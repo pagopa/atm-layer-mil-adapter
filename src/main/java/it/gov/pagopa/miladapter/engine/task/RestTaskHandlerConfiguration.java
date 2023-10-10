@@ -35,12 +35,12 @@ public class RestTaskHandlerConfiguration implements ExternalTaskHandler {
     public void execute(ExternalTask externalTask, ExternalTaskService externalTaskService) {
         log.info("{}: The External Task {} has been invoked!", this.getClass().getName(), externalTask.getId());
         Map<String, Object> variables = externalTask.getAllVariablesTyped();
-        String fakeUrl = (String) variables.get("fakeUrl");
+        String urlVariable = (String) variables.get("url");
         Map<String, String> pathParams = new HashMap<>();
         if (variables.containsKey("pathParams")) {
             pathParams = (Map<String, String>) variables.get("pathParams");
         }
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(fakeUrl);
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(urlVariable);
         URI url = builder.buildAndExpand(pathParams).toUri();
         String body = externalTask.getVariable("body");
         Map<String, String> headersMap = externalTask.getVariable("headers");
@@ -53,7 +53,7 @@ public class RestTaskHandlerConfiguration implements ExternalTaskHandler {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> request = new HttpEntity<>(body, headers);
         ResponseEntity<String> response = restTemplate
-                .exchange("https://mil-d-apim.azure-api.net/mil-auth/token", HttpMethod.POST, request, String.class);
+                .exchange(url, HttpMethod.GET, request, String.class);
 
         log.info(response.toString());
         Thread.sleep(20000);
