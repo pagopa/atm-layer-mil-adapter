@@ -1,1 +1,1 @@
-# atm-layer-mil-integration
+# atm-layer-mil-adapter
