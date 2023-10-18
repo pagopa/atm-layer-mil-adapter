@@ -1,0 +1,33 @@
+server:
+  port: ${SERVER_PORT:8080}
+camunda:
+  bpm:
+    client:
+      base-url: ${MIL_ADAPTER_ENGINE_URL}/engine-rest
+      lock-duration: ${MIL_ADAPTER_LOCK_DURATION:20000}
+      disable-backoff-strategy: ${MIL_ADAPTER_DISABLE_BACKOFF_STRATEGY:true}
+      async-response-timeout: ${MIL_ADAPTER_ASYNC_RESPONSE_TIMEOUT:20000}
+      basic-auth:
+        username: ${MIL_ADAPTER_ENGINE_ACCOUNT_USER}
+        password: ${MIL_ADAPTER_ENGINE_ACCOUNT_PASSWORD}
+rest-configuration:
+  mil-base-path: ${MIL_ADAPTER_MIL_BASE_PATH}
+  interceptor-logging-enabled: ${MIL_ADAPTER_ENABLE_INTERCEPTOR_LOGGING:true}
+  log-engine-input-variables-enabled: ${MIL_ADAPTER_LOG_ENGINE_INPUT_VARIABLES:true}
+  read-timeout: ${MIL_ADAPTER_REST_READ_TIMEOUT:20000}
+  connection-timeout: ${MIL_ADAPTER_REST_CONNECTION_TIMEOUT:20000}
+  auth:
+    mil-auth-path: ${MIL_ADAPTER_MIL_AUTH_RELATIVE_PATH:/mil-auth/token}
+    client-id: ${MIL_ADAPTER_MIL_AUTH_CLIENT_ID:}
+    client-secret: ${MIL_ADAPTER_MIL_AUTH_CLIENT_SECRET:}
+    grant-type: ${MIL_ADAPTER_MIL_AUTH_CLIENT_CREDENTIALS:client_credentials}
+cache-configuration:
+  cache-name: ${MIL_ADAPTER_TOKEN_CACHE_NAME:token-cache}
+  max-entries: ${MIL_ADAPTER_TOKEN_CACHE_MAX_ENTRIES:100}
+
+spring:
+  datasource:
+    url: ${MIL_ADAPTER_ENGINE_DB_BASE_URL}/${MIL_ADAPTER_ENGINE_DB_NAME}?currentSchema=${MIL_ADAPTER_ENGINE_DB_SCHEMA}
+    username: ${MIL_ADAPTER_ENGINE_DB_USERNAME}
+    password: ${MIL_ADAPTER_ENGINE_DB_PASSWORD}
+    driverClassName: ${MIL_ADAPTER_ENGINE_DB_DRIVER}
