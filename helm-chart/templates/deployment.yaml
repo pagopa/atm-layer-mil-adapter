@@ -24,7 +24,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: MIL_ADAPTER_ENGINE_URL
-              value: {{ .Values.camudaWebUser.address }}
+              value: {{ .Values.camundaWebUser.address }}
             - name: MIL_ADAPTER_DISABLE_BACKOFF_STRATEGY
               value: {{ .Values.milAdapter.disableBackoffStrategy }}
             - name: MIL_ADAPTER_LOCK_DURATION
