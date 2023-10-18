@@ -15,12 +15,12 @@ nameOverride: ""
 fullnameOverride: ""
 
 milAdapter:
-  disableBackoffStrategy: true
+  disableBackoffStrategy: "true"
   lockDuration: 20000
   asyncResponseTimeout: 20000
   milBasePath: "https://mil-d-apim.azure-api.net" 
-  enableInterceptorLogging: true
-  logEngineInputVariables: true
+  enableInterceptorLogging: "true"
+  logEngineInputVariables: "true"
   restReadTimeout: 20000
   restConnectionTmieout: 20000
   milAuthRelativePath: "/mil-auth/token"
