@@ -16,17 +16,17 @@ fullnameOverride: ""
 
 milAdapter:
   disableBackoffStrategy: "true"
-  lockDuration: 20000
-  asyncResponseTimeout: 20000
+  lockDuration: "20000"
+  asyncResponseTimeout: "20000"
   milBasePath: "https://mil-d-apim.azure-api.net" 
   enableInterceptorLogging: "true"
   logEngineInputVariables: "true"
-  restReadTimeout: 20000
-  restConnectionTmieout: 20000
+  restReadTimeout: "20000"
+  restConnectionTmieout: "20000"
   milAuthRelativePath: "/mil-auth/token"
   milAuthClientCredentials: "client_credentials"
   tokenCacheName: "token-cache"
-  tokenCacheMaxEntries: 100
+  tokenCacheMaxEntries: "100"
 
 milAuth:
   credentialsSecretName: "atm-layer-mil-adapter-auth"
