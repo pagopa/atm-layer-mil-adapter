@@ -15,18 +15,18 @@ nameOverride: ""
 fullnameOverride: ""
 
 milAdapter:
-  disableBackoffStrategy: "true"
-  lockDuration: "20000"
-  asyncResponseTimeout: "20000"
-  milBasePath: "https://mil-d-apim.azure-api.net" 
-  enableInterceptorLogging: "true"
-  logEngineInputVariables: "true"
-  restReadTimeout: "20000"
-  restConnectionTmieout: "20000"
-  milAuthRelativePath: "/mil-auth/token"
-  milAuthClientCredentials: "client_credentials"
-  tokenCacheName: "token-cache"
-  tokenCacheMaxEntries: "100"
+  disableBackoffStrategy: true
+  lockDuration: 20000
+  asyncResponseTimeout: 20000
+  milBasePath: https://mil-d-apim.azure-api.net
+  enableInterceptorLogging: true
+  logEngineInputVariables: true
+  restReadTimeout: 20000
+  restConnectionTmieout: 20000
+  milAuthRelativePath: /mil-auth/token
+  milAuthClientCredentials: client_credentials
+  tokenCacheName: token-cache
+  tokenCacheMaxEntries: 100
 
 milAuth:
   credentialsSecretName: "atm-layer-mil-adapter-auth"
@@ -36,7 +36,7 @@ milAuth:
 
 
 camundaWebUser:
-  address: "pagopa-dev-atm-layer-wf-engine.pagopa.svc.cluster.local:8080" 
+  address: pagopa-dev-atm-layer-wf-engine.pagopa.svc.cluster.local:8080
   credentialsSecretName: "atm-layer-wf-engine-webuser"
   credentialsSecretKeys:
     username: WEB_USER
