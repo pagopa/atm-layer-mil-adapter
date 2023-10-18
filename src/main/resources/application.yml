@@ -1,36 +1,3 @@
-server:
-  port: ${SERVER_PORT:8082}
-camunda:
-  bpm:
-    client:
-      base-url: http://localhost:8080/engine-rest
-      lock-duration: 30000
-      disable-backoff-strategy: true
-      async-response-timeout: 30000
-#      basic-auth:
-#        username: admin
-#        password: password
-logging:
-  level:
-    org:
-      camunda:
-        bpm:
-          client:
-            spring: DEBUG
-    web: debug
-#spring:
-#  jpa:
-#    database: POSTGRESQL
-#    show-sql: true
-#    hibernate:
-#      ddl-auto: none
-#  datasource:
-#    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=atm_tasks
-#    username: postgres
-#    password: password
-#    driverClassName: org.postgresql.Driver
-#  liquibase:
-#    change-log: classpath:db/changelog/camunda-changelog.xml
-#  sql:
-#    init:
-#      platform: postgres
+spring:
+  profiles:
+    active: @spring.profiles.active@
