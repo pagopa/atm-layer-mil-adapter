@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
 public class HttpRequestUtilsTest {
-
     @InjectMocks
     private HttpRequestUtils httpRequestUtils;
 
@@ -142,6 +141,12 @@ public class HttpRequestUtilsTest {
     @Test
     void testHttpMethodFromValueDefault() {
         assertThrows(RuntimeException.class, () -> HttpRequestUtils.httpMethodFromValue("Http method does not exist"));
+    }
+
+    @Test
+    public void defaultConstructorTest() {
+        Object httpRequestUtilsConstructed = new HttpRequestUtils();
+        assertTrue(httpRequestUtilsConstructed instanceof HttpRequestUtils);
     }
 }
 
