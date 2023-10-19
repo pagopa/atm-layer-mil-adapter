@@ -1,13 +1,16 @@
+{{- if .Values.ingress.enabled -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Values.serviceAccount.name }}
-  namespace: {{ .Values.serviceAccount.namespace }}
   annotations:
     {{- toYaml .Values.ingress.annotations | nindent 4 }}
 spec:
   rules:
-    - http:
+     - {{- if .host }}
+      host: {{ .host }}
+      {{- end }}
+      http:
         paths:
           - path: {{ index .Values.ingress.hosts 0 "paths" 0 "path" }}
             pathType: {{ index .Values.ingress.hosts 0 "paths" 0 "pathType" }}
@@ -16,3 +19,4 @@ spec:
                 name: {{ .Values.serviceAccount.name }}
                 port:
                   number: {{ .Values.service.port }}
+{{- end }}
