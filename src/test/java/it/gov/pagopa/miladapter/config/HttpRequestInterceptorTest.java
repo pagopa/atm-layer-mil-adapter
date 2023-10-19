@@ -18,15 +18,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ContextConfiguration(classes = {HttpRequestInterceptor.class})
 @ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {HttpRequestInterceptor.class})
 public class HttpRequestInterceptorTest {
 
     @InjectMocks
-    HttpRequestInterceptor httpRequestInterceptor;
+    private HttpRequestInterceptor httpRequestInterceptor;
 
     @Test
-    void testIntercept() throws IOException {
+    public void testIntercept() throws IOException {
         MockClientHttpRequest request = new MockClientHttpRequest();
         byte[] body = "body".getBytes(StandardCharsets.UTF_8);
         ClientHttpRequestExecution clientHttpRequestExecution = mock(ClientHttpRequestExecution.class);

@@ -9,6 +9,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -70,6 +71,12 @@ public class EngineVariablesUtilsTest {
         assertEquals("VALUE", result.get("key"));
         assertEquals("VALUE", result.get("KEY"));
         assertEquals(3, result.size());
+    }
+
+    @Test
+    public void defaultConstructorTest() {
+        Object engineVariablesUtils = new EngineVariablesUtils();
+        assertTrue(engineVariablesUtils instanceof EngineVariablesUtils);
     }
 
     public Map<String, Object> getMapForTest() {

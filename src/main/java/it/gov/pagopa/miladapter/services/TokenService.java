@@ -29,6 +29,8 @@ public class TokenService {
     private RestConfigurationProperties restConfigurationProperties;
     @Autowired
     CacheService cacheService;
+    @Autowired
+    RestTemplate restTemplate;
 
 
     public void injectAuthToken(HttpHeaders restHeaders, AuthParameters authParameters) {
@@ -52,7 +54,6 @@ public class TokenService {
 
     public Token generateToken(AuthParameters authParameters, KeyToken keyToken) {
         log.info("MIL Authentication flow started");
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = prepareAuthHeaders(authParameters);
 
         HttpEntity<MultiValueMap<String, String>> request = prepareAuthBody(headers);
