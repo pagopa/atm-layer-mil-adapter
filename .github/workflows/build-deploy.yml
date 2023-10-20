@@ -73,3 +73,6 @@ jobs:
           --set image.tag=${{ github.sha }} \
           --set image.repository=${{ steps.login-ecr.outputs.registry }}/${{ vars.DOCKER_IMAGE_NAME }} \
           --set serviceAccount.name=${{ vars.DOCKER_IMAGE_NAME }} 
+          --set deployment.name=${{ vars.DOCKER_IMAGE_NAME }} 
+          --set service.name=${{ vars.DOCKER_IMAGE_NAME }} 
+          --set ingress.name=${{ vars.DOCKER_IMAGE_NAME }} 

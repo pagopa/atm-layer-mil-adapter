@@ -76,12 +76,19 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+deployment:
+  name: xxxxx
+  namespace: pagopa
+
 service:
+  name: xxxxx
+  namespace: pagopa
   type: NodePort
   port: 8080
 
 ingress:
   enabled: true
+  name: xxxxx
   className: ""
   annotations: 
     kubernetes.io/ingress.class: "alb"
