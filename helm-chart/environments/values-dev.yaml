@@ -76,12 +76,19 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+deployment:
+  name: xxxxx
+  namespace: pagopa
+
 service:
+  name: xxxxx
+  namespace: pagopa
   type: NodePort
   port: 8080
 
 ingress:
   enabled: false
+  name: xxxxx
   className: ""
   annotations: 
     kubernetes.io/ingress.class: "alb"
@@ -90,7 +97,7 @@ ingress:
     alb.ingress.kubernetes.io/load-balancer-name: "pagopa-dev-atm-layer-alb-int"
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTP": 8080}]'
   hosts:
-    - host: chart-example.local
+    - host:
       paths:
         - path: /mil/
           pathType: Prefix
