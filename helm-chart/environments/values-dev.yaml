@@ -87,7 +87,7 @@ service:
   port: 8080
 
 ingress:
-  enabled: true
+  enabled: false
   name: xxxxx
   className: ""
   annotations: 
