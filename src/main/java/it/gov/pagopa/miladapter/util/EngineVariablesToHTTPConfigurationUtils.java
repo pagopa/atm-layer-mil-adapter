@@ -27,7 +27,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         String body = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.BODY.getValue(), false);
         Map<String, String> headersMap = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.HEADERS.getValue(), false);
         HttpHeaders headers = HttpRequestUtils.createHttpHeaders(headersMap);
-        headers.add(RequiredProcessVariables.REQUEST_ID.getMilValue(), requestId);
+        headers.add(RequiredProcessVariables.REQUEST_ID.getMilValue(), UUID.randomUUID().toString());
         Map<String, String> pathParams = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.PATH_PARAMS.getValue(), false);
         if (CollectionUtils.isEmpty(pathParams)) {
             pathParams = new HashMap<>();
