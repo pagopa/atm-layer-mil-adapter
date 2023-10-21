@@ -50,7 +50,7 @@ public class MILRestServiceImplTest {
     @Test
     public void executeMILRestCallTestOK() {
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("test response", HttpStatus.OK));
-        VariableMap output = milRestService.executeMILRestCall(httpConfiguration);
+        VariableMap output = milRestService.executeRestCall(httpConfiguration);
         assertEquals("test response", output.get("response"));
         assertEquals(200, output.get("statusCode"));
     }
@@ -58,7 +58,7 @@ public class MILRestServiceImplTest {
     @Test
     public void executeMILRestCallTestKO() {
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("BAD REQUEST", HttpStatus.BAD_REQUEST));
-        VariableMap output = milRestService.executeMILRestCall(httpConfiguration);
+        VariableMap output = milRestService.executeRestCall(httpConfiguration);
         assertEquals("BAD REQUEST", output.get("response"));
         assertEquals(400, output.get("statusCode"));
     }

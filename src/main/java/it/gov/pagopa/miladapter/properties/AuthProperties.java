@@ -8,5 +8,4 @@ public class AuthProperties {
     private String clientId;
     private String clientSecret;
     private String grantType;
-    private Boolean enableAuth;
 }
