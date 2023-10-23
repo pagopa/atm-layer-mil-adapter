@@ -29,7 +29,7 @@ public class EngineVariablesToHTTPConfigurationUtilsTest {
         variables.put(HttpVariablesEnum.URL.getValue(), "http://prova");
         variables.put(HttpVariablesEnum.METHOD.getValue(), "GET");
 
-        HTTPConfiguration httpConfiguration = EngineVariablesToHTTPConfigurationUtils.getHttpConfiguration(variables);
+        HTTPConfiguration httpConfiguration = EngineVariablesToHTTPConfigurationUtils.getHttpConfiguration(variables,true);
         assertEquals("http://prova", httpConfiguration.getEndpoint());
         assertEquals(HttpMethod.GET, httpConfiguration.getHttpMethod());
         assertEquals(null, httpConfiguration.getBody());
@@ -51,7 +51,7 @@ public class EngineVariablesToHTTPConfigurationUtilsTest {
         pathParams.put("id", "1");
         variables.put(HttpVariablesEnum.PATH_PARAMS.getValue(), pathParams);
 
-        HTTPConfiguration httpConfiguration = EngineVariablesToHTTPConfigurationUtils.getHttpConfiguration(variables);
+        HTTPConfiguration httpConfiguration = EngineVariablesToHTTPConfigurationUtils.getHttpConfiguration(variables,true);
         assertEquals("http://prova/{id}", httpConfiguration.getEndpoint());
         assertEquals(HttpMethod.GET, httpConfiguration.getHttpMethod());
         assertEquals(null, httpConfiguration.getBody());

@@ -5,7 +5,5 @@ import org.camunda.bpm.engine.variable.VariableMap;
 
 import java.util.Map;
 
-public interface MILRestService {
-
-    VariableMap executeMILRestCall(HTTPConfiguration configuration);
+public interface MILRestService extends GenericRestService {
 }

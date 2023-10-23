@@ -2,7 +2,7 @@ package it.gov.pagopa.miladapter.services.impl;
 
 import it.gov.pagopa.miladapter.model.HTTPConfiguration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
-import it.gov.pagopa.miladapter.services.MILRestService;
+import it.gov.pagopa.miladapter.services.GenericRestServiceNoAuth;
 import it.gov.pagopa.miladapter.services.TokenService;
 import it.gov.pagopa.miladapter.util.HttpRequestUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import java.net.URI;
 
 @Service
 @Slf4j
-public class MILRestServiceImpl implements MILRestService {
+public class GenericRestServiceNoAuthImpl implements GenericRestServiceNoAuth {
 
     @Autowired
     RestConfigurationProperties restConfigurationProperties;
@@ -29,12 +29,11 @@ public class MILRestServiceImpl implements MILRestService {
 
     @Override
     public void injectAuthToken(HTTPConfiguration httpConfiguration) {
-        tokenService.injectAuthToken(httpConfiguration.getHeaders(), httpConfiguration.getAuthParameters());
     }
 
     @Override
     public URI prepareUri(HTTPConfiguration httpConfiguration) {
-        return HttpRequestUtils.buildURI(restConfigurationProperties.getMilBasePath(), httpConfiguration.getEndpoint(), httpConfiguration.getPathParams());
+        return HttpRequestUtils.buildURI(httpConfiguration.getEndpoint(), httpConfiguration.getPathParams());
     }
 
     @Override

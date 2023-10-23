@@ -1,6 +1,6 @@
 package it.gov.pagopa.miladapter;
 
-import it.gov.pagopa.miladapter.engine.task.RestTaskHandler;
+import it.gov.pagopa.miladapter.engine.task.impl.MILRestTaskHandler;
 import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
 import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.HTTPConfiguration;
@@ -30,10 +30,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-public class RestTaskHandlerTest {
+public class MILRestTaskHandlerTest {
 
     @InjectMocks
-    private RestTaskHandler restTaskHandler;
+    private MILRestTaskHandler MILRestTaskHandler;
 
     @Mock
     private MILRestService milRestService;
@@ -60,13 +60,13 @@ public class RestTaskHandlerTest {
         Map<String, Object> variables = prepareInputVariables();
 
         when(restConfigurationProperties.isLogEngineInputVariablesEnabled()).thenReturn(true);
-        when(milRestService.executeMILRestCall(any())).thenReturn(variableMap);
+        when(milRestService.executeRestCall(any())).thenReturn(variableMap);
         when(externalTask.getAllVariables()).thenReturn(variables);
         when(externalTask.getId()).thenReturn("yourExternalTaskId");
 
-        restTaskHandler.execute(externalTask, externalTaskService);
+        MILRestTaskHandler.execute(externalTask, externalTaskService);
 
-        verify(milRestService, times(1)).executeMILRestCall(any());
+        verify(milRestService, times(1)).executeRestCall(any());
         verify(externalTaskService, times(1)).complete(externalTask, variableMap);
     }
 
@@ -75,17 +75,17 @@ public class RestTaskHandlerTest {
         ExternalTask externalTask = mock(ExternalTask.class);
         ExternalTaskService externalTaskService = mock(ExternalTaskService.class);
         Map<String, Object> variables = prepareInputVariables();
-        HTTPConfiguration httpConfiguration = EngineVariablesToHTTPConfigurationUtils.getHttpConfiguration(variables);
+        HTTPConfiguration httpConfiguration = EngineVariablesToHTTPConfigurationUtils.getHttpConfiguration(variables,true);
 
 
         when(restConfigurationProperties.isLogEngineInputVariablesEnabled()).thenReturn(false);
-        when(milRestService.executeMILRestCall(any())).thenThrow(new RuntimeException("exception"));
+        when(milRestService.executeRestCall(any())).thenThrow(new RuntimeException("exception"));
         when(externalTask.getAllVariables()).thenReturn(variables);
         when(externalTask.getId()).thenReturn("yourExternalTaskId");
 
-        restTaskHandler.execute(externalTask, externalTaskService);
+        MILRestTaskHandler.execute(externalTask, externalTaskService);
 
-        verify(milRestService, times(1)).executeMILRestCall(any());
+        verify(milRestService, times(1)).executeRestCall(any());
         verify(externalTaskService, times(1)).handleFailure(eq(externalTask), eq("exception"), any(), eq(0), eq(0L));
     }
 
