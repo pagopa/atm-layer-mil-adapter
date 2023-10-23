@@ -39,7 +39,7 @@ public class HttpRequestUtils {
     }
 
     public static URI buildURI(String endpoint, Map<String, String> pathParams) {
-        Assert.notNull(pathParams, "pathParams can be empty but can not not be null");
+        Assert.notNull(pathParams, "pathParams can be empty but cannot be null");
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(endpoint);
         return builder.buildAndExpand(pathParams).toUri();
     }
