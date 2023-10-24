@@ -10,6 +10,8 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: latest
 
+namespace: pagopa
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -29,15 +31,14 @@ milAdapter:
   tokenCacheMaxEntries: 100
 
 milAuth:
-  credentialsSecretName: "atm-layer-mil-adapter-auth"
+  credentialsSecretName: "atm-layer-mil-auth"
   credentialsSecretKeys:
     clientId: CLIENT_ID
     clientSecret: CLIENT_SECRET
 
-
 camundaWebUser:
   address: http://pagopa-dev-atm-layer-wf-engine.pagopa.svc.cluster.local:8080
-  credentialsSecretName: "atm-layer-wf-engine-webuser"
+  credentialsSecretName: "atm-layer-webuser"
   credentialsSecretKeys:
     username: WEB_USER
     password: WEB_PASSWORD
@@ -47,7 +48,7 @@ database:
   url: jdbc:postgresql://pagopa-dev-atm-layer-rds.cluster-cyezwzpjc2tj.eu-south-1.rds.amazonaws.com:5431
   db_name: pagopadb
   schema: atm_layer_engine
-  credentialsSecretName: "atm-layer-wf-engine-database"
+  credentialsSecretName: "atm-layer-database"
   credentialsSecretKeys:
     username: DB_USERNAME
     password: DB_PASSWORD
@@ -57,11 +58,11 @@ serviceAccount:
   # Specifies whether a service account should be created
   create: true
   # Annotations to add to the service account
-  annotations: {}
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::00000000000:role/pagopa-dev-atm-layer-xxxxxx-serviceaccount-role
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: xxxxx
-  namespace: pagopa
+  name: pagopa-dev-atm-layer-mil-adapter
 
 podAnnotations: {}
 
@@ -77,18 +78,19 @@ securityContext: {}
   # runAsUser: 1000
 
 deployment:
-  name: xxxxx
-  namespace: pagopa
+  name: pagopa-dev-atm-layer-mil-adapter
+  annotations:
+    reloader.stakater.com/auto: "true"
+    secret.reloader.stakater.com/reload: atm-layer-wdatabase, atm-layer-webuser, atm-layer-mil-auth
 
 service:
-  name: xxxxx
-  namespace: pagopa
+  name: pagopa-dev-atm-layer-mil-adapter
   type: NodePort
   port: 8080
 
 ingress:
   enabled: false
-  name: xxxxx
+  name: pagopa-dev-atm-layer-mil-adapter
   className: ""
   annotations: 
     kubernetes.io/ingress.class: "alb"
