@@ -26,19 +26,19 @@ spec:
           driver: secrets-store.csi.k8s.io
           readOnly: true 
           volumeAttributes:
-            secretProviderClass: atm-layer-mil-adapter-secrets
+            secretProviderClass: {{ .Values.secretProviderClass.name }}
       - name: secrets-store-inline-2
         csi:
           driver: secrets-store.csi.k8s.io
           readOnly: true 
           volumeAttributes:
-            secretProviderClass: atm-layer-mil-adapter-secrets
+            secretProviderClass: {{ .Values.secretProviderClass.name }}
       - name: secrets-store-inline-3
         csi:
           driver: secrets-store.csi.k8s.io
           readOnly: true 
           volumeAttributes:
-            secretProviderClass: atm-layer-mil-adapter-secrets
+            secretProviderClass: {{ .Values.secretProviderClass.name }}
       containers:
         - name: {{ .Values.deployment.name }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -112,13 +112,13 @@ spec:
               value: "{{ .Values.milAdapter.tokenCacheMaxEntries }}"
           volumeMounts:
           - name: secrets-store-inline-1
-            mountPath: "/mnt/secrets-store/1"
+            mountPath: "/mnt/secrets-store"
             readOnly: true
           - name: secrets-store-inline-2
-            mountPath: "/mnt/secrets-store/2"
+            mountPath: "/mnt/secrets-store"
             readOnly: true
           - name: secrets-store-inline-3
-            mountPath: "/mnt/secrets-store/3"
+            mountPath: "/mnt/secrets-store"
             readOnly: true
 
   strategy:
