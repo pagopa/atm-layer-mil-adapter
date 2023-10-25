@@ -2,9 +2,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.deployment.name }}
-  namespace: {{ .Values.deployment.namespace }}
+  namespace: {{ .Values.namespace }}
   labels:
     App: {{ .Values.deployment.name }}
+  annotations:
+    {{- toYaml .Values.deployment.annotations | nindent 4 }}
+
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -16,6 +19,26 @@ spec:
         App: {{ .Values.deployment.name }}
         force-recreate: {{ randAlphaNum 5 | quote }}
     spec:
+      serviceAccountName: {{ include "chart-1.serviceAccountName" . }}
+      volumes:
+      - name: secrets-store-inline-1
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true 
+          volumeAttributes:
+            secretProviderClass: {{ .Values.secretProviderClass.name }}
+      - name: secrets-store-inline-2
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true 
+          volumeAttributes:
+            secretProviderClass: {{ .Values.secretProviderClass.name }}
+      - name: secrets-store-inline-3
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true 
+          volumeAttributes:
+            secretProviderClass: {{ .Values.secretProviderClass.name }}
       containers:
         - name: {{ .Values.deployment.name }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -87,6 +110,16 @@ spec:
               value: "{{ .Values.milAdapter.tokenCacheName }}"
             - name: MIL_ADAPTER_TOKEN_CACHE_MAX_ENTRIES
               value: "{{ .Values.milAdapter.tokenCacheMaxEntries }}"
+          volumeMounts:
+          - name: secrets-store-inline-1
+            mountPath: "/mnt/secrets-store"
+            readOnly: true
+          - name: secrets-store-inline-2
+            mountPath: "/mnt/secrets-store"
+            readOnly: true
+          - name: secrets-store-inline-3
+            mountPath: "/mnt/secrets-store"
+            readOnly: true
 
   strategy:
     type: Recreate
