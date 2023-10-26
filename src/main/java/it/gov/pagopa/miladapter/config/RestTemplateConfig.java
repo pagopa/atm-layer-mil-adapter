@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,9 +20,8 @@ public class RestTemplateConfig {
     RestConfigurationProperties restConfigurationProperties;
 
     private RestTemplate getRestTemplate() {
-        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
         factory.setConnectTimeout(restConfigurationProperties.getConnectionTimeout());
-        factory.setReadTimeout(restConfigurationProperties.getReadTimeout());
         return new RestTemplate(new BufferingClientHttpRequestFactory(factory));
     }
 

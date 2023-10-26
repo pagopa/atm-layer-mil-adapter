@@ -19,6 +19,7 @@
         <easy.random.version>5.0.0</easy.random.version>
         <junit.version>4.13.2</junit.version>
         <jacoco.version>0.8.11</jacoco.version>
+        <httpclient5.version>5.2.1</httpclient5.version>
     </properties>
 
     <parent>
@@ -128,6 +129,12 @@
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${httpclient5.version}</version>
         </dependency>
 
         <dependency>
