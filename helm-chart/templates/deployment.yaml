@@ -21,19 +21,7 @@ spec:
     spec:
       serviceAccountName: {{ include "chart-1.serviceAccountName" . }}
       volumes:
-      - name: secrets-store-inline-1
-        csi:
-          driver: secrets-store.csi.k8s.io
-          readOnly: true 
-          volumeAttributes:
-            secretProviderClass: {{ .Values.secretProviderClass.name }}
-      - name: secrets-store-inline-2
-        csi:
-          driver: secrets-store.csi.k8s.io
-          readOnly: true 
-          volumeAttributes:
-            secretProviderClass: {{ .Values.secretProviderClass.name }}
-      - name: secrets-store-inline-3
+      - name: secrets-store-inline
         csi:
           driver: secrets-store.csi.k8s.io
           readOnly: true 
@@ -111,13 +99,7 @@ spec:
             - name: MIL_ADAPTER_TOKEN_CACHE_MAX_ENTRIES
               value: "{{ .Values.milAdapter.tokenCacheMaxEntries }}"
           volumeMounts:
-          - name: secrets-store-inline-1
-            mountPath: "/mnt/secrets-store"
-            readOnly: true
-          - name: secrets-store-inline-2
-            mountPath: "/mnt/secrets-store"
-            readOnly: true
-          - name: secrets-store-inline-3
+          - name: secrets-store-inline
             mountPath: "/mnt/secrets-store"
             readOnly: true
 
