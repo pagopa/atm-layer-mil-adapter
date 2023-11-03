@@ -55,6 +55,7 @@ database:
 
 secretProviderClass:
   name: atm-layer-mil-adapter-secrets
+  env: dev
 
 serviceAccount:
   # Specifies whether a service account should be created
