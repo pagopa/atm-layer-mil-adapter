@@ -17,8 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestPropertySource(properties = {
         "rest-configuration.mil-base-path=https://example.com",
         "rest-configuration.interceptor-logging-enabled=true",
-        "rest-configuration.read-timeout=5000",
-        "rest-configuration.connection-timeout=3000",
+        "rest-configuration.connection-response-timeout-milliseconds=3000",
+        "rest-configuration.connection-request-timeout-milliseconds=5000",
+        "rest-configuration.max-retry=1",
+        "rest-configuration.retry-interval-milliseconds=500",
         "rest-configuration.auth.mil-auth-path=path",
         "rest-configuration.auth.client-id=client-id",
         "rest-configuration.auth.client-secret=client-secret",
@@ -34,8 +36,10 @@ public class RestConfigurationPropertiesTest {
     public void testRestConfigurationProperties() {
         assertEquals("https://example.com", restConfigurationProperties.getMilBasePath());
         assertTrue(restConfigurationProperties.isInterceptorLoggingEnabled());
-        assertEquals(5000, restConfigurationProperties.getReadTimeout());
-        assertEquals(3000, restConfigurationProperties.getConnectionTimeout());
+        assertEquals(5000, restConfigurationProperties.getConnectionRequestTimeoutMilliseconds());
+        assertEquals(3000, restConfigurationProperties.getConnectionResponseTimeoutMilliseconds());
+        assertEquals(1, restConfigurationProperties.getMaxRetry());
+        assertEquals(500, restConfigurationProperties.getRetryIntervalMilliseconds());
         assertFalse(restConfigurationProperties.isLogEngineInputVariablesEnabled());
         assertEquals(restConfigurationProperties.getAuth().getMilAuthPath(), "path");
         assertEquals(restConfigurationProperties.getAuth().getClientId(), "client-id");

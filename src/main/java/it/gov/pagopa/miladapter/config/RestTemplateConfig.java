@@ -1,42 +1,28 @@
 package it.gov.pagopa.miladapter.config;
 
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
+import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Configuration
 public class RestTemplateConfig {
 
     @Autowired
+    RestTemplateGenerator restTemplateGenerator;
+
+    @Autowired
     RestConfigurationProperties restConfigurationProperties;
 
-    private RestTemplate getRestTemplate() {
-        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        factory.setConnectTimeout(restConfigurationProperties.getConnectionTimeout());
-        return new RestTemplate(new BufferingClientHttpRequestFactory(factory));
-    }
-
     @Bean
-    public RestTemplate restTemplateWithInterceptor() {
-        RestTemplate restTemplate = getRestTemplate();
-
-        if (restConfigurationProperties.isInterceptorLoggingEnabled()) {
-            List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
-            if (CollectionUtils.isEmpty(interceptors)) {
-                interceptors = new ArrayList<>();
-            }
-            interceptors.add(new HttpRequestInterceptor());
-            restTemplate.setInterceptors(interceptors);
-        }
-        return restTemplate;
+    public RestTemplate getRestTemplate() {
+        return restTemplateGenerator.generate(
+                restConfigurationProperties.getConnectionRequestTimeoutMilliseconds(),
+                restConfigurationProperties.getConnectionResponseTimeoutMilliseconds(),
+                restConfigurationProperties.getMaxRetry(),
+                restConfigurationProperties.getRetryIntervalMilliseconds()
+        );
     }
 }
