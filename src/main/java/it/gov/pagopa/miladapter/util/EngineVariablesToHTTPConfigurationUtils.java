@@ -31,6 +31,13 @@ public class EngineVariablesToHTTPConfigurationUtils {
         return integerValue;
     }
 
+    public static Integer parseInteger(Long value) {
+        if (value != null) {
+            return value.intValue();
+        }
+        return null;
+    }
+
     public static HTTPConfiguration getHttpConfiguration(Map<String, Object> variables, boolean milFlow) {
 
         String requestId = UUID.randomUUID().toString();
@@ -52,17 +59,12 @@ public class EngineVariablesToHTTPConfigurationUtils {
         HttpRequestUtils.checkNotNullPathParams(pathParams);
         // Map<String, String> queryParams = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.QUERY_PARAMS.getValue(), false);
 
-        Integer connectionResponseTimeout = getIntegerValue(HttpVariablesEnum.CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS.getValue(), EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS.getValue(), false));
-        Integer connectionRequestTimeout = getIntegerValue(HttpVariablesEnum.CONNECTION_REQUEST_TIMEOUT_MILLISECONDS.getValue(), EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_REQUEST_TIMEOUT_MILLISECONDS.getValue(), false));
-        Integer maxRetry = getIntegerValue(HttpVariablesEnum.MAX_RETRY.getValue(), EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.MAX_RETRY.getValue(), false));
-        Integer retryIntervalMilliseconds = getIntegerValue(HttpVariablesEnum.RETRY_INTERVAL_MILLISECONDS.getValue(), EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.RETRY_INTERVAL_MILLISECONDS.getValue(), false));
+        Long connectionResponseTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS.getValue(), false);
+        Long connectionRequestTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_REQUEST_TIMEOUT_MILLISECONDS.getValue(), false);
+        Long maxRetry = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.MAX_RETRY.getValue(), false);
+        Long retryIntervalMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.RETRY_INTERVAL_MILLISECONDS.getValue(), false);
 
-        AuthParameters authParameters = AuthParameters.builder()
-                .requestId(requestId)
-                .acquirerId(acquirerId)
-                .terminalId(terminalId)
-                .channel(channel)
-                .build();
+        AuthParameters authParameters = AuthParameters.builder().requestId(requestId).acquirerId(acquirerId).terminalId(terminalId).channel(channel).build();
 
         return HTTPConfiguration.builder()
                 .body(body)
@@ -71,10 +73,9 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .pathParams(pathParams)
                 .headers(headers)
                 .authParameters(authParameters)
-                .connectionResponseTimeoutMilliseconds(connectionResponseTimeout)
-                .connectionRequestTimeoutMilliseconds(connectionRequestTimeout)
-                .maxRetry(maxRetry)
-                .retryIntervalMilliseconds(retryIntervalMilliseconds)
-                .build();
+                .connectionResponseTimeoutMilliseconds(parseInteger(connectionResponseTimeout))
+                .connectionRequestTimeoutMilliseconds(parseInteger(connectionRequestTimeout))
+                .maxRetry(parseInteger(maxRetry))
+                .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds)).build();
     }
 }
