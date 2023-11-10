@@ -1,5 +1,7 @@
 package it.gov.pagopa.miladapter.util;
 
+import it.gov.pagopa.miladapter.model.HTTPConfiguration;
+import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
@@ -61,6 +63,13 @@ public class HttpRequestUtils {
                 throw new RuntimeException("declared path param cannot be empty or null");
             }
         }
+    }
+
+    public static void getRestFactoryConfigsOrDefault(HTTPConfiguration configuration, RestConfigurationProperties restConfigurationProperties) {
+        configuration.setConnectionResponseTimeoutMilliseconds(configuration.getConnectionResponseTimeoutMilliseconds() == null ? restConfigurationProperties.getConnectionResponseTimeoutMilliseconds() : configuration.getConnectionResponseTimeoutMilliseconds());
+        configuration.setConnectionRequestTimeoutMilliseconds(configuration.getConnectionRequestTimeoutMilliseconds() == null ? restConfigurationProperties.getConnectionRequestTimeoutMilliseconds() : configuration.getConnectionRequestTimeoutMilliseconds());
+        configuration.setMaxRetry(configuration.getMaxRetry() == null ? restConfigurationProperties.getMaxRetry() : configuration.getMaxRetry());
+        configuration.setRetryIntervalMilliseconds(configuration.getRetryIntervalMilliseconds() == null ? restConfigurationProperties.getRetryIntervalMilliseconds() : configuration.getRetryIntervalMilliseconds());
     }
 
     public static HttpMethod httpMethodFromValue(String httpMethodString) {

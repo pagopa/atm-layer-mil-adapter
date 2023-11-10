@@ -2,14 +2,15 @@ package it.gov.pagopa.miladapter.services.impl;
 
 import it.gov.pagopa.miladapter.model.HTTPConfiguration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
+import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
 import it.gov.pagopa.miladapter.services.GenericRestServiceNoAuth;
 import it.gov.pagopa.miladapter.services.TokenService;
 import it.gov.pagopa.miladapter.util.HttpRequestUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 
@@ -21,8 +22,7 @@ public class GenericRestServiceNoAuthImpl implements GenericRestServiceNoAuth {
     RestConfigurationProperties restConfigurationProperties;
 
     @Autowired
-    RestTemplate restTemplate;
-
+    RestTemplateGenerator restTemplateGenerator;
 
     @Autowired
     TokenService tokenService;
@@ -37,8 +37,18 @@ public class GenericRestServiceNoAuthImpl implements GenericRestServiceNoAuth {
     }
 
     @Override
-    public RestTemplate getRestTemplate() {
-        return this.restTemplate;
+    public Logger getLogger() {
+        return log;
+    }
+
+    @Override
+    public RestConfigurationProperties getRestConfigurationProperties() {
+        return this.restConfigurationProperties;
+    }
+
+    @Override
+    public RestTemplateGenerator getRestTemplateGenerator() {
+        return restTemplateGenerator;
     }
 
     @Override

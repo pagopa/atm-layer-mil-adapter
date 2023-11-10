@@ -11,8 +11,10 @@ public class RestConfigurationProperties {
 
     private String milBasePath;
     private boolean interceptorLoggingEnabled;
-    private int readTimeout;
-    private int connectionTimeout;
+    private int connectionRequestTimeoutMilliseconds;
+    private int connectionResponseTimeoutMilliseconds;
+    private int maxRetry;
+    private int retryIntervalMilliseconds;
     private boolean logEngineInputVariablesEnabled;
     AuthProperties auth;
 }

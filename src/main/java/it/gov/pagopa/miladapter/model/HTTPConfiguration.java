@@ -1,6 +1,5 @@
 package it.gov.pagopa.miladapter.model;
 
-import jakarta.security.auth.message.config.AuthConfig;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -25,6 +24,10 @@ public class HTTPConfiguration {
     String body;
     HttpHeaders headers;
     Map<String, String> pathParams;
+    Integer connectionResponseTimeoutMilliseconds;
+    Integer connectionRequestTimeoutMilliseconds;
+    Integer maxRetry;
+    Integer retryIntervalMilliseconds;
 
     AuthParameters authParameters;
 

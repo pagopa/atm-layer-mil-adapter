@@ -3,8 +3,12 @@ package it.gov.pagopa.miladapter.services;
 import camundajar.impl.com.google.gson.JsonObject;
 import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
 import it.gov.pagopa.miladapter.model.HTTPConfiguration;
+import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
+import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
+import it.gov.pagopa.miladapter.util.HttpRequestUtils;
 import org.camunda.bpm.engine.variable.VariableMap;
 import org.camunda.bpm.engine.variable.Variables;
+import org.slf4j.Logger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,21 +24,19 @@ public interface GenericRestService {
         this.injectAuthToken(configuration);
         ResponseEntity<String> response;
         try {
-            response = this.getRestTemplate()
+            response = this.getRestTemplate(configuration)
                     .exchange(this.prepareUri(configuration), configuration.getHttpMethod(), this.buildHttpEntity(configuration), String.class);
-        } catch (HttpClientErrorException e) {
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            getLogger().error("Exception in HTTP request: ", e);
             response = new ResponseEntity<>(e.getResponseBodyAsString(), e.getStatusCode());
-        } catch (HttpServerErrorException e) {
-            response = new ResponseEntity<>(e.getResponseBodyAsString(), e.getStatusCode());
-            throw e;
         } catch (Exception e) {
+            getLogger().error("Exception in HTTP request: ", e);
             response = new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-            throw e;
         }
 
         VariableMap output = Variables.createVariables();
-        if(response.getBody() == null){
-            response = new ResponseEntity<>(new JsonObject().toString(),response.getStatusCode());
+        if (response.getBody() == null) {
+            response = new ResponseEntity<>(new JsonObject().toString(), response.getStatusCode());
         }
         output.putValue(HttpVariablesEnum.RESPONSE.getValue(), response.getBody());
         output.putValue(HttpVariablesEnum.STATUS_CODE.getValue(), response.getStatusCode().value());
@@ -45,7 +47,17 @@ public interface GenericRestService {
 
     URI prepareUri(HTTPConfiguration configuration);
 
+    Logger getLogger();
+
+    RestConfigurationProperties getRestConfigurationProperties();
+
+    RestTemplateGenerator getRestTemplateGenerator();
+
     <T> HttpEntity<T> buildHttpEntity(HTTPConfiguration configuration);
 
-    RestTemplate getRestTemplate();
+    default RestTemplate getRestTemplate(HTTPConfiguration configuration) {
+        HttpRequestUtils.getRestFactoryConfigsOrDefault(configuration, getRestConfigurationProperties());
+        return getRestTemplateGenerator().generate(configuration.getConnectionRequestTimeoutMilliseconds(), configuration.getConnectionResponseTimeoutMilliseconds(),
+                configuration.getMaxRetry(), configuration.getRetryIntervalMilliseconds());
+    }
 }
