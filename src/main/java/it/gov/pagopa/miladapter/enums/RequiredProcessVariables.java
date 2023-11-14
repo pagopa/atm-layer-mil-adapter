@@ -14,7 +14,7 @@ public enum RequiredProcessVariables {
     CLIENT_SECRET(null, "client_secret", null),
     GRANT_TYPE(null, "grant_type", null),
     BRANCH_ID("branchId", null, "branchId"),
-    FUNCTION_ID("functionId", null, "functionId"),
+    FUNCTION_ID("functionId", null, "functionType"),
     CODE("code", null, "code");
 
     private String engineValue;
