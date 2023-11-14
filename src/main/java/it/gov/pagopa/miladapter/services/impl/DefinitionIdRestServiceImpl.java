@@ -7,6 +7,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
@@ -51,6 +52,8 @@ public class DefinitionIdRestServiceImpl implements DefinitionIdRestService {
                                 + configuration.getAuthParameters().getCode());
         pathParams.put(RequiredProcessVariables.FUNCTION_ID.getModelValue(), configuration.getFunction());
 
+        configuration
+                .setHttpMethod(HttpMethod.valueOf(restConfigurationProperties.getDefinitionIdProperties().getMethod()));
         return HttpRequestUtils.buildURI(restConfigurationProperties.getModelBasePath(),
                 restConfigurationProperties.getDefinitionIdProperties().getUrl(),
                 pathParams);
