@@ -9,7 +9,7 @@ public enum RequiredProcessVariables {
     REQUEST_ID(null, "RequestId", null),
     ACQUIRER_ID("bankId", "AcquirerId", "acquirerId"),
     CHANNEL("channel", "Channel", null),
-    TERMINAL_ID("terminalId", "TerminalId", null),
+    TERMINAL_ID("terminalId", "TerminalId", "terminalId"),
     CLIENT_ID(null, "client_id", null),
     CLIENT_SECRET(null, "client_secret", null),
     GRANT_TYPE(null, "grant_type", null),
