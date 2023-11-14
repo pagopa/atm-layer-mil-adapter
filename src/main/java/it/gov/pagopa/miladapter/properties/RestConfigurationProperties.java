@@ -17,6 +17,6 @@ public class RestConfigurationProperties {
     private int retryIntervalMilliseconds;
     private boolean logEngineInputVariablesEnabled;
     private String modelBasePath;
-    DefinitionIdProperties definitionId;
+    DefinitionIdProperties definitionIdProperties;
     AuthProperties auth;
 }

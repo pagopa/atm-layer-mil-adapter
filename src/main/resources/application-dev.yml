@@ -24,7 +24,7 @@ rest-configuration:
     client-id: ${MIL_ADAPTER_MIL_AUTH_CLIENT_ID:83c0b10f-b398-4cc8-b356-a3e0f0291679}
     client-secret: ${MIL_ADAPTER_MIL_AUTH_CLIENT_SECRET:bea0fc26-fe22-4b26-8230-ef7d4461acf9}
     grant-type: ${MIL_ADAPTER_MIL_AUTH_CLIENT_CREDENTIALS:client_credentials}
-  definition-id:
+  definition-id-properties:
     method: GET
     url: /bpmn/function/{functionType}/bank/{acquirerId}/branch/{branchId}/terminal/{terminalId}
 cache-configuration:
