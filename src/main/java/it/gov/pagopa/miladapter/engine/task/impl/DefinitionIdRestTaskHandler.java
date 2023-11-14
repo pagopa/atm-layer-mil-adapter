@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-@ExternalTaskSubscription(includeExtensionProperties = true, topicName = "model-adapter")
+@ExternalTaskSubscription(includeExtensionProperties = true, topicName = "definition-id-adapter")
 public class DefinitionIdRestTaskHandler implements RestExternalTaskHandler {
 
     @Autowired
