@@ -52,7 +52,7 @@ public class DefinitionIdRestServiceImpl implements DefinitionIdRestService {
         pathParams.put(RequiredProcessVariables.FUNCTION_ID.getModelValue(), configuration.getFunction());
 
         return HttpRequestUtils.buildURI(restConfigurationProperties.getModelBasePath(),
-                restConfigurationProperties.getDefinitionId().getUrl(),
+                restConfigurationProperties.getDefinitionIdProperties().getUrl(),
                 pathParams);
     }
 
