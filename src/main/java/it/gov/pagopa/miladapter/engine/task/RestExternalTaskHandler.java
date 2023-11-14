@@ -1,18 +1,18 @@
 package it.gov.pagopa.miladapter.engine.task;
 
-import it.gov.pagopa.miladapter.model.HTTPConfiguration;
-import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
-import it.gov.pagopa.miladapter.services.GenericRestService;
-import it.gov.pagopa.miladapter.util.EngineVariablesToHTTPConfigurationUtils;
-import it.gov.pagopa.miladapter.util.EngineVariablesUtils;
+import java.util.Arrays;
+import java.util.Map;
+
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskHandler;
 import org.camunda.bpm.client.task.ExternalTaskService;
 import org.camunda.bpm.engine.variable.VariableMap;
 import org.slf4j.Logger;
 
-import java.util.Arrays;
-import java.util.Map;
+import it.gov.pagopa.miladapter.model.Configuration;
+import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
+import it.gov.pagopa.miladapter.services.GenericRestService;
+import it.gov.pagopa.miladapter.util.EngineVariablesUtils;
 
 public interface RestExternalTaskHandler extends ExternalTaskHandler {
     default void execute(ExternalTask externalTask, ExternalTaskService externalTaskService) {
@@ -22,12 +22,13 @@ public interface RestExternalTaskHandler extends ExternalTaskHandler {
             if (getRestConfigurationProperties().isLogEngineInputVariablesEnabled()) {
                 getLogger().info("Input Engine Variables: {}", variables);
             }
-            HTTPConfiguration httpConfiguration = EngineVariablesToHTTPConfigurationUtils.getHttpConfiguration(variables, isMILFlow());
-            VariableMap variableMap = getRestService().executeRestCall(httpConfiguration);
+            Configuration configuration = getHttpConfiguration(variables);
+            VariableMap variableMap = getRestService().executeRestCall(configuration);
             externalTaskService.complete(externalTask, variableMap);
         } catch (Exception e) {
             getLogger().error("Error on MIL-Adapter execution: {}", e.getMessage(), e);
-            externalTaskService.handleFailure(externalTask, e.getMessage(), e.getMessage().concat(Arrays.toString(e.getStackTrace())), 0, 0);
+            externalTaskService.handleFailure(externalTask, e.getMessage(),
+                    e.getMessage().concat(Arrays.toString(e.getStackTrace())), 0, 0);
         }
 
     }
@@ -39,4 +40,7 @@ public interface RestExternalTaskHandler extends ExternalTaskHandler {
     GenericRestService getRestService();
 
     boolean isMILFlow();
+
+    Configuration getHttpConfiguration(Map<String, Object> variables);
+
 }

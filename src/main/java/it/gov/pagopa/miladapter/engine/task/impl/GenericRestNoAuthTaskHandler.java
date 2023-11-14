@@ -1,21 +1,23 @@
 package it.gov.pagopa.miladapter.engine.task.impl;
 
-import it.gov.pagopa.miladapter.engine.task.RestExternalTaskHandler;
-import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
-import it.gov.pagopa.miladapter.services.GenericRestService;
-import it.gov.pagopa.miladapter.services.GenericRestServiceNoAuth;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Map;
+
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import it.gov.pagopa.miladapter.engine.task.RestExternalTaskHandler;
+import it.gov.pagopa.miladapter.model.Configuration;
+import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
+import it.gov.pagopa.miladapter.services.GenericRestService;
+import it.gov.pagopa.miladapter.services.GenericRestServiceNoAuth;
+import it.gov.pagopa.miladapter.util.EngineVariablesToHTTPConfigurationUtils;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-@ExternalTaskSubscription(
-        includeExtensionProperties = true,
-        topicName = "rest-adapter-no-auth")
+@ExternalTaskSubscription(includeExtensionProperties = true, topicName = "rest-adapter-no-auth")
 public class GenericRestNoAuthTaskHandler implements RestExternalTaskHandler {
 
     @Autowired
@@ -42,4 +44,10 @@ public class GenericRestNoAuthTaskHandler implements RestExternalTaskHandler {
     public boolean isMILFlow() {
         return false;
     }
+
+    @Override
+    public Configuration getHttpConfiguration(Map<String, Object> variables) {
+        return EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCall(variables, isMILFlow());
+    }
+
 }

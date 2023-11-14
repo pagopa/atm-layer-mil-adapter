@@ -2,7 +2,7 @@ package it.gov.pagopa.miladapter.services;
 
 import camundajar.impl.com.google.gson.JsonObject;
 import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
-import it.gov.pagopa.miladapter.model.HTTPConfiguration;
+import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
 import it.gov.pagopa.miladapter.util.HttpRequestUtils;
@@ -20,7 +20,7 @@ import java.net.URI;
 
 public interface GenericRestService {
 
-    default VariableMap executeRestCall(HTTPConfiguration configuration) {
+    default VariableMap executeRestCall(Configuration configuration) {
         this.injectAuthToken(configuration);
         ResponseEntity<String> response;
         try {
@@ -43,9 +43,9 @@ public interface GenericRestService {
         return output;
     }
 
-    void injectAuthToken(HTTPConfiguration configuration);
+    void injectAuthToken(Configuration configuration);
 
-    URI prepareUri(HTTPConfiguration configuration);
+    URI prepareUri(Configuration configuration);
 
     Logger getLogger();
 
@@ -53,9 +53,9 @@ public interface GenericRestService {
 
     RestTemplateGenerator getRestTemplateGenerator();
 
-    <T> HttpEntity<T> buildHttpEntity(HTTPConfiguration configuration);
+    <T> HttpEntity<T> buildHttpEntity(Configuration configuration);
 
-    default RestTemplate getRestTemplate(HTTPConfiguration configuration) {
+    default RestTemplate getRestTemplate(Configuration configuration) {
         HttpRequestUtils.getRestFactoryConfigsOrDefault(configuration, getRestConfigurationProperties());
         return getRestTemplateGenerator().generate(configuration.getConnectionRequestTimeoutMilliseconds(), configuration.getConnectionResponseTimeoutMilliseconds(),
                 configuration.getMaxRetry(), configuration.getRetryIntervalMilliseconds());

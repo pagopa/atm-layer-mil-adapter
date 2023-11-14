@@ -2,7 +2,7 @@ package it.gov.pagopa.miladapter.util;
 
 import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
 import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
-import it.gov.pagopa.miladapter.model.HTTPConfiguration;
+import it.gov.pagopa.miladapter.model.Configuration;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.junit.jupiter.api.Test;
@@ -29,13 +29,14 @@ public class EngineVariablesToHTTPConfigurationUtilsTest {
         variables.put(HttpVariablesEnum.URL.getValue(), "http://prova");
         variables.put(HttpVariablesEnum.METHOD.getValue(), "GET");
 
-        HTTPConfiguration httpConfiguration = EngineVariablesToHTTPConfigurationUtils.getHttpConfiguration(variables,true);
-        assertEquals("http://prova", httpConfiguration.getEndpoint());
-        assertEquals(HttpMethod.GET, httpConfiguration.getHttpMethod());
-        assertEquals(null, httpConfiguration.getBody());
-        assertEquals(1, httpConfiguration.getHeaders().size());
-        assertTrue(httpConfiguration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getMilValue()));
-        assertEquals(new MultivaluedHashMap(), httpConfiguration.getPathParams());
+        Configuration configuration = EngineVariablesToHTTPConfigurationUtils
+                .getHttpConfigurationExternalCall(variables, true);
+        assertEquals("http://prova", configuration.getEndpoint());
+        assertEquals(HttpMethod.GET, configuration.getHttpMethod());
+        assertEquals(null, configuration.getBody());
+        assertEquals(1, configuration.getHeaders().size());
+        assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getMilValue()));
+        assertEquals(new MultivaluedHashMap(), configuration.getPathParams());
 
     }
 
@@ -51,15 +52,16 @@ public class EngineVariablesToHTTPConfigurationUtilsTest {
         pathParams.put("id", "1");
         variables.put(HttpVariablesEnum.PATH_PARAMS.getValue(), pathParams);
 
-        HTTPConfiguration httpConfiguration = EngineVariablesToHTTPConfigurationUtils.getHttpConfiguration(variables,true);
-        assertEquals("http://prova/{id}", httpConfiguration.getEndpoint());
-        assertEquals(HttpMethod.GET, httpConfiguration.getHttpMethod());
-        assertEquals(null, httpConfiguration.getBody());
-        assertEquals(1, httpConfiguration.getHeaders().size());
-        assertTrue(httpConfiguration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getMilValue()));
-        assertEquals(1, httpConfiguration.getPathParams().size());
-        assertTrue(httpConfiguration.getPathParams().containsKey("id"));
-        assertEquals("1", httpConfiguration.getPathParams().get("id"));
+        Configuration configuration = EngineVariablesToHTTPConfigurationUtils
+                .getHttpConfigurationExternalCall(variables, true);
+        assertEquals("http://prova/{id}", configuration.getEndpoint());
+        assertEquals(HttpMethod.GET, configuration.getHttpMethod());
+        assertEquals(null, configuration.getBody());
+        assertEquals(1, configuration.getHeaders().size());
+        assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getMilValue()));
+        assertEquals(1, configuration.getPathParams().size());
+        assertTrue(configuration.getPathParams().containsKey("id"));
+        assertEquals("1", configuration.getPathParams().get("id"));
     }
 
     @Test

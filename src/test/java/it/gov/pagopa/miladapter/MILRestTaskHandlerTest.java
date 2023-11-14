@@ -3,7 +3,7 @@ package it.gov.pagopa.miladapter;
 import it.gov.pagopa.miladapter.engine.task.impl.MILRestTaskHandler;
 import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
 import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
-import it.gov.pagopa.miladapter.model.HTTPConfiguration;
+import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
 import it.gov.pagopa.miladapter.services.MILRestService;
@@ -45,12 +45,10 @@ public class MILRestTaskHandlerTest {
 
     EasyRandom easyRandom;
 
-
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
         easyRandom = new EasyRandom();
-
 
     }
 
@@ -76,8 +74,8 @@ public class MILRestTaskHandlerTest {
         ExternalTask externalTask = mock(ExternalTask.class);
         ExternalTaskService externalTaskService = mock(ExternalTaskService.class);
         Map<String, Object> variables = prepareInputVariables();
-        HTTPConfiguration httpConfiguration = EngineVariablesToHTTPConfigurationUtils.getHttpConfiguration(variables,true);
-
+        Configuration configuration = EngineVariablesToHTTPConfigurationUtils
+                .getHttpConfigurationExternalCall(variables, true);
 
         when(restConfigurationProperties.isLogEngineInputVariablesEnabled()).thenReturn(false);
         when(milRestService.executeRestCall(any())).thenThrow(new RuntimeException("exception"));

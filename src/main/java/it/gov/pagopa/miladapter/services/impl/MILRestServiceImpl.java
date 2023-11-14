@@ -1,6 +1,6 @@
 package it.gov.pagopa.miladapter.services.impl;
 
-import it.gov.pagopa.miladapter.model.HTTPConfiguration;
+import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
 import it.gov.pagopa.miladapter.services.MILRestService;
@@ -24,18 +24,17 @@ public class MILRestServiceImpl implements MILRestService {
     @Autowired
     RestTemplateGenerator restTemplateGenerator;
 
-
     @Autowired
     TokenService tokenService;
 
     @Override
-    public void injectAuthToken(HTTPConfiguration httpConfiguration) {
-        tokenService.injectAuthToken(httpConfiguration.getHeaders(), httpConfiguration.getAuthParameters());
+    public void injectAuthToken(Configuration configuration) {
+        tokenService.injectAuthToken(configuration.getHeaders(), configuration.getAuthParameters());
     }
 
     @Override
-    public URI prepareUri(HTTPConfiguration httpConfiguration) {
-        return HttpRequestUtils.buildURI(restConfigurationProperties.getMilBasePath(), httpConfiguration.getEndpoint(), httpConfiguration.getPathParams());
+    public URI prepareUri(Configuration configuration){
+        return HttpRequestUtils.buildURI(restConfigurationProperties.getMilBasePath(), configuration.getEndpoint(), configuration.getPathParams());
     }
 
     @Override
@@ -54,7 +53,7 @@ public class MILRestServiceImpl implements MILRestService {
     }
 
     @Override
-    public HttpEntity<String> buildHttpEntity(HTTPConfiguration httpConfiguration) {
-        return HttpRequestUtils.buildHttpEntity(httpConfiguration.getBody(), httpConfiguration.getHeaders());
+    public HttpEntity<String> buildHttpEntity(Configuration configuration) {
+        return HttpRequestUtils.buildHttpEntity(configuration.getBody(), configuration.getHeaders());
     }
 }
