@@ -18,7 +18,7 @@ rest-configuration:
   connection-response-timeout-milliseconds: ${MIL_ADAPTER_REST_CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS:20000}
   max-retry: ${MIL_ADAPTER_REST_MAX_RETRY:1}
   retry-interval-milliseconds: ${MIL_ADAPTER_REST_RETRY_INTERVAL_MILLISECONDS:500}
-  model-base-path: ${MIL_ADAPTER_MODEL_BASE_PATH:http://pagopa-dev-atm-layer-model.pagopa.svc.cluster.local:8080}
+  model-base-path: ${MIL_ADAPTER_MODEL_BASE_PATH:http://pagopa-dev-atm-layer-model.pagopa.svc.cluster.local:8080/api/v1/model}
   auth:
     mil-auth-path: ${MIL_ADAPTER_MIL_AUTH_RELATIVE_PATH:/mil-auth/token}
     client-id: ${MIL_ADAPTER_MIL_AUTH_CLIENT_ID:}
