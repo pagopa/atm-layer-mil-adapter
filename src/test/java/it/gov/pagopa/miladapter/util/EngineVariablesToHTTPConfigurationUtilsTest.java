@@ -65,6 +65,25 @@ public class EngineVariablesToHTTPConfigurationUtilsTest {
     }
 
     @Test
+    public void getHttpConfigurationInternalCallWithPathParamsTest() {
+        Map<String, Object> variables = new CaseInsensitiveMap<>();
+        variables.put(RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), "12345");
+        variables.put(RequiredProcessVariables.TERMINAL_ID.getEngineValue(), "12345678");
+        variables.put(RequiredProcessVariables.FUNCTION_ID.getEngineValue(), "FUNCTION_ID");
+        variables.put(RequiredProcessVariables.CODE.getEngineValue(), "CODE");
+        Map<String, String> pathParams = new HashMap<>();
+        pathParams.put("id", "1");
+        variables.put(HttpVariablesEnum.PATH_PARAMS.getValue(), pathParams);
+
+        Configuration configuration = EngineVariablesToHTTPConfigurationUtils
+                .getHttpConfigurationInternalCall(variables, true);
+        assertEquals("FUNCTION_ID", configuration.getFunction());
+        assertEquals("12345", configuration.getAuthParameters().getAcquirerId());
+        assertEquals("12345678", configuration.getAuthParameters().getTerminalId());
+        assertEquals("CODE", configuration.getAuthParameters().getCode());
+    }
+
+    @Test
     public void defaultConstructorTest() {
         Object engineVariablesToHTTPConfigurationUtils = new EngineVariablesToHTTPConfigurationUtils();
         assertTrue(engineVariablesToHTTPConfigurationUtils instanceof EngineVariablesToHTTPConfigurationUtils);

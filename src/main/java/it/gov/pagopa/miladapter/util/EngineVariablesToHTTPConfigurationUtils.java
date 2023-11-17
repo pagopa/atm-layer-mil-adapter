@@ -80,7 +80,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds)).build();
     }
 
-    public static Configuration getHttpConfigurdationInternalCall(Map<String, Object> variables, boolean milFlow) {
+    public static Configuration getHttpConfigurationInternalCall(Map<String, Object> variables, boolean milFlow) {
 
         String acquirerId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), milFlow);
         String terminalId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.TERMINAL_ID.getEngineValue(), milFlow);

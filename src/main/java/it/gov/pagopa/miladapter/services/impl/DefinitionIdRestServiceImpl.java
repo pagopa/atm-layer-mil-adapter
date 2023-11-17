@@ -54,6 +54,7 @@ public class DefinitionIdRestServiceImpl implements DefinitionIdRestService {
 
         configuration
                 .setHttpMethod(HttpMethod.valueOf(restConfigurationProperties.getDefinitionIdProperties().getMethod()));
+
         return HttpRequestUtils.buildURI(restConfigurationProperties.getModelBasePath(),
                 restConfigurationProperties.getDefinitionIdProperties().getUrl(),
                 pathParams);
