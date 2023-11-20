@@ -1,17 +1,18 @@
 package it.gov.pagopa.miladapter.util;
 
-import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
-import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
-import it.gov.pagopa.miladapter.model.AuthParameters;
-import it.gov.pagopa.miladapter.model.HTTPConfiguration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.CollectionUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
+import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
+import it.gov.pagopa.miladapter.model.AuthParameters;
+import it.gov.pagopa.miladapter.model.Configuration;
 
 public class EngineVariablesToHTTPConfigurationUtils {
 
@@ -38,7 +39,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         return null;
     }
 
-    public static HTTPConfiguration getHttpConfiguration(Map<String, Object> variables, boolean milFlow) {
+    public static Configuration getHttpConfigurationExternalCall(Map<String, Object> variables, boolean milFlow) {
 
         String requestId = UUID.randomUUID().toString();
         String acquirerId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), milFlow);
@@ -66,7 +67,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
 
         AuthParameters authParameters = AuthParameters.builder().requestId(requestId).acquirerId(acquirerId).terminalId(terminalId).channel(channel).build();
 
-        return HTTPConfiguration.builder()
+        return Configuration.builder()
                 .body(body)
                 .endpoint(endpointVariable)
                 .httpMethod(httpMethod)
@@ -77,5 +78,31 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .connectionRequestTimeoutMilliseconds(parseInteger(connectionRequestTimeout))
                 .maxRetry(parseInteger(maxRetry))
                 .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds)).build();
+    }
+
+    public static Configuration getHttpConfigurationInternalCall(Map<String, Object> variables, boolean milFlow) {
+
+        String acquirerId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), milFlow);
+        String terminalId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.TERMINAL_ID.getEngineValue(), milFlow);
+        String branchId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.BRANCH_ID.getEngineValue(), false);
+        String code = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.CODE.getEngineValue(), false);
+
+        String functionId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.FUNCTION_ID.getEngineValue(), false);
+
+        Long connectionResponseTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS.getValue(), false);
+        Long connectionRequestTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_REQUEST_TIMEOUT_MILLISECONDS.getValue(), false);
+        Long maxRetry = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.MAX_RETRY.getValue(), false);
+        Long retryIntervalMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.RETRY_INTERVAL_MILLISECONDS.getValue(), false);
+
+        AuthParameters authParameters = AuthParameters.builder().acquirerId(acquirerId).terminalId(terminalId).branchId(branchId).code(code).build();
+
+        return Configuration.builder()
+                .authParameters(authParameters)
+                .connectionResponseTimeoutMilliseconds(parseInteger(connectionResponseTimeout))
+                .connectionRequestTimeoutMilliseconds(parseInteger(connectionRequestTimeout))
+                .maxRetry(parseInteger(maxRetry))
+                .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds))
+                .function(functionId)
+                .build();
     }
 }

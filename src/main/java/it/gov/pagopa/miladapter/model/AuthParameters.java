@@ -1,20 +1,19 @@
 package it.gov.pagopa.miladapter.model;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode
-public class AuthParameters {
+@SuperBuilder
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@EqualsAndHashCode(callSuper = false)
+public class AuthParameters extends TerminalParameters {
 
     private String requestId;
-    private String terminalId;
-    private String channel;
-    private String acquirerId;
+
 }

@@ -16,5 +16,7 @@ public class RestConfigurationProperties {
     private int maxRetry;
     private int retryIntervalMilliseconds;
     private boolean logEngineInputVariablesEnabled;
+    private String modelBasePath;
+    DefinitionIdProperties definitionIdProperties;
     AuthProperties auth;
 }

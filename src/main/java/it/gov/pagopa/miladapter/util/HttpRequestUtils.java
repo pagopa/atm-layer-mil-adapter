@@ -1,6 +1,6 @@
 package it.gov.pagopa.miladapter.util;
 
-import it.gov.pagopa.miladapter.model.HTTPConfiguration;
+import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -22,7 +22,6 @@ import java.util.Map;
 @Component
 @Slf4j
 public class HttpRequestUtils {
-
 
     public static HttpEntity<String> buildHttpEntity(String body, HttpHeaders headers) {
         return new HttpEntity<>(body, headers);
@@ -65,11 +64,21 @@ public class HttpRequestUtils {
         }
     }
 
-    public static void getRestFactoryConfigsOrDefault(HTTPConfiguration configuration, RestConfigurationProperties restConfigurationProperties) {
-        configuration.setConnectionResponseTimeoutMilliseconds(configuration.getConnectionResponseTimeoutMilliseconds() == null ? restConfigurationProperties.getConnectionResponseTimeoutMilliseconds() : configuration.getConnectionResponseTimeoutMilliseconds());
-        configuration.setConnectionRequestTimeoutMilliseconds(configuration.getConnectionRequestTimeoutMilliseconds() == null ? restConfigurationProperties.getConnectionRequestTimeoutMilliseconds() : configuration.getConnectionRequestTimeoutMilliseconds());
-        configuration.setMaxRetry(configuration.getMaxRetry() == null ? restConfigurationProperties.getMaxRetry() : configuration.getMaxRetry());
-        configuration.setRetryIntervalMilliseconds(configuration.getRetryIntervalMilliseconds() == null ? restConfigurationProperties.getRetryIntervalMilliseconds() : configuration.getRetryIntervalMilliseconds());
+    public static void getRestFactoryConfigsOrDefault(Configuration configuration,
+            RestConfigurationProperties restConfigurationProperties) {
+        configuration.setConnectionResponseTimeoutMilliseconds(
+                configuration.getConnectionResponseTimeoutMilliseconds() == null
+                        ? restConfigurationProperties.getConnectionResponseTimeoutMilliseconds()
+                        : configuration.getConnectionResponseTimeoutMilliseconds());
+        configuration
+                .setConnectionRequestTimeoutMilliseconds(configuration.getConnectionRequestTimeoutMilliseconds() == null
+                        ? restConfigurationProperties.getConnectionRequestTimeoutMilliseconds()
+                        : configuration.getConnectionRequestTimeoutMilliseconds());
+        configuration.setMaxRetry(configuration.getMaxRetry() == null ? restConfigurationProperties.getMaxRetry()
+                : configuration.getMaxRetry());
+        configuration.setRetryIntervalMilliseconds(configuration.getRetryIntervalMilliseconds() == null
+                ? restConfigurationProperties.getRetryIntervalMilliseconds()
+                : configuration.getRetryIntervalMilliseconds());
     }
 
     public static HttpMethod httpMethodFromValue(String httpMethodString) {

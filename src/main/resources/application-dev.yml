@@ -18,11 +18,15 @@ rest-configuration:
   connection-response-timeout-milliseconds: ${MIL_ADAPTER_REST_CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS:20000}
   max-retry: ${MIL_ADAPTER_REST_MAX_RETRY:1}
   retry-interval-milliseconds: ${MIL_ADAPTER_REST_RETRY_INTERVAL_MILLISECONDS:500}
+  model-base-path: ${MIL_ADAPTER_MODEL_BASE_PATH:http://pagopa-dev-atm-layer-model.pagopa.svc.cluster.local:8080/api/v1/model}
   auth:
     mil-auth-path: ${MIL_ADAPTER_MIL_AUTH_RELATIVE_PATH:/mil-auth/token}
     client-id: ${MIL_ADAPTER_MIL_AUTH_CLIENT_ID:83c0b10f-b398-4cc8-b356-a3e0f0291679}
     client-secret: ${MIL_ADAPTER_MIL_AUTH_CLIENT_SECRET:bea0fc26-fe22-4b26-8230-ef7d4461acf9}
     grant-type: ${MIL_ADAPTER_MIL_AUTH_CLIENT_CREDENTIALS:client_credentials}
+  definition-id-properties:
+    method: GET
+    url: /bpmn/function/{functionType}/bank/{acquirerId}/branch/{branchId}/terminal/{terminalId}
 cache-configuration:
   cache-name: ${MIL_ADAPTER_TOKEN_CACHE_NAME:token-cache}
   max-entries: ${MIL_ADAPTER_TOKEN_CACHE_MAX_ENTRIES:100}

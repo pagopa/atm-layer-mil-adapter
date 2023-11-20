@@ -10,22 +10,23 @@ import org.springframework.stereotype.Component;
 import it.gov.pagopa.miladapter.engine.task.RestExternalTaskHandler;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
+import it.gov.pagopa.miladapter.services.DefinitionIdRestService;
 import it.gov.pagopa.miladapter.services.GenericRestService;
-import it.gov.pagopa.miladapter.services.GenericRestServiceNoAuth;
 import it.gov.pagopa.miladapter.util.EngineVariablesToHTTPConfigurationUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-@ExternalTaskSubscription(includeExtensionProperties = true, topicName = "rest-adapter-no-auth")
-public class GenericRestNoAuthTaskHandler implements RestExternalTaskHandler {
+@ExternalTaskSubscription(includeExtensionProperties = true, topicName = "definition-id-adapter")
+public class DefinitionIdRestTaskHandler implements RestExternalTaskHandler {
 
     @Autowired
-    GenericRestServiceNoAuth genericRestServiceNoAuth;
+    DefinitionIdRestService modelRestService;
 
     @Autowired
     RestConfigurationProperties restConfigurationProperties;
 
+    @Override
     public Logger getLogger() {
         return log;
     }
@@ -37,7 +38,7 @@ public class GenericRestNoAuthTaskHandler implements RestExternalTaskHandler {
 
     @Override
     public GenericRestService getRestService() {
-        return genericRestServiceNoAuth;
+        return this.modelRestService;
     }
 
     @Override
@@ -47,7 +48,7 @@ public class GenericRestNoAuthTaskHandler implements RestExternalTaskHandler {
 
     @Override
     public Configuration getHttpConfiguration(Map<String, Object> variables) {
-        return EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCall(variables, isMILFlow());
+        return EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationInternalCall(variables, isMILFlow());
     }
 
 }
