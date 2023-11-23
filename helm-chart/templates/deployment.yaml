@@ -19,7 +19,7 @@ spec:
         App: {{ .Values.deployment.name }}
         force-recreate: {{ randAlphaNum 5 | quote }}
     spec:
-      serviceAccountName: {{ include "atm-layer-mil-adapter.serviceAccountName" . }}
+      serviceAccountName: {{ include "atm-layer-rest-adapter.serviceAccountName" . }}
       volumes:
       - name: secrets-store-inline
         csi:
@@ -98,6 +98,8 @@ spec:
               value: "{{ .Values.milAdapter.tokenCacheName }}"
             - name: MIL_ADAPTER_TOKEN_CACHE_MAX_ENTRIES
               value: "{{ .Values.milAdapter.tokenCacheMaxEntries }}"
+            - name: MIL_ADAPTER_MODEL_BASE_PATH
+              value: "{{ .Values.milAdapter.modelBasePath }}"
           volumeMounts:
           - name: secrets-store-inline
             mountPath: "/mnt/secrets-store"

@@ -2,14 +2,14 @@
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "atm-layer-mil-adapter.fullname" . }}
+  name: {{ include "atm-layer-rest-adapter.fullname" . }}
   labels:
-    {{- include "atm-layer-mil-adapter.labels" . | nindent 4 }}
+    {{- include "atm-layer-rest-adapter.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "atm-layer-mil-adapter.fullname" . }}
+    name: {{ include "atm-layer-rest-adapter.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   metrics:

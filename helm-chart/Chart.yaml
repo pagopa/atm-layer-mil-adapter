@@ -1,7 +1,7 @@
 apiVersion: v2
-name: atm-layer-mil-adapter
+name: atm-layer-rest-adapter
 description: |
-  Helm Chart for MIL Adapter ATM Layer
+  Helm Chart for REST Adapter ATM Layer
 
 # A chart can be either an 'application' or a 'library' chart.
 #
