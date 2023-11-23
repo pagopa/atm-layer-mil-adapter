@@ -1,4 +1,4 @@
-# Default values for atm-layer-rest-adapter.
+# Default values for atm-layer-mil-adapter.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -32,14 +32,14 @@ milAdapter:
   modelBasePath: http://pagopa-dev-atm-layer-model.pagopa.svc.cluster.local:8080
 
 milAuth:
-  credentialsSecretName: "pagopa-dev-atm-layer-rest-adapter-rest-auth"
+  credentialsSecretName: "pagopa-dev-atm-layer-mil-adapter-mil-auth"
   credentialsSecretKeys:
     clientId: CLIENT_ID
     clientSecret: CLIENT_SECRET
 
 camundaWebUser:
   address: http://pagopa-dev-atm-layer-wf-engine.pagopa.svc.cluster.local:8080
-  credentialsSecretName: "pagopa-dev-atm-layer-rest-adapter-camunda"
+  credentialsSecretName: "pagopa-dev-atm-layer-mil-adapter-camunda"
   credentialsSecretKeys:
     username: WEB_USER
     password: WEB_PASSWORD
@@ -49,13 +49,13 @@ database:
   url: jdbc:postgresql://pagopa-dev-atm-layer-rds.cluster-cyezwzpjc2tj.eu-south-1.rds.amazonaws.com:5431
   db_name: pagopadb
   schema: atm_layer_engine
-  credentialsSecretName: "pagopa-dev-atm-layer-rest-adapter-database"
+  credentialsSecretName: "pagopa-dev-atm-layer-mil-adapter-database"
   credentialsSecretKeys:
     username: DB_USERNAME
     password: DB_PASSWORD
 
 secretProviderClass:
-  name: atm-layer-rest-adapter-secrets
+  name: atm-layer-mil-adapter-secrets
   env: dev
 
 serviceAccount:
@@ -66,7 +66,7 @@ serviceAccount:
     eks.amazonaws.com/role-arn: arn:aws:iam::00000000000:role/pagopa-dev-atm-layer-xxxxxx-serviceaccount-role
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: pagopa-dev-atm-layer-rest-adapter
+  name: pagopa-dev-atm-layer-mil-adapter
 
 podAnnotations: {}
 
@@ -82,19 +82,19 @@ securityContext: {}
   # runAsUser: 1000
 
 deployment:
-  name: pagopa-dev-atm-layer-rest-adapter
+  name: pagopa-dev-atm-layer-mil-adapter
   annotations:
     reloader.stakater.com/auto: "true"
-    secret.reloader.stakater.com/reload: pagopa-dev-atm-layer-rest-adapter-database, pagopa-dev-atm-layer-rest-adapter-camunda, pagopa-dev-atm-layer-rest-adapter-rest-auth
+    secret.reloader.stakater.com/reload: pagopa-dev-atm-layer-mil-adapter-database, pagopa-dev-atm-layer-mil-adapter-camunda, pagopa-dev-atm-layer-mil-adapter-mil-auth
 
 service:
-  name: pagopa-dev-atm-layer-rest-adapter
+  name: pagopa-dev-atm-layer-mil-adapter
   type: NodePort
   port: 8080
 
 ingress:
   enabled: false
-  name: pagopa-dev-atm-layer-rest-adapter
+  name: pagopa-dev-atm-layer-mil-adapter
   className: ""
   annotations: 
     kubernetes.io/ingress.class: "alb"

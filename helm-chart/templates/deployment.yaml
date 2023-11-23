@@ -19,7 +19,7 @@ spec:
         App: {{ .Values.deployment.name }}
         force-recreate: {{ randAlphaNum 5 | quote }}
     spec:
-      serviceAccountName: {{ include "atm-layer-rest-adapter.serviceAccountName" . }}
+      serviceAccountName: {{ include "atm-layer-mil-adapter.serviceAccountName" . }}
       volumes:
       - name: secrets-store-inline
         csi:
