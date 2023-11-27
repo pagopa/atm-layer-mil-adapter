@@ -46,7 +46,7 @@ camundaWebUser:
 
 database:
   driver: org.postgresql.Driver
-  url: jdbc:postgresql://pagopa-prod-atm-layer-rds.cluster-cjww3kikqdtw.eu-south-1.rds.amazonaws.com:5431
+  url: jdbc:postgresql://pagopa-prod-atm-layer-rds.cluster-cjww3kikqdtw.eu-south-1.rds.amazonaws.com:5432
   db_name: pagopadb
   schema: atm_layer_engine
   credentialsSecretName: "pagopa-prod-atm-layer-mil-adapter-database"
