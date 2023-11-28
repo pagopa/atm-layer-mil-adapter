@@ -44,6 +44,15 @@ jobs:
       - name: Test and Integration tests
         run: |
           mvn test -Dquarkus.package.type=native -Dquarkus.application.name=atm-layer-mil-adapter -Dquarkus.profile=prod
+      
+      - name: Commit for test
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git pull
+          git add .
+          git commit --allow-empty -m "test"
+          git push
 
       - name: Create Status check based on postman results
         id: process-postman
