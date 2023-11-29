@@ -53,7 +53,7 @@ jobs:
 
       - name: Test execution
         run: |
-          mvn test -Dquarkus.package.type=native -Dquarkus.application.name=atm-layer-mil-adapter -Dquarkus.profile=prod
+          mvn test
 
       - name: JaCoCo Code Coverage Report
         id: jacoco_reporter

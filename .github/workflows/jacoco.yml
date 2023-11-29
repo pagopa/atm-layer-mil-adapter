@@ -22,7 +22,7 @@ jobs:
 
       - name: Test execution
         run: |
-          mvn test -Dquarkus.package.type=native -Dquarkus.application.name=atm-layer-mil-adapter -Dquarkus.profile=prod
+          mvn test
 
       - name: Add coverage to PR
         id: jacoco
