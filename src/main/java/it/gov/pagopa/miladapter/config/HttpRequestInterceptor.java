@@ -10,6 +10,7 @@ import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 @Slf4j
 @Configuration
@@ -37,8 +38,14 @@ public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         logRequest(request, body);
+        long timestampStart = request.getHeaders().getDate();
+        log.info("Request started at : {}", timestampStart);
         ClientHttpResponse response = execution.execute(request, body);
         logResponse(response);
+        long timestampEnd = response.getHeaders().getDate();
+        log.info("Request finished at : {}", timestampEnd);
+        long duration = timestampEnd - timestampStart;
+        log.info("Request duration : {}", duration);
         return response;
     }
 }

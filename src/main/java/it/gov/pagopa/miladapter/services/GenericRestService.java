@@ -21,9 +21,24 @@ import java.net.URI;
 public interface GenericRestService {
 
     default VariableMap executeRestCall(Configuration configuration) {
+
         this.injectAuthToken(configuration);
         ResponseEntity<String> response;
+
         try {
+            if (configuration.getDelayMilliseconds() != null || configuration.getDelayMilliseconds() != 0) {
+                try {
+                    Thread.sleep(configuration.getDelayMilliseconds());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            } else {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
             response = this.getRestTemplate(configuration)
                     .exchange(this.prepareUri(configuration), configuration.getHttpMethod(), this.buildHttpEntity(configuration), String.class);
         } catch (HttpClientErrorException | HttpServerErrorException e) {

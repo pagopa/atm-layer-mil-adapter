@@ -1,18 +1,17 @@
 package it.gov.pagopa.miladapter.util;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
+import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
+import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
+import it.gov.pagopa.miladapter.model.AuthParameters;
+import it.gov.pagopa.miladapter.model.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.CollectionUtils;
 
-import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
-import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
-import it.gov.pagopa.miladapter.model.AuthParameters;
-import it.gov.pagopa.miladapter.model.Configuration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class EngineVariablesToHTTPConfigurationUtils {
 
@@ -88,6 +87,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         String code = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.CODE.getEngineValue(), false);
 
         String functionId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.FUNCTION_ID.getEngineValue(), false);
+        Integer delayMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.DELAY_MILLISECONDS.getValue(), false);
 
         Long connectionResponseTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS.getValue(), false);
         Long connectionRequestTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_REQUEST_TIMEOUT_MILLISECONDS.getValue(), false);
@@ -103,6 +103,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .maxRetry(parseInteger(maxRetry))
                 .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds))
                 .function(functionId)
+                .delayMilliseconds(delayMilliseconds)
                 .build();
     }
 }
