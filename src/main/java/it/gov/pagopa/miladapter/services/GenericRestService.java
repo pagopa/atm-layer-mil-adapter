@@ -40,6 +40,7 @@ public interface GenericRestService {
         }
         output.putValue(HttpVariablesEnum.RESPONSE.getValue(), response.getBody());
         output.putValue(HttpVariablesEnum.STATUS_CODE.getValue(), response.getStatusCode().value());
+        output.putValue(HttpVariablesEnum.RESPONSE_HEADERS.getValue(), response.getHeaders());
         return output;
     }
 
