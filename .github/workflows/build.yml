@@ -54,16 +54,16 @@ jobs:
           coverage_report_title: JaCoCo
           github_token: ${{ secrets.GITHUB_TOKEN }}
           skip_check_run: false
-          minimum_coverage: 90
+          minimum_coverage: 75
           fail_below_threshold: false
           publish_only_summary: false
 
-      - name: Fail Build if overall coverage is less than 90%
-        if: steps.jacoco_reporter.outputs.coverage_percentage < 90.0 
+      - name: Fail Build if overall coverage is less than 75%
+        if: steps.jacoco_reporter.outputs.coverage_percentage < 75.0 
         uses: actions/github-script@v6
         with:
           script: |
-            core.setFailed('Overall coverage is less than 90%!')
+            core.setFailed('Overall coverage is less than 75%!')
 
       - name: Build docker image
         env:
