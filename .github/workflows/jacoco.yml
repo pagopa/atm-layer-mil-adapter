@@ -20,7 +20,7 @@ jobs:
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Test and Integration tests
+      - name: Test execution
         run: |
           mvn test -Dquarkus.package.type=native -Dquarkus.application.name=atm-layer-mil-adapter -Dquarkus.profile=prod
 
