@@ -44,6 +44,8 @@ public class EngineVariablesToHTTPConfigurationUtils {
         String acquirerId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), milFlow);
         String channel = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.CHANNEL.getEngineValue(), milFlow);
         String terminalId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.TERMINAL_ID.getEngineValue(), milFlow);
+        Long delayMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.DELAY_MILLISECONDS.getValue(), false);
+
 
         String endpointVariable = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.URL.getValue(), true);
         String httpMethodVariable = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.METHOD.getValue(), true);
@@ -76,7 +78,9 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .connectionResponseTimeoutMilliseconds(parseInteger(connectionResponseTimeout))
                 .connectionRequestTimeoutMilliseconds(parseInteger(connectionRequestTimeout))
                 .maxRetry(parseInteger(maxRetry))
-                .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds)).build();
+                .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds))
+                .delayMilliseconds(parseInteger(delayMilliseconds))
+                .build();
     }
 
     public static Configuration getHttpConfigurationInternalCall(Map<String, Object> variables, boolean milFlow) {
@@ -87,7 +91,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         String code = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.CODE.getEngineValue(), false);
 
         String functionId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.FUNCTION_ID.getEngineValue(), false);
-        Integer delayMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.DELAY_MILLISECONDS.getValue(), false);
+        Long delayMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.DELAY_MILLISECONDS.getValue(), false);
 
         Long connectionResponseTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS.getValue(), false);
         Long connectionRequestTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_REQUEST_TIMEOUT_MILLISECONDS.getValue(), false);
@@ -103,7 +107,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .maxRetry(parseInteger(maxRetry))
                 .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds))
                 .function(functionId)
-                .delayMilliseconds(delayMilliseconds)
+                .delayMilliseconds(parseInteger(delayMilliseconds))
                 .build();
     }
 }

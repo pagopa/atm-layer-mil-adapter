@@ -38,11 +38,11 @@ public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         logRequest(request, body);
-        long timestampStart = request.getHeaders().getDate();
+        long timestampStart = System.currentTimeMillis();
         log.info("Request started at : {}", timestampStart);
         ClientHttpResponse response = execution.execute(request, body);
         logResponse(response);
-        long timestampEnd = response.getHeaders().getDate();
+        long timestampEnd = System.currentTimeMillis();
         log.info("Request finished at : {}", timestampEnd);
         long duration = timestampEnd - timestampStart;
         log.info("Request duration : {}", duration);

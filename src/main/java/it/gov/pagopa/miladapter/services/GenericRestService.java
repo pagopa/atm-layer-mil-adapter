@@ -26,15 +26,9 @@ public interface GenericRestService {
         ResponseEntity<String> response;
 
         try {
-            if (configuration.getDelayMilliseconds() != null || configuration.getDelayMilliseconds() != 0) {
+            if (configuration.getDelayMilliseconds() != null) {
                 try {
                     Thread.sleep(configuration.getDelayMilliseconds());
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            } else {
-                try {
-                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
