@@ -1,18 +1,17 @@
 package it.gov.pagopa.miladapter.util;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
+import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
+import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
+import it.gov.pagopa.miladapter.model.AuthParameters;
+import it.gov.pagopa.miladapter.model.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.CollectionUtils;
 
-import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
-import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
-import it.gov.pagopa.miladapter.model.AuthParameters;
-import it.gov.pagopa.miladapter.model.Configuration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class EngineVariablesToHTTPConfigurationUtils {
 
@@ -45,6 +44,8 @@ public class EngineVariablesToHTTPConfigurationUtils {
         String acquirerId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), milFlow);
         String channel = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.CHANNEL.getEngineValue(), milFlow);
         String terminalId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.TERMINAL_ID.getEngineValue(), milFlow);
+        Long delayMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.DELAY_MILLISECONDS.getValue(), false);
+
 
         String endpointVariable = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.URL.getValue(), true);
         String httpMethodVariable = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.METHOD.getValue(), true);
@@ -77,7 +78,9 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .connectionResponseTimeoutMilliseconds(parseInteger(connectionResponseTimeout))
                 .connectionRequestTimeoutMilliseconds(parseInteger(connectionRequestTimeout))
                 .maxRetry(parseInteger(maxRetry))
-                .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds)).build();
+                .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds))
+                .delayMilliseconds(parseInteger(delayMilliseconds))
+                .build();
     }
 
     public static Configuration getHttpConfigurationInternalCall(Map<String, Object> variables, boolean milFlow) {
@@ -88,6 +91,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         String code = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.CODE.getEngineValue(), false);
 
         String functionId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.FUNCTION_ID.getEngineValue(), false);
+        Long delayMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.DELAY_MILLISECONDS.getValue(), false);
 
         Long connectionResponseTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS.getValue(), false);
         Long connectionRequestTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_REQUEST_TIMEOUT_MILLISECONDS.getValue(), false);
@@ -103,6 +107,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .maxRetry(parseInteger(maxRetry))
                 .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds))
                 .function(functionId)
+                .delayMilliseconds(parseInteger(delayMilliseconds))
                 .build();
     }
 }
