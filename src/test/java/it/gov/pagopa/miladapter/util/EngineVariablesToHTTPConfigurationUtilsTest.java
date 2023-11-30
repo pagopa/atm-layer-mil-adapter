@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -36,6 +37,23 @@ public class EngineVariablesToHTTPConfigurationUtilsTest {
     @Test
     public void testGetIntegerValue_ValidInteger() {
         assertEquals(123, EngineVariablesToHTTPConfigurationUtils.getIntegerValue("TestVariable", "123"));
+    }
+
+    @Test
+    void testParseIntegerWithValue() {
+        Long value = 12345L;
+
+        Integer result = EngineVariablesToHTTPConfigurationUtils.parseInteger(value);
+
+        assertNotNull(result);
+        assertEquals(value.intValue(), result);
+    }
+
+    @Test
+    void testParseIntegerWithNullValue() {
+        Integer result = null;
+
+        assertNull(result);
     }
 
     @Test
