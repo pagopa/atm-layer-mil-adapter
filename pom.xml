@@ -20,6 +20,7 @@
         <junit.version>4.13.2</junit.version>
         <jacoco.version>0.8.11</jacoco.version>
         <httpclient5.version>5.2.1</httpclient5.version>
+        <camunda.spin.version>1.22.0</camunda.spin.version>
     </properties>
 
     <parent>
@@ -37,10 +38,28 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
+
+            <dependency>
+                <groupId>org.camunda.spin</groupId>
+                <artifactId>camunda-spin-bom</artifactId>
+                <scope>import</scope>
+                <type>pom</type>
+                <version>${camunda.spin.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.camunda.spin</groupId>
+            <artifactId>camunda-spin-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.camunda.spin</groupId>
+            <artifactId>camunda-spin-dataformat-all</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.camunda.bpm.springboot</groupId>
             <artifactId>camunda-bpm-spring-boot-starter-external-task-client</artifactId>
