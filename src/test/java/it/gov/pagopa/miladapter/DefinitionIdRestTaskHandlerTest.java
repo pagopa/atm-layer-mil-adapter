@@ -45,7 +45,7 @@ public class DefinitionIdRestTaskHandlerTest {
 
     @BeforeEach
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         easyRandom = new EasyRandom();
 
     }
