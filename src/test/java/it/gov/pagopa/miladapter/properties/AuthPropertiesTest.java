@@ -3,8 +3,6 @@ package it.gov.pagopa.miladapter.properties;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class AuthPropertiesTest {
     @Test
@@ -58,17 +56,6 @@ public class AuthPropertiesTest {
         AuthProperties authProperties1 = generateAuthPropertiesForTests();
         assertEquals(authProperties1,authProperties);
     }
-/*
-    @Test
-    public void testCanEqual() {
-        AuthProperties authProperties = generateAuthPropertiesForTests();
-        AuthProperties authProperties1 = generateAuthPropertiesForTests();
-        authProperties1.setMilAuthPath("different value");
-        assertTrue(authProperties.canEqual(authProperties));
-        assertTrue(authProperties.canEqual(authProperties1));
-    }
-
- */
 
     private static AuthProperties generateAuthPropertiesForTests() {
         AuthProperties authProperties = new AuthProperties();
