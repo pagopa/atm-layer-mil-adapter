@@ -3,7 +3,6 @@ package it.gov.pagopa.miladapter;
 import it.gov.pagopa.miladapter.engine.task.impl.GenericRestNoAuthTaskHandler;
 import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
 import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
-import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.services.GenericRestServiceNoAuth;
 import it.gov.pagopa.miladapter.util.EngineVariablesToHTTPConfigurationUtils;
