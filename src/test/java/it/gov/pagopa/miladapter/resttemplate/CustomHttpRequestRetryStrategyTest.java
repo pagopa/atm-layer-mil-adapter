@@ -57,6 +57,14 @@ public class CustomHttpRequestRetryStrategyTest {
 
         boolean result = customHttpRequestRetryStrategy.retryRequest(httpResponse, 2, Mockito.mock(HttpContext.class));
         Assertions.assertFalse(result);
+
+        when(httpResponse.getCode()).thenReturn(201);
+
+        boolean resultWithStatus201 = customHttpRequestRetryStrategy.retryRequest(httpResponse, 2, Mockito.mock(HttpContext.class));
+        Assertions.assertFalse(resultWithStatus201);
+
+        boolean resultWithIOverMaxRetry = customHttpRequestRetryStrategy.retryRequest(httpResponse, 3, Mockito.mock(HttpContext.class));
+        Assertions.assertFalse(resultWithIOverMaxRetry);
     }
     @Test
     public void testRetryRequestKo() {
@@ -68,6 +76,10 @@ public class CustomHttpRequestRetryStrategyTest {
 
         boolean result = customHttpRequestRetryStrategy.retryRequest(httpResponse, 2, Mockito.mock(HttpContext.class));
         Assertions.assertTrue(result);
+
+        boolean resultWithOverMaxRetry = customHttpRequestRetryStrategy.retryRequest(httpResponse, 3, Mockito.mock(HttpContext.class));
+        Assertions.assertFalse(resultWithOverMaxRetry);
+
     }
     @Test
     public void testGetRetryInterval() {
