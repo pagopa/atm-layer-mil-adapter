@@ -1,0 +1,42 @@
+name: Coverage on PR
+
+on:
+  pull_request:
+
+jobs:
+  pr_scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup JDK
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '17'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Test execution
+        run: |
+          mvn test
+
+      - name: Add coverage to PR
+        id: jacoco
+        uses: madrapps/jacoco-report@7a334255fbce42f385d7567c25d986a9c62e2971
+        with:
+          paths: target/site/jacoco/jacoco.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 75
+          title: jacoco
+          update-comment: true
+
+      - name: Fail PR if overall coverage is less than 75%
+        if: ${{ steps.jacoco.outputs.coverage-overall < 75.0 }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.setFailed('Overall coverage is less than 75%!')

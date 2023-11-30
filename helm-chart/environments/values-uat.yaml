@@ -29,6 +29,7 @@ milAdapter:
   milAuthClientCredentials: client_credentials
   tokenCacheName: token-cache
   tokenCacheMaxEntries: 100
+  modelBasePath: http://pagopa-uat-atm-layer-model.pagopa.svc.cluster.local:8080
 
 milAuth:
   credentialsSecretName: "pagopa-uat-atm-layer-mil-adapter-mil-auth"
@@ -45,7 +46,7 @@ camundaWebUser:
 
 database:
   driver: org.postgresql.Driver
-  url: jdbc:postgresql://pagopa-uat-atm-layer-rds.cluster-cyezwzpjc2tj.eu-south-1.rds.amazonaws.com:5431
+  url: jdbc:postgresql://pagopa-uat-atm-layer-rds.cluster-csdbokdg0q4t.eu-south-1.rds.amazonaws.com:5432
   db_name: pagopadb
   schema: atm_layer_engine
   credentialsSecretName: "pagopa-uat-atm-layer-mil-adapter-database"

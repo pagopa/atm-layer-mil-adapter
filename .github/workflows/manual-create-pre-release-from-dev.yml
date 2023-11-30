@@ -3,13 +3,6 @@ name: Manual create pre-release from dev
 on:
   workflow_dispatch:
     inputs:
-      env:
-        description: 'Environment:'
-        type: choice
-        required: true
-        default: dev
-        options:
-        - dev
       commit:
         description: 'Pre-release type:'
         type: choice
@@ -31,7 +24,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/dev'
     strategy:
       matrix:
-        environment: ["${{ inputs.env }}"]
+        environment: [dev]
 
     name: "manual-create-pre-release"
     runs-on: ubuntu-latest
@@ -50,6 +43,37 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Setup JDK
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '17'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Test execution
+        run: |
+          mvn test
+
+      - name: JaCoCo Code Coverage Report
+        id: jacoco_reporter
+        uses: PavanMudigonda/jacoco-reporter@v4.9
+        with:
+          coverage_results_path: target/site/jacoco/jacoco.xml
+          coverage_report_name: 'Coverage create pre-release: ${{ github.run_number }}'
+          coverage_report_title: JaCoCo
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          skip_check_run: false
+          minimum_coverage: 75
+          fail_below_threshold: false
+          publish_only_summary: false
+
+      - name: Fail Build if overall coverage is less than 75%
+        if: steps.jacoco_reporter.outputs.coverage_percentage < 75.0 
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.setFailed('Overall coverage is less than 75%!')
 
       - name: Build docker image
         env:

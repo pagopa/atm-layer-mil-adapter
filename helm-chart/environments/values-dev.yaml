@@ -29,6 +29,7 @@ milAdapter:
   milAuthClientCredentials: client_credentials
   tokenCacheName: token-cache
   tokenCacheMaxEntries: 100
+  modelBasePath: http://pagopa-dev-atm-layer-model.pagopa.svc.cluster.local:8080
 
 milAuth:
   credentialsSecretName: "pagopa-dev-atm-layer-mil-adapter-mil-auth"

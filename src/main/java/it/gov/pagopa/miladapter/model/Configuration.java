@@ -28,6 +28,7 @@ public class Configuration {
     Integer connectionRequestTimeoutMilliseconds;
     Integer maxRetry;
     Integer retryIntervalMilliseconds;
+    Integer delayMilliseconds;
 
     AuthParameters authParameters;
 

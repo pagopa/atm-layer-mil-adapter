@@ -14,12 +14,14 @@ public enum HttpVariablesEnum {
     QUERY_PARAMS("queryParams"),
     RESPONSE("response"),
     STATUS_CODE("statusCode"),
+    RESPONSE_HEADERS("responseHeaders"),
     CLIENT_ID("client_id"),
     CLIENT_SECRET("client_secret"),
     CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS("connectionResponseTimeoutMilliseconds"),
     CONNECTION_REQUEST_TIMEOUT_MILLISECONDS("connectionRequestTimeoutMilliseconds"),
     MAX_RETRY("maxRetry"),
-    RETRY_INTERVAL_MILLISECONDS("retryIntervalMilliseconds");
+    RETRY_INTERVAL_MILLISECONDS("retryIntervalMilliseconds"),
+    DELAY_MILLISECONDS("delayMilliseconds");
 
 
     private String value;
