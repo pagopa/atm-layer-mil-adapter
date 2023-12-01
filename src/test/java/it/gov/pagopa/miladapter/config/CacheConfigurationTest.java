@@ -18,7 +18,7 @@ public class CacheConfigurationTest {
 
     @BeforeEach
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(cacheConfigurationProperties.getCacheName()).thenReturn("cache name");
         when(cacheConfigurationProperties.getMaxEntries()).thenReturn(1);
     }
