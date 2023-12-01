@@ -6,10 +6,10 @@
       
 | Outcome                 | Value                                                               |
 |-------------------------|---------------------------------------------------------------------|
-| Code Coverage %         | 79.18%               |
-| :heavy_check_mark: Number of Lines Covered | 308    |
-| :x: Number of Lines Missed  | 81     |
-| Total Number of Lines   | 389     |
+| Code Coverage %         | 96.92%               |
+| :heavy_check_mark: Number of Lines Covered | 378    |
+| :x: Number of Lines Missed  | 12     |
+| Total Number of Lines   | 390     |
 
 
 ## Details:
@@ -57,6 +57,16 @@
 
     
 ### it/gov/pagopa/miladapter/model
+
+<details>
+    <summary>
+:x: HTTPConfiguration.java
+    </summary>
+
+        
+</details>
+
+    
 
 <details>
     <summary>
@@ -168,11 +178,11 @@
 
 <details>
     <summary>
-:x: HttpRequestUtils.java
+:heavy_check_mark: HttpRequestUtils.java
     </summary>
 
         
-#### Lines Missed:
+#### All Lines Covered!
         
 </details>
 
@@ -186,14 +196,6 @@
         
 #### Lines Missed:
         
-- Line #28
-```
-        } catch (Exception e) {
-```
-- Line #30
-```
-        }
-```
 </details>
 
     
@@ -271,23 +273,15 @@
         
 #### Lines Missed:
         
-- Line #37
+- Line #39
 ```
                 } catch (InterruptedException e) {
 ```
-- Line #39
-```
-                }
-```
-- Line #43
+- Line #45
 ```
         } catch (HttpClientErrorException | HttpServerErrorException e) {
 ```
-- Line #46
-```
-        } catch (Exception e) {
-```
-- Line #49
+- Line #51
 ```
         }
 ```
@@ -322,11 +316,11 @@
 
 <details>
     <summary>
-:x: GenericRestNoAuthTaskHandler.java
+:heavy_check_mark: GenericRestNoAuthTaskHandler.java
     </summary>
 
         
-#### Lines Missed:
+#### All Lines Covered!
         
 </details>
 
@@ -335,11 +329,11 @@
 
 <details>
     <summary>
-:x: CustomHttpRequestRetryStrategy.java
+:heavy_check_mark: CustomHttpRequestRetryStrategy.java
     </summary>
 
         
-#### Lines Missed:
+#### All Lines Covered!
         
 </details>
 
@@ -347,11 +341,11 @@
 
 <details>
     <summary>
-:x: RestTemplateGenerator.java
+:heavy_check_mark: RestTemplateGenerator.java
     </summary>
 
         
-#### Lines Missed:
+#### All Lines Covered!
         
 </details>
 
@@ -372,16 +366,12 @@
 
 <details>
     <summary>
-:x: GenericRestServiceNoAuthImpl.java
+:heavy_check_mark: GenericRestServiceNoAuthImpl.java
     </summary>
 
         
-#### Lines Missed:
+#### All Lines Covered!
         
-- Line #32
-```
-    }
-```
 </details>
 
     
