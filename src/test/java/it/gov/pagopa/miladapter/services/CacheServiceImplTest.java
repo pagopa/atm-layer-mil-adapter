@@ -33,7 +33,7 @@ public class CacheServiceImplTest {
 
     @BeforeEach
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(cacheConfigurationProperties.getCacheName()).thenReturn("cache name");
         Cache<String,Token> cache = Mockito.mock(Cache.class);
         when(cacheManager.getCache("cache name",String.class,Token.class)).thenReturn(cache);

@@ -42,7 +42,7 @@ public class MILRestServiceImplTest {
 
     @BeforeEach
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         configuration = new Configuration();
         configuration.setEndpoint("/test");
         configuration.setHttpMethod(HttpMethod.GET);

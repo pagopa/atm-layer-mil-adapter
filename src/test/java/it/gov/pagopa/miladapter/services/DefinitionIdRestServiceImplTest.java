@@ -46,7 +46,7 @@ public class DefinitionIdRestServiceImplTest {
 
     @BeforeEach
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         configuration = new Configuration();
         configuration.setHttpMethod(HttpMethod.GET);
         configuration.setHeaders(new HttpHeaders());
