@@ -10,6 +10,10 @@ import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
 
 @Slf4j
@@ -38,14 +42,14 @@ public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         logRequest(request, body);
-        long timestampStart = System.currentTimeMillis();
+        LocalDateTime timestampStart = LocalDateTime.now();
         log.info("Request started at : {}", timestampStart);
         ClientHttpResponse response = execution.execute(request, body);
         logResponse(response);
-        long timestampEnd = System.currentTimeMillis();
+        LocalDateTime timestampEnd = LocalDateTime.now();
         log.info("Request finished at : {}", timestampEnd);
-        long duration = timestampEnd - timestampStart;
-        log.info("Request duration : {}", duration);
+        long duration = Duration.between(timestampStart, timestampEnd).toMillis();
+        log.info("Request duration : {}ms", duration);
         return response;
     }
 }

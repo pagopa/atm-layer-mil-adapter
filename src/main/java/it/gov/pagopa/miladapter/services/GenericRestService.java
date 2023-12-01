@@ -28,12 +28,14 @@ public interface GenericRestService {
         this.injectAuthToken(configuration);
         ResponseEntity<String> response;
 
+        long asyncTimeout  = getRestConfigurationProperties().getAsyncThreshold();
         try {
             if (configuration.getDelayMilliseconds() != null) {
+                if (configuration.getDelayMilliseconds() > asyncTimeout/2) {
+                    throw new RuntimeException(String.format("The delay between consecutive retries must be lower than: %s ms", asyncTimeout/2));
+                }
                 try {
-                    getLogger().info("Starting delay of {}, at {}",configuration.getDelayMilliseconds(),System.currentTimeMillis());
                     Thread.sleep(configuration.getDelayMilliseconds());
-                    getLogger().info("End of delay at {}", System.currentTimeMillis());
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
