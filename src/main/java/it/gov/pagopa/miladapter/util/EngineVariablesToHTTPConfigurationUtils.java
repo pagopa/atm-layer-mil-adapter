@@ -38,13 +38,26 @@ public class EngineVariablesToHTTPConfigurationUtils {
         return null;
     }
 
+    public static Integer parseInteger(Number input){
+        if (input == null) {
+            return null;
+        }
+        if (input instanceof Long) {
+            return Math.toIntExact((Long) input);
+        } else if (input instanceof Integer) {
+            return (Integer) input;
+        } else {
+            throw new IllegalArgumentException("Cannot cast delayMilliseconds value, input class: " + input.getClass().getName());
+        }
+    }
+
     public static Configuration getHttpConfigurationExternalCall(Map<String, Object> variables, boolean milFlow) {
 
         String requestId = UUID.randomUUID().toString();
         String acquirerId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), milFlow);
         String channel = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.CHANNEL.getEngineValue(), milFlow);
         String terminalId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.TERMINAL_ID.getEngineValue(), milFlow);
-        Long delayMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.DELAY_MILLISECONDS.getValue(), false);
+        Number delayMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.DELAY_MILLISECONDS.getValue(), false);
 
 
         String endpointVariable = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.URL.getValue(), true);
@@ -59,7 +72,6 @@ public class EngineVariablesToHTTPConfigurationUtils {
             pathParams = new HashMap<>();
         }
         HttpRequestUtils.checkNotNullPathParams(pathParams);
-        // Map<String, String> queryParams = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.QUERY_PARAMS.getValue(), false);
 
         Long connectionResponseTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS.getValue(), false);
         Long connectionRequestTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_REQUEST_TIMEOUT_MILLISECONDS.getValue(), false);
