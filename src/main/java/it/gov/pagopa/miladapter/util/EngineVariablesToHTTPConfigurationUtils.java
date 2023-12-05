@@ -59,7 +59,6 @@ public class EngineVariablesToHTTPConfigurationUtils {
             pathParams = new HashMap<>();
         }
         HttpRequestUtils.checkNotNullPathParams(pathParams);
-        // Map<String, String> queryParams = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.QUERY_PARAMS.getValue(), false);
 
         Long connectionResponseTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS.getValue(), false);
         Long connectionRequestTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_REQUEST_TIMEOUT_MILLISECONDS.getValue(), false);

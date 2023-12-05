@@ -24,12 +24,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @ExtendWith(SpringExtension.class)
-public class HttpRequestUtilsTest {
+class HttpRequestUtilsTest {
     @InjectMocks
     private HttpRequestUtils httpRequestUtils;
 
     @Test
-    public void testBuildHttpEntity() {
+    void testBuildHttpEntity() {
         String body = "{\"idempotencyKey\": \"71695110631_X935001531\",\n" + "10 \"amount\": 10000}";
         HttpHeaders headers = new HttpHeaders();
         headers.add("Channel", "ATM");
@@ -40,7 +40,7 @@ public class HttpRequestUtilsTest {
     }
 
     @Test
-    public void testCreateHttpHeadersWithValidMap() {
+    void testCreateHttpHeadersWithValidMap() {
         Map<String, String> headersMap = new HashMap<>();
         headersMap.put("Channel", "ATM");
         HttpHeaders headers = httpRequestUtils.createHttpHeaders(headersMap);
@@ -48,14 +48,14 @@ public class HttpRequestUtilsTest {
     }
 
     @Test
-    public void testCreateHttpHeadersWithEmptyMap() {
+    void testCreateHttpHeadersWithEmptyMap() {
         Map<String, String> headersMap = new HashMap<>();
         HttpHeaders headers = httpRequestUtils.createHttpHeaders(headersMap);
         Assertions.assertTrue(CollectionUtils.isEmpty(headers));
     }
 
     @Test
-    public void testBuildURI() {
+    void testBuildURI() {
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put("paTaxCode", "00000000201");
         pathParams.put("noticeNumber", "012345678901234567");
@@ -66,7 +66,7 @@ public class HttpRequestUtilsTest {
     }
 
     @Test
-    public void testFromMapToHeaders() {
+    void testFromMapToHeaders() {
         Map<String, String> map = new HashMap<>();
         map.put("Channel", "");
         assertThrows(RuntimeException.class, () -> httpRequestUtils.fromMapToHeaders(map));
@@ -144,7 +144,7 @@ public class HttpRequestUtilsTest {
     }
 
     @Test
-    public void defaultConstructorTest() {
+    void defaultConstructorTest() {
         Object httpRequestUtilsConstructed = new HttpRequestUtils();
         assertTrue(httpRequestUtilsConstructed instanceof HttpRequestUtils);
     }

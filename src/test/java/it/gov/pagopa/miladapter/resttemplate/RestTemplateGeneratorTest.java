@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 
 @ContextConfiguration(classes = {RestTemplateGenerator.class, RestConfigurationProperties.class})
 @ExtendWith(SpringExtension.class)
-public class RestTemplateGeneratorTest {
+class RestTemplateGeneratorTest {
 
     @Mock
     private RestConfigurationProperties restConfigurationProperties;

@@ -20,13 +20,13 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {HttpRequestInterceptor.class})
-public class HttpRequestInterceptorTest {
+class HttpRequestInterceptorTest {
 
     @InjectMocks
     private HttpRequestInterceptor httpRequestInterceptor;
 
     @Test
-    public void testIntercept() throws IOException {
+    void testIntercept() throws IOException {
         MockClientHttpRequest request = new MockClientHttpRequest();
         byte[] body = "body".getBytes(StandardCharsets.UTF_8);
         ClientHttpRequestExecution clientHttpRequestExecution = mock(ClientHttpRequestExecution.class);

@@ -30,7 +30,7 @@ import it.gov.pagopa.miladapter.services.DefinitionIdRestService;
 import it.gov.pagopa.miladapter.util.EngineVariablesToHTTPConfigurationUtils;
 
 @ExtendWith(SpringExtension.class)
-public class DefinitionIdRestTaskHandlerTest {
+class DefinitionIdRestTaskHandlerTest {
 
     @InjectMocks
     private DefinitionIdRestTaskHandler definitionIdRestTaskHandler;
@@ -51,7 +51,7 @@ public class DefinitionIdRestTaskHandlerTest {
     }
 
     @Test
-    public void testExecuteOk() {
+    void testExecuteOk() {
         ExternalTask externalTask = mock(ExternalTask.class);
         ExternalTaskService externalTaskService = mock(ExternalTaskService.class);
         VariableMap variableMap = mock(VariableMap.class);
@@ -68,7 +68,7 @@ public class DefinitionIdRestTaskHandlerTest {
     }
 
     @Test
-    public void testExecuteKo() {
+    void testExecuteKo() {
         ExternalTask externalTask = mock(ExternalTask.class);
         ExternalTaskService externalTaskService = mock(ExternalTaskService.class);
         Map<String, Object> variables = prepareInputVariables();
