@@ -27,13 +27,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         "rest-configuration.auth.grant-type=client-credentials"
 })
 @ComponentScan(basePackageClasses = RestConfigurationProperties.class)
-public class RestConfigurationPropertiesTest {
+class RestConfigurationPropertiesTest {
 
     @Autowired
     private RestConfigurationProperties restConfigurationProperties;
 
     @Test
-    public void testRestConfigurationProperties() {
+    void testRestConfigurationProperties() {
         assertEquals("https://example.com", restConfigurationProperties.getMilBasePath());
         assertTrue(restConfigurationProperties.isInterceptorLoggingEnabled());
         assertEquals(5000, restConfigurationProperties.getConnectionRequestTimeoutMilliseconds());
@@ -41,9 +41,9 @@ public class RestConfigurationPropertiesTest {
         assertEquals(1, restConfigurationProperties.getMaxRetry());
         assertEquals(500, restConfigurationProperties.getRetryIntervalMilliseconds());
         assertFalse(restConfigurationProperties.isLogEngineInputVariablesEnabled());
-        assertEquals(restConfigurationProperties.getAuth().getMilAuthPath(), "path");
-        assertEquals(restConfigurationProperties.getAuth().getClientId(), "client-id");
-        assertEquals(restConfigurationProperties.getAuth().getClientSecret(), "client-secret");
-        assertEquals(restConfigurationProperties.getAuth().getGrantType(), "client-credentials");
+        assertEquals("path", restConfigurationProperties.getAuth().getMilAuthPath());
+        assertEquals("client-id", restConfigurationProperties.getAuth().getClientId());
+        assertEquals("client-secret", restConfigurationProperties.getAuth().getClientSecret());
+        assertEquals("client-credentials", restConfigurationProperties.getAuth().getGrantType());
     }
 }

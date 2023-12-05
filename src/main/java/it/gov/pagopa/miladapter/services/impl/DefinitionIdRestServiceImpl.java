@@ -34,6 +34,7 @@ public class DefinitionIdRestServiceImpl implements DefinitionIdRestService {
 
     @Override
     public void injectAuthToken(Configuration configuration) {
+        // default implementation ignored
     }
 
     @Override

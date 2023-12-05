@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
-public class MILRestServiceImplTest {
+class MILRestServiceImplTest {
     @Mock
     private RestConfigurationProperties restConfigurationProperties;
     @Mock
@@ -53,7 +53,7 @@ public class MILRestServiceImplTest {
     }
 
     @Test
-    public void executeMILRestCallTestOK() {
+    void executeMILRestCallTestOK() {
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("test response", HttpStatus.OK));
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
         VariableMap output = milRestService.executeRestCall(configuration);
@@ -62,7 +62,7 @@ public class MILRestServiceImplTest {
     }
 
     @Test
-    public void executeMILRestCallTestKO() {
+    void executeMILRestCallTestKO() {
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("BAD REQUEST", HttpStatus.BAD_REQUEST));
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
         VariableMap output = milRestService.executeRestCall(configuration);

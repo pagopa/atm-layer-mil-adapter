@@ -17,25 +17,25 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class EngineVariablesToHTTPConfigurationUtilsTest {
+class EngineVariablesToHTTPConfigurationUtilsTest {
 
     @Test
-    public void testGetIntegerValue_NullValue() {
+    void testGetIntegerValue_NullValue() {
         assertNull(EngineVariablesToHTTPConfigurationUtils.getIntegerValue("TestVariable", null));
     }
 
     @Test
-    public void testGetIntegerValue_EmptyValue() {
+    void testGetIntegerValue_EmptyValue() {
         assertThrows(RuntimeException.class, () -> EngineVariablesToHTTPConfigurationUtils.getIntegerValue("TestVariable", ""));
     }
 
     @Test
-    public void testGetIntegerValue_InvalidInteger() {
+    void testGetIntegerValue_InvalidInteger() {
         assertThrows(RuntimeException.class, () -> EngineVariablesToHTTPConfigurationUtils.getIntegerValue("TestVariable", "abc"));
     }
 
     @Test
-    public void testGetIntegerValue_ValidInteger() {
+    void testGetIntegerValue_ValidInteger() {
         assertEquals(123, EngineVariablesToHTTPConfigurationUtils.getIntegerValue("TestVariable", "123"));
     }
 
@@ -57,7 +57,7 @@ public class EngineVariablesToHTTPConfigurationUtilsTest {
     }
 
     @Test
-    public void getHttpConfigurationEmptyPathParamsTest() {
+    void getHttpConfigurationEmptyPathParamsTest() {
 
         Map<String, Object> variables = new CaseInsensitiveMap<>();
         variables.put(RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), "bank_id");
@@ -78,7 +78,7 @@ public class EngineVariablesToHTTPConfigurationUtilsTest {
     }
 
     @Test
-    public void getHttpConfigurationWithPathParamsTest() {
+    void getHttpConfigurationWithPathParamsTest() {
         Map<String, Object> variables = new CaseInsensitiveMap<>();
         variables.put(RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), "bank_id");
         variables.put(RequiredProcessVariables.TERMINAL_ID.getEngineValue(), "term_id");
@@ -102,7 +102,7 @@ public class EngineVariablesToHTTPConfigurationUtilsTest {
     }
 
     @Test
-    public void getHttpConfigurationInternalCallWithPathParamsTest() {
+    void getHttpConfigurationInternalCallWithPathParamsTest() {
         Map<String, Object> variables = new CaseInsensitiveMap<>();
         variables.put(RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), "12345");
         variables.put(RequiredProcessVariables.TERMINAL_ID.getEngineValue(), "12345678");

@@ -18,7 +18,7 @@ import java.time.Duration;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-public class CustomHttpRequestRetryStrategyTest {
+class CustomHttpRequestRetryStrategyTest {
     private CustomHttpRequestRetryStrategy customHttpRequestRetryStrategy;
     @BeforeEach
     public void setup() {
@@ -27,7 +27,7 @@ public class CustomHttpRequestRetryStrategyTest {
         customHttpRequestRetryStrategy = new CustomHttpRequestRetryStrategy(maxRetry, retryInterval);
     }
     @Test
-    public void testRetryRequestMaxRetry() {
+    void testRetryRequestMaxRetry() {
         HttpRequest httpRequest = Mockito.mock(HttpRequest.class);
         HttpContext httpContext = Mockito.mock(HttpContext.class);
         IOException IoException = Mockito.mock(IOException.class);
@@ -43,7 +43,7 @@ public class CustomHttpRequestRetryStrategyTest {
         Assertions.assertFalse(resultFalse);
     }
     @Test
-    public void testRetryRequestOk() {
+    void testRetryRequestOk() {
         HttpResponse httpResponse = Mockito.mock(HttpResponse.class);
         StatusLine statusLine = Mockito.mock(StatusLine.class);
 
@@ -62,7 +62,7 @@ public class CustomHttpRequestRetryStrategyTest {
         Assertions.assertFalse(resultWithIOverMaxRetry);
     }
     @Test
-    public void testRetryRequestKo() {
+    void testRetryRequestKo() {
         HttpResponse httpResponse = Mockito.mock(HttpResponse.class);
         StatusLine statusLine = Mockito.mock(StatusLine.class);
 
@@ -77,7 +77,7 @@ public class CustomHttpRequestRetryStrategyTest {
 
     }
     @Test
-    public void testGetRetryInterval() {
+    void testGetRetryInterval() {
         HttpRequest httpRequest = Mockito.mock(HttpRequest.class);
         HttpResponse httpResponse = Mockito.mock(HttpResponse.class);
         HttpContext httpContext = Mockito.mock(HttpContext.class);

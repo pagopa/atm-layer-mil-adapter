@@ -18,7 +18,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class CacheServiceImplTest {
+class CacheServiceImplTest {
 
     @Mock
     CacheConfigurationProperties cacheConfigurationProperties;
@@ -41,35 +41,35 @@ public class CacheServiceImplTest {
     }
 
     @Test
-    public void getTokenTest() {
+    void getTokenTest() {
         cacheServiceimpl.getToken(key);
         verify(cacheManager,times(1)).getCache("cache name",String.class,Token.class);
         verify(cacheConfigurationProperties,times(1)).getCacheName();
     }
 
     @Test
-    public void insertToken(){
+    void insertToken(){
         cacheServiceimpl.insertToken(key,token);
         verify(cacheManager,times(1)).getCache("cache name",String.class,Token.class);
         verify(cacheConfigurationProperties,times(1)).getCacheName();
     }
 
     @Test
-    public void calculateTokenDurationInSecondsOKTest(){
+    void calculateTokenDurationInSecondsOKTest(){
         when(cacheConfigurationProperties.getTokenSecurityThreshold()).thenReturn(1);
         int result=cacheServiceimpl.calculateTokenDurationInSeconds(2);
         assertEquals(1,result);
     }
 
     @Test
-    public void calculateTokenDurationInSecondsNegativeMilDurationTest(){
+    void calculateTokenDurationInSecondsNegativeMilDurationTest(){
         when(cacheConfigurationProperties.getTokenSecurityThreshold()).thenReturn(1);
         int result=cacheServiceimpl.calculateTokenDurationInSeconds(-1);
         assertEquals(0,result);
     }
 
     @Test
-    public void calculateTokenDurationInSecondsMilDurationNotHigherThanThresholdTest(){
+    void calculateTokenDurationInSecondsMilDurationNotHigherThanThresholdTest(){
         when(cacheConfigurationProperties.getTokenSecurityThreshold()).thenReturn(1);
         int result=cacheServiceimpl.calculateTokenDurationInSeconds(1);
         assertEquals(0,result);

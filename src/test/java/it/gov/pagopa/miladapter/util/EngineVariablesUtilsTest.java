@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class EngineVariablesUtilsTest {
+class EngineVariablesUtilsTest {
     Map<String, Object> map;
 
     @BeforeEach
@@ -22,49 +22,49 @@ public class EngineVariablesUtilsTest {
     }
 
     @Test
-    public void getTypedVariableTestOk() {
+    void getTypedVariableTestOk() {
         String value = EngineVariablesUtils.getTypedVariable(map, "key", true);
-        assertEquals(value, "value");
+        assertEquals("value", value);
     }
 
     @Test
-    public void getTypedVariableTestRequiredNull() {
+    void getTypedVariableTestRequiredNull() {
         Exception exception = assertThrows(Exception.class, () -> EngineVariablesUtils.getTypedVariable(map, "inexistentValue", true));
         assertEquals("inexistentValue variable cannot be null", exception.getMessage());
     }
 
     @Test
-    public void getTypedVariableTestNotRequiredNull() {
+    void getTypedVariableTestNotRequiredNull() {
         String value = EngineVariablesUtils.getTypedVariable(map, "inexistentValue", false);
         assertEquals(null, value);
     }
 
     @Test
-    public void getTypedVaribaleTestRequiredBlankString() {
+    void getTypedVariableTestRequiredBlankString() {
         Exception exception = assertThrows(RuntimeException.class, () -> EngineVariablesUtils.getTypedVariable(map, "blankSpaceKey", true));
         assertEquals("blankSpaceKey String variable cannot be empty", exception.getMessage());
     }
 
     @Test
-    public void getTypedVaribaleTestRequiredEmptyString() {
+    void getTypedVariableTestRequiredEmptyString() {
         Exception exception = assertThrows(RuntimeException.class, () -> EngineVariablesUtils.getTypedVariable(map, "emptyKey", true));
         assertEquals("emptyKey String variable cannot be empty", exception.getMessage());
     }
 
     @Test
-    public void getTypedVaribaleTestNotRequiredBlankString() {
+    void getTypedVariableTestNotRequiredBlankString() {
         String value = EngineVariablesUtils.getTypedVariable(map, "blankSpaceKey", false);
         assertEquals(" ", value);
     }
 
     @Test
-    public void getTypedVaribaleTestNotRequiredEmptyString() {
+    void getTypedVaribaleTestNotRequiredEmptyString() {
         String value = EngineVariablesUtils.getTypedVariable(map, "emptyKey", false);
         assertEquals("", value);
     }
 
     @Test
-    public void getTaskVariablesCaseInsensitiveTest() {
+    void getTaskVariablesCaseInsensitiveTest() {
         ExternalTask externalTask = mock(ExternalTask.class);
         when(externalTask.getAllVariables()).thenReturn(map);
         Map<String, Object> result = EngineVariablesUtils.getTaskVariablesCaseInsensitive(externalTask);
@@ -74,7 +74,7 @@ public class EngineVariablesUtilsTest {
     }
 
     @Test
-    public void defaultConstructorTest() {
+    void defaultConstructorTest() {
         Object engineVariablesUtils = new EngineVariablesUtils();
         assertTrue(engineVariablesUtils instanceof EngineVariablesUtils);
     }

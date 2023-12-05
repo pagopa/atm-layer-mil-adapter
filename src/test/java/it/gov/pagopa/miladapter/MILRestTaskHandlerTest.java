@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
-public class MILRestTaskHandlerTest {
+class MILRestTaskHandlerTest {
 
     @InjectMocks
     private MILRestTaskHandler MILRestTaskHandler;
@@ -48,7 +48,7 @@ public class MILRestTaskHandlerTest {
     }
 
     @Test
-    public void testExecuteOk() {
+    void testExecuteOk() {
         ExternalTask externalTask = mock(ExternalTask.class);
         ExternalTaskService externalTaskService = mock(ExternalTaskService.class);
         VariableMap variableMap = mock(VariableMap.class);
@@ -65,7 +65,7 @@ public class MILRestTaskHandlerTest {
     }
 
     @Test
-    public void testExecuteKo() {
+    void testExecuteKo() {
         ExternalTask externalTask = mock(ExternalTask.class);
         ExternalTaskService externalTaskService = mock(ExternalTaskService.class);
         Map<String, Object> variables = prepareInputVariables();
