@@ -29,7 +29,7 @@ import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
 import it.gov.pagopa.miladapter.services.impl.DefinitionIdRestServiceImpl;
 
-public class DefinitionIdRestServiceImplTest {
+class DefinitionIdRestServiceImplTest {
 
     @Mock
     private RestConfigurationProperties restConfigurationProperties;
@@ -62,7 +62,7 @@ public class DefinitionIdRestServiceImplTest {
     }
 
     @Test
-    public void executeDefinitionIdCallTestOK() {
+    void executeDefinitionIdCallTestOK() {
         configuration.getAuthParameters().setBranchId("1234");
         configuration.getAuthParameters().setTerminalId("12345678");
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class)))
@@ -74,7 +74,7 @@ public class DefinitionIdRestServiceImplTest {
     }
 
     @Test
-    public void executeDefinitionIdCallTestOKNoBranchNoTerminalId() {
+    void executeDefinitionIdCallTestOKNoBranchNoTerminalId() {
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class)))
                 .thenReturn(new ResponseEntity("test response", HttpStatus.OK));
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
@@ -84,7 +84,7 @@ public class DefinitionIdRestServiceImplTest {
     }
 
     @Test
-    public void executeMILRestCallTestKO() {
+    void executeMILRestCallTestKO() {
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("BAD REQUEST", HttpStatus.BAD_REQUEST));
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
         VariableMap output = definitionIdRestService.executeRestCall(configuration);

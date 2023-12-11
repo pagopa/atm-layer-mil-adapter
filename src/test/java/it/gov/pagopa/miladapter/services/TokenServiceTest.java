@@ -33,7 +33,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-public class TokenServiceTest {
+class TokenServiceTest {
 
     @InjectMocks
     private TokenService tokenService;
@@ -53,7 +53,7 @@ public class TokenServiceTest {
     }
 
     @Test
-    public void testInjectAuthTokenPresentInCache() {
+    void testInjectAuthTokenPresentInCache() {
         HttpHeaders restHeaders = new HttpHeaders();
         AuthParameters authParameters = mock(AuthParameters.class);
         Token validToken = new Token();
@@ -66,7 +66,7 @@ public class TokenServiceTest {
     }
 
     @Test
-    public void testInjectAuthTokenNotPresentInCacheOk() {
+    void testInjectAuthTokenNotPresentInCacheOk() {
         HttpHeaders restHeaders = new HttpHeaders();
         AuthParameters authParameters = new AuthParameters();
         authParameters.setRequestId("6762543c-2660-4622-b4d4-8b2bc596df29");
@@ -94,7 +94,7 @@ public class TokenServiceTest {
     }
 
     @Test
-    public void testInjectAuthTokenNotPresentInCacheKo() {
+    void testInjectAuthTokenNotPresentInCacheKo() {
         HttpHeaders restHeaders = new HttpHeaders();
         AuthParameters authParameters = new AuthParameters();
         authParameters.setRequestId("6762543c-2660-4622-b4d4-8b2bc596df29");
