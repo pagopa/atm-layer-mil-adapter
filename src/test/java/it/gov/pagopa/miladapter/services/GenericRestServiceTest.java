@@ -27,7 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpMethod.GET;
 
-public class GenericRestServiceTest {
+class GenericRestServiceTest {
 
     @Mock
     RestConfigurationProperties restConfigurationProperties;
@@ -69,7 +69,7 @@ public class GenericRestServiceTest {
 
 
     @Test
-    public void testExecuteRestCallFailure() {
+    void testExecuteRestCallFailure() {
         Configuration configuration = mock(Configuration.class);
 
         when(configuration.getDelayMilliseconds()).thenReturn(600);

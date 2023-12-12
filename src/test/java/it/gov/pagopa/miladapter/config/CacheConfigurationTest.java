@@ -10,7 +10,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.*;
 
-public class CacheConfigurationTest {
+class CacheConfigurationTest {
     @Mock
     CacheConfigurationProperties cacheConfigurationProperties;
     @InjectMocks
@@ -24,8 +24,8 @@ public class CacheConfigurationTest {
     }
 
     @Test
-    public void EhcacheManagerTest() {
-        CacheManager result = cacheConfiguration.EhcacheManager();
+    void EhcacheManagerTest() {
+        CacheManager result = cacheConfiguration.ehcacheManager(cacheConfigurationProperties);
         verify(cacheConfigurationProperties, times(1)).getCacheName();
         verify(cacheConfigurationProperties, times(1)).getMaxEntries();
         assert (result.getRuntimeConfiguration().getCacheConfigurations().containsKey("cache name"));

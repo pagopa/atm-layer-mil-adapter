@@ -29,6 +29,7 @@ public class GenericRestServiceNoAuthImpl implements GenericRestServiceNoAuth {
 
     @Override
     public void injectAuthToken(Configuration configuration) {
+        // default implementation ignored
     }
 
     @Override
