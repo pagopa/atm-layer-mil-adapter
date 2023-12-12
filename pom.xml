@@ -6,7 +6,9 @@
 
     <groupId>it.gov.pagopa</groupId>
     <artifactId>mil-adapter</artifactId>
+
     <version>1.0.0-dev.7</version>
+
 
     <packaging>jar</packaging>
 
