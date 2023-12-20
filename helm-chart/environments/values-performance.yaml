@@ -1,0 +1,142 @@
+# Default values for atm-layer-mil-adapter.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 2
+
+image:
+  repository: 00000000000.dkr.ecr.eu-south-1.amazonaws.com/xxxxxxx
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: latest
+
+namespace: pagopa
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+milAdapter:
+  disableBackoffStrategy: true
+  lockDuration: 20000
+  asyncResponseTimeout: 20000
+  milBasePath: https://mil-d-apim.azure-api.net
+  enableInterceptorLogging: true
+  logEngineInputVariables: true
+  restReadTimeout: 20000
+  restConnectionTmieout: 20000
+  milAuthRelativePath: /mil-auth/token
+  milAuthClientCredentials: client_credentials
+  tokenCacheName: token-cache
+  tokenCacheMaxEntries: 100
+  modelBasePath: http://pagopa-performance-atm-layer-model.pagopa.svc.cluster.local:8080
+
+milAuth:
+  credentialsSecretName: "pagopa-performance-atm-layer-mil-adapter-mil-auth"
+  credentialsSecretKeys:
+    clientId: CLIENT_ID
+    clientSecret: CLIENT_SECRET
+
+camundaWebUser:
+  address: http://pagopa-performance-atm-layer-wf-engine.pagopa.svc.cluster.local:8080
+  credentialsSecretName: "pagopa-performance-atm-layer-mil-adapter-camunda"
+  credentialsSecretKeys:
+    username: WEB_USER
+    password: WEB_PASSWORD
+
+database:
+  driver: org.postgresql.Driver
+  url: jdbc:postgresql://pagopa-performance-atm-layer-rds.cluster-csdbokdg0q4t.eu-south-1.rds.amazonaws.com:5432
+  db_name: pagopadb
+  schema: atm_layer_engine
+  credentialsSecretName: "pagopa-performance-atm-layer-mil-adapter-database"
+  credentialsSecretKeys:
+    username: DB_USERNAME
+    password: DB_PASSWORD
+
+secretProviderClass:
+  name: atm-layer-mil-adapter-secrets
+  env: performance
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::00000000000:role/pagopa-performance-atm-layer-xxxxxx-serviceaccount-role
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: pagopa-performance-atm-layer-mil-adapter
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+deployment:
+  name: pagopa-performance-atm-layer-mil-adapter
+  annotations:
+    reloader.stakater.com/auto: "true"
+    secret.reloader.stakater.com/reload: pagopa-performance-atm-layer-mil-adapter-database, pagopa-performance-atm-layer-mil-adapter-camunda, pagopa-performance-atm-layer-mil-adapter-mil-auth
+
+service:
+  name: pagopa-performance-atm-layer-mil-adapter
+  type: NodePort
+  port: 8080
+
+ingress:
+  enabled: false
+  name: pagopa-performance-atm-layer-mil-adapter
+  className: ""
+  annotations: 
+    kubernetes.io/ingress.class: "alb"
+    alb.ingress.kubernetes.io/scheme: "internal"
+    alb.ingress.kubernetes.io/group.name: "alb-controller"
+    alb.ingress.kubernetes.io/load-balancer-name: "pagopa-performance-atm-layer-alb-int"
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTP": 8080}]'
+  hosts:
+    - host:
+      paths:
+        - path: /mil/
+          pathType: Prefix
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+Release:
+  Time:
+    Seconds: 60
