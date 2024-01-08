@@ -15,7 +15,7 @@ rest-configuration:
   interceptor-logging-enabled: ${MIL_ADAPTER_ENABLE_INTERCEPTOR_LOGGING:true}
   log-engine-input-variables-enabled: ${MIL_ADAPTER_LOG_ENGINE_INPUT_VARIABLES:true}
   connection-request-timeout-milliseconds: ${MIL_ADAPTER_REST_CONNECTION_REQUEST_TIMEOUT_MILLISECONDS:1000}
-  connection-response-timeout-milliseconds: ${MIL_ADAPTER_REST_CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS:20000}
+  connection-response-timeout-milliseconds: ${MIL_ADAPTER_REST_CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS:4000}
   max-retry: ${MIL_ADAPTER_REST_MAX_RETRY:1}
   retry-interval-milliseconds: ${MIL_ADAPTER_REST_RETRY_INTERVAL_MILLISECONDS:500}
   async-threshold: ${MIL_ADAPTER_ASYNC_RESPONSE_TIMEOUT:20000}
