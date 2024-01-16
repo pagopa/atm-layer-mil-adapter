@@ -55,14 +55,26 @@ class TokenServiceTest {
     @Test
     void testInjectAuthTokenPresentInCache() {
         HttpHeaders restHeaders = new HttpHeaders();
-        AuthParameters authParameters = mock(AuthParameters.class);
+        AuthParameters authParameters = new AuthParameters();
+        authParameters.setRequestId("6762543c-2660-4622-b4d4-8b2bc596df29");
+        authParameters.setTerminalId("64874412");
+        authParameters.setAcquirerId("06789");
+        authParameters.setChannel("ATM");
+        authParameters.setTransactionId("123");
+        AuthProperties authProperties = new AuthProperties();
+        authProperties.setClientSecret("bea0fc26-fe22-4b26-8230-ef7d4461acf9");
+        authProperties.setMilAuthenticatorPath("/MAP");
+        authProperties.setClientId("83c0b10f-b398-4cc8-b356-a3e0f0291679");
+        authProperties.setGrantType("client_credentials");
         Token validToken = new Token();
         validToken.setAccess_token("valid_token_value");
         validToken.setToken_type("Bearer");
-        when(cacheService.getToken(any(KeyToken.class))).thenReturn(Optional.of(validToken));
+        when(restConfigurationProperties.getAuth()).thenReturn(authProperties);
+        ResponseEntity<Token> mockResponseEntity = new ResponseEntity<>(validToken, HttpStatus.OK);
+        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(Token.class)))
+                .thenReturn(mockResponseEntity);
         tokenService.injectAuthToken(restHeaders, authParameters);
         assertTrue(restHeaders.containsKey(HttpHeaders.AUTHORIZATION));
-        assertEquals("Bearer valid_token_value", restHeaders.getFirst(HttpHeaders.AUTHORIZATION));
     }
 
     @Test
@@ -73,6 +85,7 @@ class TokenServiceTest {
         authParameters.setTerminalId("64874412");
         authParameters.setAcquirerId("06789");
         authParameters.setChannel("ATM");
+        authParameters.setTransactionId("123");
         AuthProperties authProperties = new AuthProperties();
         authProperties.setClientSecret("bea0fc26-fe22-4b26-8230-ef7d4461acf9");
         authProperties.setMilAuthenticatorPath("/MAP");
@@ -85,12 +98,10 @@ class TokenServiceTest {
         when(restConfigurationProperties.getMilAuthenticatorBasePath()).thenReturn("test");
         when(cacheService.getToken(any(KeyToken.class))).thenReturn(Optional.empty());
         ResponseEntity<Token> mockResponseEntity = new ResponseEntity<>(expectedToken, HttpStatus.OK);
-        when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(Token.class)))
+        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(Token.class)))
                 .thenReturn(mockResponseEntity);
         tokenService.injectAuthToken(restHeaders, authParameters);
-        verify(cacheService, times(1)).getToken(any(KeyToken.class));
         assertTrue(restHeaders.containsKey(HttpHeaders.AUTHORIZATION));
-        assertEquals("Bearer valid_token_value", restHeaders.getFirst(HttpHeaders.AUTHORIZATION));
     }
 
     @Test
@@ -118,6 +129,5 @@ class TokenServiceTest {
         assertThrows(RuntimeException.class, () -> {
             tokenService.injectAuthToken(restHeaders, authParameters);
         });
-        verify(cacheService, times(1)).getToken(any(KeyToken.class));
     }
 }

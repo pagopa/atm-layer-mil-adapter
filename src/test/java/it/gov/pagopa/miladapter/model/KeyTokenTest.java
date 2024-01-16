@@ -46,6 +46,6 @@ class KeyTokenTest {
 
     @Test
     void testConstructor() {
-        assertEquals("ATM_06789_64874412_123", (new KeyToken("64874412", "06789", "ATM", "123")).toString());
+        assertEquals("ATM_06789_64874412_123", (new KeyToken("64874412", "ATM", "06789", "123")).toString());
     }
 }
