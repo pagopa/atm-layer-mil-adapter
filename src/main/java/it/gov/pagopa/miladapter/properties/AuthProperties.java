@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class AuthProperties {
-    private String milAuthPath;
+    private String milAuthenticatorPath;
     private String clientId;
     private String clientSecret;
     private String grantType;

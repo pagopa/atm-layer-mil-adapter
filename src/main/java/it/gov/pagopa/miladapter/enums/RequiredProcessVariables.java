@@ -15,10 +15,11 @@ public enum RequiredProcessVariables {
     GRANT_TYPE(null, "grant_type", null),
     BRANCH_ID("branchId", null, "branchId"),
     FUNCTION_ID("functionId", null, "functionType"),
-    CODE("code", null, "code");
+    CODE("code", null, "code"),
+    TRANSACTION_ID(null, "TransactionId", null);
 
     private String engineValue;
-    private String milValue;
+    private String authenticatorValue;
     private String modelValue;
 
 }

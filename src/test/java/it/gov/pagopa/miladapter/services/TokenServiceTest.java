@@ -75,14 +75,14 @@ class TokenServiceTest {
         authParameters.setChannel("ATM");
         AuthProperties authProperties = new AuthProperties();
         authProperties.setClientSecret("bea0fc26-fe22-4b26-8230-ef7d4461acf9");
-        authProperties.setMilAuthPath("/MAP");
+        authProperties.setMilAuthenticatorPath("/MAP");
         authProperties.setClientId("83c0b10f-b398-4cc8-b356-a3e0f0291679");
         authProperties.setGrantType("client_credentials");
         Token expectedToken = new Token();
         expectedToken.setAccess_token("valid_token_value");
         expectedToken.setToken_type("Bearer");
         when(restConfigurationProperties.getAuth()).thenReturn(authProperties);
-        when(restConfigurationProperties.getMilBasePath()).thenReturn("test");
+        when(restConfigurationProperties.getMilAuthenticatorBasePath()).thenReturn("test");
         when(cacheService.getToken(any(KeyToken.class))).thenReturn(Optional.empty());
         ResponseEntity<Token> mockResponseEntity = new ResponseEntity<>(expectedToken, HttpStatus.OK);
         when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(Token.class)))
@@ -103,14 +103,14 @@ class TokenServiceTest {
         authParameters.setChannel("ATM");
         AuthProperties authProperties = new AuthProperties();
         authProperties.setClientSecret("bea0fc26-fe22-4b26-8230-ef7d4461acf9");
-        authProperties.setMilAuthPath("/MAP");
+        authProperties.setMilAuthenticatorPath("/MAP");
         authProperties.setClientId("83c0b10f-b398-4cc8-b356-a3e0f0291679");
         authProperties.setGrantType("client_credentials");
         Token expectedToken = new Token();
         expectedToken.setAccess_token("valid_token_value");
         expectedToken.setToken_type("Bearer");
         when(restConfigurationProperties.getAuth()).thenReturn(authProperties);
-        when(restConfigurationProperties.getMilBasePath()).thenReturn("test");
+        when(restConfigurationProperties.getMilAuthenticatorBasePath()).thenReturn("test");
         when(cacheService.getToken(any(KeyToken.class))).thenReturn(Optional.empty());
         ResponseEntity<Token> mockResponseEntity = new ResponseEntity<>(expectedToken, HttpStatus.BAD_REQUEST);
         when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(Token.class)))

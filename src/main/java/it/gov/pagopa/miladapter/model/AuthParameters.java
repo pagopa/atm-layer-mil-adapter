@@ -15,5 +15,5 @@ import lombok.experimental.SuperBuilder;
 public class AuthParameters extends TerminalParameters {
 
     private String requestId;
-
+    private String transactionId;
 }

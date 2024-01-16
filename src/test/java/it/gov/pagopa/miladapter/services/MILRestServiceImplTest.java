@@ -49,7 +49,7 @@ class MILRestServiceImplTest {
         configuration.setHeaders(new HttpHeaders());
         configuration.setPathParams(new HashMap<>());
         configuration.setAuthParameters(new AuthParameters());
-        when(restConfigurationProperties.getMilBasePath()).thenReturn("http://test-url:8080");
+        when(restConfigurationProperties.getMilAuthenticatorBasePath()).thenReturn("http://test-url:8080");
     }
 
     @Test

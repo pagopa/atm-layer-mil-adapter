@@ -72,7 +72,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertNull(configuration.getBody());
         assertEquals(1, configuration.getHeaders().size());
-        Assertions.assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getMilValue()));
+        Assertions.assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue()));
         assertEquals(new MultivaluedHashMap<>(), configuration.getPathParams());
 
     }
@@ -95,7 +95,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertNull(configuration.getBody());
         assertEquals(1, configuration.getHeaders().size());
-        Assertions.assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getMilValue()));
+        Assertions.assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue()));
         assertEquals(1, configuration.getPathParams().size());
         Assertions.assertTrue(configuration.getPathParams().containsKey("id"));
         assertEquals("1", configuration.getPathParams().get("id"));

@@ -10,8 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class KeyTokenTest {
     @Test
     void testEqualsAndHashCode(){
-        KeyToken keyToken1 = new KeyToken("64874412","06789","ATM");
-        KeyToken keyToken2 = new KeyToken("64874412","06789","ATM");
+        KeyToken keyToken1 = new KeyToken("64874412","06789","ATM", "123");
+        KeyToken keyToken2 = new KeyToken("64874412","06789","ATM", "123");
         assertEquals(keyToken1, keyToken2);
         assertEquals(keyToken1.hashCode(), keyToken2.hashCode());
     }
@@ -27,7 +27,7 @@ class KeyTokenTest {
 
     @Test
     void testAllArgsConstructor(){
-        KeyToken keyToken = new KeyToken("64874412","06789","ATM");
+        KeyToken keyToken = new KeyToken("64874412","06789","ATM", "123");
         assertEquals("64874412", keyToken.getTerminalId());
         assertEquals("06789", keyToken.getAcquirerId());
         assertEquals("ATM", keyToken.getChannel());
@@ -46,6 +46,6 @@ class KeyTokenTest {
 
     @Test
     void testConstructor() {
-        assertEquals("ATM_06789_64874412", (new KeyToken("64874412", "06789", "ATM")).toString());
+        assertEquals("ATM_06789_64874412_123", (new KeyToken("64874412", "06789", "ATM", "123")).toString());
     }
 }
