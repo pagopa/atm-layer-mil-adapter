@@ -61,6 +61,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
 
         Map<String, Object> variables = new CaseInsensitiveMap<>();
         variables.put(RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), "bank_id");
+        variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
         variables.put(RequiredProcessVariables.TERMINAL_ID.getEngineValue(), "term_id");
         variables.put(RequiredProcessVariables.CHANNEL.getEngineValue(), "ATM");
         variables.put(HttpVariablesEnum.URL.getValue(), "http://prova");
@@ -72,7 +73,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertNull(configuration.getBody());
         assertEquals(1, configuration.getHeaders().size());
-        Assertions.assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getMilValue()));
+        Assertions.assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue()));
         assertEquals(new MultivaluedHashMap<>(), configuration.getPathParams());
 
     }
@@ -83,6 +84,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         variables.put(RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), "bank_id");
         variables.put(RequiredProcessVariables.TERMINAL_ID.getEngineValue(), "term_id");
         variables.put(RequiredProcessVariables.CHANNEL.getEngineValue(), "ATM");
+        variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
         variables.put(HttpVariablesEnum.URL.getValue(), "http://prova/{id}");
         variables.put(HttpVariablesEnum.METHOD.getValue(), "GET");
         Map<String, String> pathParams = new HashMap<>();
@@ -95,7 +97,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertNull(configuration.getBody());
         assertEquals(1, configuration.getHeaders().size());
-        Assertions.assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getMilValue()));
+        Assertions.assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue()));
         assertEquals(1, configuration.getPathParams().size());
         Assertions.assertTrue(configuration.getPathParams().containsKey("id"));
         assertEquals("1", configuration.getPathParams().get("id"));

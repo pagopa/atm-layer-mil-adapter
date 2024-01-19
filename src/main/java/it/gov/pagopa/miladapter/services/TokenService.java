@@ -19,6 +19,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Calendar;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -44,12 +45,20 @@ public class TokenService {
         keyToken.setChannel(authParameters.getChannel());
         keyToken.setAcquirerId(authParameters.getAcquirerId());
         keyToken.setTerminalId(authParameters.getTerminalId());
-        Optional<Token> optionalToken = cacheService.getToken(keyToken);
-        if (optionalToken.isPresent()) {
-            log.info("Recovering still valid access Token");
-            return optionalToken.get().getAccess_token();
+        keyToken.setTransactionId(authParameters.getTransactionId());
+//        Optional<Token> optionalToken = cacheService.getToken(keyToken);
+        HttpHeaders headers = prepareAuthHeaders(authParameters);
+        HttpEntity<?> request = new HttpEntity<>(headers);
+        String externalApiUrl = restConfigurationProperties.getMilAuthenticatorBasePath() + restConfigurationProperties.getAuth().getMilAuthenticatorPath();
+        ResponseEntity<Token> response = restTemplate.exchange(externalApiUrl, HttpMethod.GET, request, Token.class);
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new RuntimeException("There was an error during the API call" + response.getStatusCode());
         }
-        return generateToken(authParameters, keyToken).getAccess_token();
+//        if (optionalToken.isPresent()) {
+//            log.info("Recovering still valid access Token");
+//            return optionalToken.get().getAccess_token();
+//        }
+        return Objects.requireNonNull(response.getBody()).toString();
     }
 
     public Token generateToken(AuthParameters authParameters, KeyToken keyToken) {
@@ -57,7 +66,7 @@ public class TokenService {
         HttpHeaders headers = prepareAuthHeaders(authParameters);
 
         HttpEntity<MultiValueMap<String, String>> request = prepareAuthBody(headers);
-        String externalApiUrl = restConfigurationProperties.getMilBasePath() + restConfigurationProperties.getAuth().getMilAuthPath();
+        String externalApiUrl = restConfigurationProperties.getMilAuthenticatorBasePath() + restConfigurationProperties.getAuth().getMilAuthenticatorPath();
         ResponseEntity<Token> response = restTemplate.exchange(externalApiUrl, HttpMethod.POST, request, Token.class);
 
         if (response.getStatusCode() != HttpStatus.OK) {
@@ -78,9 +87,9 @@ public class TokenService {
 
     private HttpEntity<MultiValueMap<String, String>> prepareAuthBody(HttpHeaders headers) {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add(RequiredProcessVariables.CLIENT_ID.getMilValue(), restConfigurationProperties.getAuth().getClientId());
-        body.add(RequiredProcessVariables.CLIENT_SECRET.getMilValue(), restConfigurationProperties.getAuth().getClientSecret());
-        body.add(RequiredProcessVariables.GRANT_TYPE.getMilValue(), restConfigurationProperties.getAuth().getGrantType());
+        body.add(RequiredProcessVariables.CLIENT_ID.getAuthenticatorValue(), restConfigurationProperties.getAuth().getClientId());
+        body.add(RequiredProcessVariables.CLIENT_SECRET.getAuthenticatorValue(), restConfigurationProperties.getAuth().getClientSecret());
+        body.add(RequiredProcessVariables.GRANT_TYPE.getAuthenticatorValue(), restConfigurationProperties.getAuth().getGrantType());
 
         return new HttpEntity<>(body, headers);
     }
@@ -89,10 +98,11 @@ public class TokenService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        headers.add(RequiredProcessVariables.REQUEST_ID.getMilValue(), authParameters.getRequestId());
-        headers.add(RequiredProcessVariables.ACQUIRER_ID.getMilValue(), authParameters.getAcquirerId());
-        headers.add(RequiredProcessVariables.CHANNEL.getMilValue(), authParameters.getChannel());
-        headers.add(RequiredProcessVariables.TERMINAL_ID.getMilValue(), authParameters.getTerminalId());
+        headers.add(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue(), authParameters.getRequestId());
+        headers.add(RequiredProcessVariables.ACQUIRER_ID.getAuthenticatorValue(), authParameters.getAcquirerId());
+        headers.add(RequiredProcessVariables.CHANNEL.getAuthenticatorValue(), authParameters.getChannel());
+        headers.add(RequiredProcessVariables.TERMINAL_ID.getAuthenticatorValue(), authParameters.getTerminalId());
+        headers.add(RequiredProcessVariables.TRANSACTION_ID.getAuthenticatorValue(), authParameters.getTransactionId());
         return headers;
     }
 }

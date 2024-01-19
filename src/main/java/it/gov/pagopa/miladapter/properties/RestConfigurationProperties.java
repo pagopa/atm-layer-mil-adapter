@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Data
 public class RestConfigurationProperties {
 
-    private String milBasePath;
+    private String milAuthenticatorBasePath;
     private boolean interceptorLoggingEnabled;
     private int connectionRequestTimeoutMilliseconds;
     private int connectionResponseTimeoutMilliseconds;
