@@ -100,6 +100,10 @@ spec:
               value: "{{ .Values.milAdapter.tokenCacheMaxEntries }}"
             - name: MIL_ADAPTER_MODEL_BASE_PATH
               value: "{{ .Values.milAdapter.modelBasePath }}"
+            - name: MIL_AUTHENTICATOR_BASE_PATH
+              value: "{{ .Values.milAuthenticator.basePath }}"
+            - name: MIL_AUTHENTICATOR_RELATIVE_PATH
+              value: "{{ .Values.milAuthenticator.relativePath }}"
           volumeMounts:
           - name: secrets-store-inline
             mountPath: "/mnt/secrets-store"
