@@ -49,24 +49,24 @@ class MILRestServiceImplTest {
         configuration.setHeaders(new HttpHeaders());
         configuration.setPathParams(new HashMap<>());
         configuration.setAuthParameters(new AuthParameters());
-        when(restConfigurationProperties.getMilAuthenticatorBasePath()).thenReturn("http://test-url:8080");
+        when(restConfigurationProperties.getMilBasePath()).thenReturn("http://test-url:8080");
     }
 
-//    @Test
-//    void executeMILRestCallTestOK() {
-//        when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("test response", HttpStatus.OK));
-//        when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
-//        VariableMap output = milRestService.executeRestCall(configuration);
-//        assertEquals("test response", output.get("response"));
-//        assertEquals(200, output.get("statusCode"));
-//    }
-//
-//    @Test
-//    void executeMILRestCallTestKO() {
-//        when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("BAD REQUEST", HttpStatus.BAD_REQUEST));
-//        when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
-//        VariableMap output = milRestService.executeRestCall(configuration);
-//        assertEquals("BAD REQUEST", output.get("response"));
-//        assertEquals(400, output.get("statusCode"));
-//    }
+    @Test
+    void executeMILRestCallTestOK() {
+        when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("test response", HttpStatus.OK));
+        when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
+        VariableMap output = milRestService.executeRestCall(configuration);
+        assertEquals("test response", output.get("response"));
+        assertEquals(200, output.get("statusCode"));
+    }
+
+    @Test
+    void executeMILRestCallTestKO() {
+        when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("BAD REQUEST", HttpStatus.BAD_REQUEST));
+        when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
+        VariableMap output = milRestService.executeRestCall(configuration);
+        assertEquals("BAD REQUEST", output.get("response"));
+        assertEquals(400, output.get("statusCode"));
+    }
 }
