@@ -15,13 +15,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @EnableConfigurationProperties(RestConfigurationProperties.class)
 @TestPropertySource(properties = {
-        "rest-configuration.mil-base-path=https://example.com",
+        "rest-configuration.mil-authenticator-base-path=https://example.com",
         "rest-configuration.interceptor-logging-enabled=true",
         "rest-configuration.connection-response-timeout-milliseconds=3000",
         "rest-configuration.connection-request-timeout-milliseconds=5000",
         "rest-configuration.max-retry=1",
         "rest-configuration.retry-interval-milliseconds=500",
-        "rest-configuration.auth.mil-auth-path=path",
+        "rest-configuration.auth.mil-authenticator-path=path",
         "rest-configuration.auth.client-id=client-id",
         "rest-configuration.auth.client-secret=client-secret",
         "rest-configuration.auth.grant-type=client-credentials"
@@ -34,14 +34,14 @@ class RestConfigurationPropertiesTest {
 
     @Test
     void testRestConfigurationProperties() {
-        assertEquals("https://example.com", restConfigurationProperties.getMilBasePath());
+        assertEquals("https://example.com", restConfigurationProperties.getMilAuthenticatorBasePath());
         assertTrue(restConfigurationProperties.isInterceptorLoggingEnabled());
         assertEquals(5000, restConfigurationProperties.getConnectionRequestTimeoutMilliseconds());
         assertEquals(3000, restConfigurationProperties.getConnectionResponseTimeoutMilliseconds());
         assertEquals(1, restConfigurationProperties.getMaxRetry());
         assertEquals(500, restConfigurationProperties.getRetryIntervalMilliseconds());
         assertFalse(restConfigurationProperties.isLogEngineInputVariablesEnabled());
-        assertEquals("path", restConfigurationProperties.getAuth().getMilAuthPath());
+        assertEquals("path", restConfigurationProperties.getAuth().getMilAuthenticatorPath());
         assertEquals("client-id", restConfigurationProperties.getAuth().getClientId());
         assertEquals("client-secret", restConfigurationProperties.getAuth().getClientSecret());
         assertEquals("client-credentials", restConfigurationProperties.getAuth().getGrantType());

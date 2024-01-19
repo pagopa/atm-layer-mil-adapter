@@ -88,6 +88,7 @@ class MILRestTaskHandlerTest {
         variables.put(RequiredProcessVariables.CHANNEL.getEngineValue(), "ATM");
         variables.put(RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), "ACQUIRER_ID");
         variables.put(RequiredProcessVariables.TERMINAL_ID.getEngineValue(), "TERMINAL_ID");
+        variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "TRANSACTION_ID");
         variables.put(HttpVariablesEnum.URL.name(), "URL");
         variables.put(HttpVariablesEnum.METHOD.name(), "GET");
         return variables;

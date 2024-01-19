@@ -34,7 +34,7 @@ public class MILRestServiceImpl implements MILRestService {
 
     @Override
     public URI prepareUri(Configuration configuration){
-        return HttpRequestUtils.buildURI(restConfigurationProperties.getMilBasePath(), configuration.getEndpoint(), configuration.getPathParams());
+        return HttpRequestUtils.buildURI(restConfigurationProperties.getMilAuthenticatorBasePath(), configuration.getEndpoint(), configuration.getPathParams());
     }
 
     @Override
