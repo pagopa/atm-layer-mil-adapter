@@ -61,6 +61,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
 
         Map<String, Object> variables = new CaseInsensitiveMap<>();
         variables.put(RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), "bank_id");
+        variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
         variables.put(RequiredProcessVariables.TERMINAL_ID.getEngineValue(), "term_id");
         variables.put(RequiredProcessVariables.CHANNEL.getEngineValue(), "ATM");
         variables.put(HttpVariablesEnum.URL.getValue(), "http://prova");
@@ -83,6 +84,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         variables.put(RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), "bank_id");
         variables.put(RequiredProcessVariables.TERMINAL_ID.getEngineValue(), "term_id");
         variables.put(RequiredProcessVariables.CHANNEL.getEngineValue(), "ATM");
+        variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
         variables.put(HttpVariablesEnum.URL.getValue(), "http://prova/{id}");
         variables.put(HttpVariablesEnum.METHOD.getValue(), "GET");
         Map<String, String> pathParams = new HashMap<>();
