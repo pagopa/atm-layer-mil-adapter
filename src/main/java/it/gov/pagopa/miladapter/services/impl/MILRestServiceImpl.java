@@ -34,7 +34,7 @@ public class MILRestServiceImpl implements MILRestService {
 
     @Override
     public URI prepareUri(Configuration configuration){
-        return HttpRequestUtils.buildURI(restConfigurationProperties.getMilBasePath(), configuration.getEndpoint(), configuration.getPathParams());
+        return HttpRequestUtils.buildURI("https://mil-d-apim.azure-api.net", configuration.getEndpoint(), configuration.getPathParams());
     }
 
     @Override
