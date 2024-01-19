@@ -54,11 +54,8 @@ public class TokenService {
         if (response.getStatusCode() != HttpStatus.OK) {
             throw new RuntimeException("There was an error during the API call" + response.getStatusCode());
         }
-//        if (optionalToken.isPresent()) {
-//            log.info("Recovering still valid access Token");
-//            return optionalToken.get().getAccess_token();
-//        }
-        return Objects.requireNonNull(response.getBody()).toString();
+        Token token = response.getBody();
+        return token.getAccess_token();
     }
 
     public Token generateToken(AuthParameters authParameters, KeyToken keyToken) {
