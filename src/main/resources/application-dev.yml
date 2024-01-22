@@ -6,10 +6,11 @@ camunda:
       base-url: ${MIL_ADAPTER_ENGINE_URL:http://localhost:8080}/engine-rest
       lock-duration: ${MIL_ADAPTER_LOCK_DURATION:20000}
       disable-backoff-strategy: ${MIL_ADAPTER_DISABLE_BACKOFF_STRATEGY:true}
-      async-response-timeout: ${MIL_ADAPTER_ASYNC_RESPONSE_TIMEOUT:20000}
+      async-response-timeout: ${MIL_ADAPTER_ASYNC_RESPONSE_TIMEOUT:1000}
       basic-auth:
         username: ${MIL_ADAPTER_ENGINE_ACCOUNT_USER:admin}
-        password: ${MIL_ADAPTER_ENGINE_ACCOUNT_PASSWORD:AurigaNtt.2023}
+        password: ${MIL_ADAPTER_ENGINE_ACCOUNT_PASSWORD:password}
+      max-tasks: 1
 rest-configuration:
   mil-base-path: ${MIL_ADAPTER_MIL_BASE_PATH:https://mil-d-apim.azure-api.net}
   interceptor-logging-enabled: ${MIL_ADAPTER_ENABLE_INTERCEPTOR_LOGGING:true}
@@ -34,8 +35,21 @@ cache-configuration:
 
 
 spring:
+  application:
+    name: mil-adapter
   datasource:
-    url: ${MIL_ADAPTER_ENGINE_DB_BASE_URL:jdbc:postgresql://localhost:5433}/${MIL_ADAPTER_ENGINE_DB_NAME:postgres}?currentSchema=${MIL_ADAPTER_ENGINE_DB_SCHEMA:atm_layer_camunda}
+    url: ${MIL_ADAPTER_ENGINE_DB_BASE_URL:jdbc:postgresql://localhost:5433}/${MIL_ADAPTER_ENGINE_DB_NAME:postgres}?currentSchema=${MIL_ADAPTER_ENGINE_DB_SCHEMA:atm_layer_engine2}
     username: ${MIL_ADAPTER_ENGINE_DB_USERNAME:postgres}
     password: ${MIL_ADAPTER_ENGINE_DB_PASSWORD:password}
     driverClassName: ${MIL_ADAPTER_ENGINE_DB_DRIVER:org.postgresql.Driver}
+tracing:
+  url: ${MIL_ADAPTER_TRACING_BACKEND_URL:http://localhost:4317}
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"

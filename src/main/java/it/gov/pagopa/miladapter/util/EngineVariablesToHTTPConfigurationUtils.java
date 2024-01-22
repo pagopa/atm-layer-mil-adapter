@@ -65,6 +65,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         Long connectionRequestTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_REQUEST_TIMEOUT_MILLISECONDS.getValue(), false);
         Long maxRetry = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.MAX_RETRY.getValue(), false);
         Long retryIntervalMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.RETRY_INTERVAL_MILLISECONDS.getValue(), false);
+        String parentSpanContextString = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACTIVITY_PARENT_SPAN.getEngineValue(), false);
 
         AuthParameters authParameters = AuthParameters.builder().requestId(requestId).acquirerId(acquirerId).terminalId(terminalId).channel(channel).build();
 
@@ -80,6 +81,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .maxRetry(parseInteger(maxRetry))
                 .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds))
                 .delayMilliseconds(parseInteger(delayMilliseconds))
+                .parentSpanContextString(parentSpanContextString)
                 .build();
     }
 
@@ -97,6 +99,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         Long connectionRequestTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_REQUEST_TIMEOUT_MILLISECONDS.getValue(), false);
         Long maxRetry = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.MAX_RETRY.getValue(), false);
         Long retryIntervalMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.RETRY_INTERVAL_MILLISECONDS.getValue(), false);
+        String parentSpanContextString = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACTIVITY_PARENT_SPAN.getEngineValue(), false);
 
         AuthParameters authParameters = AuthParameters.builder().acquirerId(acquirerId).terminalId(terminalId).branchId(branchId).code(code).build();
 
@@ -108,6 +111,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds))
                 .function(functionId)
                 .delayMilliseconds(parseInteger(delayMilliseconds))
+                .parentSpanContextString(parentSpanContextString)
                 .build();
     }
 }

@@ -1,8 +1,18 @@
 package it.gov.pagopa.miladapter.engine.task;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.SpanContext;
+import io.opentelemetry.api.trace.TraceFlags;
+import io.opentelemetry.api.trace.TraceState;
+import io.opentelemetry.context.Context;
+import it.gov.pagopa.miladapter.model.ParentSpanContext;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskHandler;
 import org.camunda.bpm.client.task.ExternalTaskService;
@@ -32,7 +42,6 @@ public interface RestExternalTaskHandler extends ExternalTaskHandler {
         }
 
     }
-
     Logger getLogger();
 
     RestConfigurationProperties getRestConfigurationProperties();

@@ -1,6 +1,7 @@
 package it.gov.pagopa.miladapter.resttemplate;
 
 
+import io.opentelemetry.api.OpenTelemetry;
 import it.gov.pagopa.miladapter.config.HttpRequestInterceptor;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,9 @@ public class RestTemplateGenerator {
     @Autowired
     RestConfigurationProperties restConfigurationProperties;
 
+    @Autowired
+    OpenTelemetry openTelemetry;
+
     public RestTemplate generate(int connectionRequestTimeout, int connectionResponseTimeout, int retry, int retryDelay) {
         log.info("Generating restTemplate with connectionTimeout: {} milliseconds, responseTimeout: {} milliseconds, maxRetry: {}, retryInterval: {} milliseconds",
                 connectionRequestTimeout, connectionResponseTimeout, retry, retryDelay);
@@ -41,15 +45,13 @@ public class RestTemplateGenerator {
         BufferingClientHttpRequestFactory bufferingFactory = new BufferingClientHttpRequestFactory(requestFactory);
         RestTemplate restTemplate = new RestTemplate(bufferingFactory);
 
-
-        if (restConfigurationProperties.isInterceptorLoggingEnabled()) {
-            List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
-            if (CollectionUtils.isEmpty(interceptors)) {
-                interceptors = new ArrayList<>();
-            }
-            interceptors.add(new HttpRequestInterceptor());
-            restTemplate.setInterceptors(interceptors);
+        List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
+        if (CollectionUtils.isEmpty(interceptors)) {
+            interceptors = new ArrayList<>();
         }
+        interceptors.add(new HttpRequestInterceptor(openTelemetry,restConfigurationProperties));
+        restTemplate.setInterceptors(interceptors);
+
         return restTemplate;
     }
 }

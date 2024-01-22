@@ -2,6 +2,7 @@ package it.gov.pagopa.miladapter.model;
 
 import java.util.Map;
 
+import io.opentelemetry.api.trace.Span;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
@@ -29,6 +30,7 @@ public class Configuration {
     Integer maxRetry;
     Integer retryIntervalMilliseconds;
     Integer delayMilliseconds;
+    String parentSpanContextString;
 
     AuthParameters authParameters;
 

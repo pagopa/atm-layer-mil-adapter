@@ -1,5 +1,6 @@
 package it.gov.pagopa.miladapter.services.impl;
 
+import io.opentelemetry.api.trace.Tracer;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
@@ -27,19 +28,27 @@ public class MILRestServiceImpl implements MILRestService {
     @Autowired
     TokenService tokenService;
 
+    @Autowired
+    Tracer tracer;
+
     @Override
     public void injectAuthToken(Configuration configuration) {
         tokenService.injectAuthToken(configuration.getHeaders(), configuration.getAuthParameters());
     }
 
     @Override
-    public URI prepareUri(Configuration configuration){
+    public URI prepareUri(Configuration configuration) {
         return HttpRequestUtils.buildURI(restConfigurationProperties.getMilBasePath(), configuration.getEndpoint(), configuration.getPathParams());
     }
 
     @Override
     public Logger getLogger() {
         return log;
+    }
+
+    @Override
+    public Tracer getTracer() {
+        return this.tracer;
     }
 
     @Override

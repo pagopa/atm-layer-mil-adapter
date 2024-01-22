@@ -1,5 +1,8 @@
 package it.gov.pagopa.miladapter.services;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.Tracer;
 import it.gov.pagopa.miladapter.model.AuthParameters;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
@@ -24,6 +27,7 @@ import java.util.HashMap;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class MILRestServiceImplTest {
@@ -36,6 +40,8 @@ public class MILRestServiceImplTest {
     private TokenService tokenService;
     @Mock
     private RestTemplateGenerator restTemplateGenerator;
+    @Mock
+    Tracer tracer;
     @InjectMocks
     MILRestServiceImpl milRestService;
     private Configuration configuration;
@@ -50,12 +56,20 @@ public class MILRestServiceImplTest {
         configuration.setPathParams(new HashMap<>());
         configuration.setAuthParameters(new AuthParameters());
         when(restConfigurationProperties.getMilBasePath()).thenReturn("http://test-url:8080");
+        SpanBuilder spanBuilder = mock(SpanBuilder.class);
+        when(tracer.spanBuilder(any())).thenReturn(spanBuilder);
+
+        Span span = mock(Span.class);
+        when(spanBuilder.startSpan()).thenReturn(span);
     }
 
     @Test
     public void executeMILRestCallTestOK() {
+
+
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("test response", HttpStatus.OK));
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
+
         VariableMap output = milRestService.executeRestCall(configuration);
         assertEquals("test response", output.get("response"));
         assertEquals(200, output.get("statusCode"));

@@ -1,15 +1,6 @@
 package it.gov.pagopa.miladapter.services.impl;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Service;
-
+import io.opentelemetry.api.trace.Tracer;
 import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
@@ -18,6 +9,15 @@ import it.gov.pagopa.miladapter.services.DefinitionIdRestService;
 import it.gov.pagopa.miladapter.services.TokenService;
 import it.gov.pagopa.miladapter.util.HttpRequestUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -31,6 +31,9 @@ public class DefinitionIdRestServiceImpl implements DefinitionIdRestService {
 
     @Autowired
     TokenService tokenService;
+
+    @Autowired
+    Tracer tracer;
 
     @Override
     public void injectAuthToken(Configuration configuration) {
@@ -49,7 +52,7 @@ public class DefinitionIdRestServiceImpl implements DefinitionIdRestService {
                 configuration.getAuthParameters().getTerminalId() != null
                         ? configuration.getAuthParameters().getTerminalId()
                         : configuration.getAuthParameters().getAcquirerId()
-                                + configuration.getAuthParameters().getCode());
+                        + configuration.getAuthParameters().getCode());
         pathParams.put(RequiredProcessVariables.FUNCTION_ID.getModelValue(), configuration.getFunction());
 
         configuration
@@ -63,6 +66,11 @@ public class DefinitionIdRestServiceImpl implements DefinitionIdRestService {
     @Override
     public Logger getLogger() {
         return log;
+    }
+
+    @Override
+    public Tracer getTracer() {
+        return this.tracer;
     }
 
     @Override
