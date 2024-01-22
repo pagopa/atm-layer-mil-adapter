@@ -4,6 +4,7 @@ import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.AuthParameters;
 import it.gov.pagopa.miladapter.model.KeyToken;
 import it.gov.pagopa.miladapter.model.Token;
+import it.gov.pagopa.miladapter.properties.CacheConfigurationProperties;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,29 +33,47 @@ public class TokenService {
     CacheService cacheService;
     @Autowired
     RestTemplate restTemplate;
+//    @Autowired
+//    private CacheConfigurationProperties cacheConfigurationProperties;
 
 
     public void injectAuthToken(HttpHeaders restHeaders, AuthParameters authParameters) {
-        String accessToken = this.getToken(authParameters);
+        String accessToken = this.getTokenMilAuth(authParameters);
         log.info("MIL Authentication Completed. JWT Token acquired");
         restHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer".concat(" ").concat(accessToken));
     }
 
-    private String getToken(AuthParameters authParameters) {
+//    private String getToken(AuthParameters authParameters) {
+//        KeyToken keyToken = new KeyToken();
+//        keyToken.setChannel(authParameters.getChannel());
+//        keyToken.setAcquirerId(authParameters.getAcquirerId());
+//        keyToken.setTerminalId(authParameters.getTerminalId());
+//        keyToken.setTransactionId(authParameters.getTransactionId());
+//        Optional<Token> optionalToken = cacheService.getToken(keyToken);
+//        if (optionalToken.isPresent()) {
+//            log.info("Recovering still valid access Token");
+//            return optionalToken.get().getAccess_token();
+//        }
+//        log.info("Recovering access Token from mil Auth");
+//        return getTokenMilAuth(authParameters);
+//    }
+
+    private String getTokenMilAuth(AuthParameters authParameters) {
         KeyToken keyToken = new KeyToken();
         keyToken.setChannel(authParameters.getChannel());
         keyToken.setAcquirerId(authParameters.getAcquirerId());
         keyToken.setTerminalId(authParameters.getTerminalId());
         keyToken.setTransactionId(authParameters.getTransactionId());
-//        Optional<Token> optionalToken = cacheService.getToken(keyToken);
         HttpHeaders headers = prepareAuthHeaders(authParameters);
         HttpEntity<?> request = new HttpEntity<>(headers);
         String externalApiUrl = restConfigurationProperties.getMilAuthenticatorBasePath() + restConfigurationProperties.getAuth().getMilAuthenticatorPath();
         ResponseEntity<Token> response = restTemplate.exchange(externalApiUrl, HttpMethod.GET, request, Token.class);
-        if (response.getStatusCode() != HttpStatus.OK) {
+        if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
             throw new RuntimeException("There was an error during the API call" + response.getStatusCode());
         }
         Token token = response.getBody();
+//        token.setExpires_in(cacheConfigurationProperties.getTokenSecurityThreshold());
+//        cacheService.insertToken(keyToken, token);
         return token.getAccess_token();
     }
 

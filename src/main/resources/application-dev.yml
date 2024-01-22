@@ -12,8 +12,8 @@ camunda:
         password: ${MIL_ADAPTER_ENGINE_ACCOUNT_PASSWORD:AurigaNtt.2023}
       max-tasks: 1
 rest-configuration:
-  mil-authenticator-base-path: http://pagopa-dev-atm-layer-mil-authenticator.pagopa.svc.cluster.local:8080
-  mil-base-path: https://mil-d-apim.azure-api.net
+  mil-authenticator-base-path: ${MIL_AUTHENTICATOR_BASE_PATH:http://pagopa-dev-atm-layer-mil-authenticator.pagopa.svc.cluster.local:8080}
+  mil-base-path: ${MIL_ADAPTER_MIL_BASE_PATH:https://mil-d-apim.azure-api.net}
   interceptor-logging-enabled: ${MIL_ADAPTER_ENABLE_INTERCEPTOR_LOGGING:true}
   log-engine-input-variables-enabled: ${MIL_ADAPTER_LOG_ENGINE_INPUT_VARIABLES:true}
   connection-request-timeout-milliseconds: ${MIL_ADAPTER_REST_CONNECTION_REQUEST_TIMEOUT_MILLISECONDS:1000}
