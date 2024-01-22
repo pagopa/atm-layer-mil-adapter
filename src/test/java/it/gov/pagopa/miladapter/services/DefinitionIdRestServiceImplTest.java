@@ -3,11 +3,16 @@ package it.gov.pagopa.miladapter.services;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
 import java.util.HashMap;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.Tracer;
 import org.camunda.bpm.engine.variable.VariableMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,6 +42,9 @@ class DefinitionIdRestServiceImplTest {
     private RestTemplate restTemplate;
 
     @Mock
+    Tracer tracer;
+
+    @Mock
     private TokenService tokenService;
     @Mock
     private RestTemplateGenerator restTemplateGenerator;
@@ -47,6 +55,10 @@ class DefinitionIdRestServiceImplTest {
     @BeforeEach
     public void init() {
         MockitoAnnotations.openMocks(this);
+        SpanBuilder spanBuilder = mock(SpanBuilder.class);
+        when(tracer.spanBuilder(any())).thenReturn(spanBuilder);
+        Span span = mock(Span.class);
+        when(spanBuilder.startSpan()).thenReturn(span);
         configuration = new Configuration();
         configuration.setHttpMethod(HttpMethod.GET);
         configuration.setHeaders(new HttpHeaders());
