@@ -6,7 +6,7 @@ camunda:
       base-url: ${MIL_ADAPTER_ENGINE_URL:http://localhost:8080}/engine-rest
       lock-duration: ${MIL_ADAPTER_LOCK_DURATION:20000}
       disable-backoff-strategy: ${MIL_ADAPTER_DISABLE_BACKOFF_STRATEGY:true}
-      async-response-timeout: ${MIL_ADAPTER_ASYNC_RESPONSE_TIMEOUT:20000}
+      async-response-timeout: ${MIL_ADAPTER_ASYNC_RESPONSE_TIMEOUT:500}
       basic-auth:
         username: ${MIL_ADAPTER_ENGINE_ACCOUNT_USER:admin}
         password: ${MIL_ADAPTER_ENGINE_ACCOUNT_PASSWORD:AurigaNtt.2023}
@@ -34,10 +34,9 @@ cache-configuration:
   max-entries: ${MIL_ADAPTER_TOKEN_CACHE_MAX_ENTRIES:100}
   token-security-threshold: ${MIL_ADAPTER_TOKEN_SECURITY_THRESHOLD_IN_SECONDS:30}
 
-
-#spring:
-#  datasource:
-#    url: ${MIL_ADAPTER_ENGINE_DB_BASE_URL:jdbc:postgresql://localhost:5433}/${MIL_ADAPTER_ENGINE_DB_NAME:postgres}?currentSchema=${MIL_ADAPTER_ENGINE_DB_SCHEMA:atm_layer_camunda}
-#    username: ${MIL_ADAPTER_ENGINE_DB_USERNAME:postgres}
-#    password: ${MIL_ADAPTER_ENGINE_DB_PASSWORD:password}
-#    driverClassName: ${MIL_ADAPTER_ENGINE_DB_DRIVER:org.postgresql.Driver}
+spring:
+  datasource:
+    url: ${MIL_ADAPTER_ENGINE_DB_BASE_URL:jdbc:postgresql://localhost:5433}/${MIL_ADAPTER_ENGINE_DB_NAME:postgres}?currentSchema=${MIL_ADAPTER_ENGINE_DB_SCHEMA:atm_layer_camunda}
+    username: ${MIL_ADAPTER_ENGINE_DB_USERNAME:postgres}
+    password: ${MIL_ADAPTER_ENGINE_DB_PASSWORD:password}
+    driverClassName: ${MIL_ADAPTER_ENGINE_DB_DRIVER:org.postgresql.Driver}
