@@ -58,7 +58,6 @@ class MILRestServiceImplTest {
         when(restConfigurationProperties.getMilBasePath()).thenReturn("http://test-url:8080");
         SpanBuilder spanBuilder = mock(SpanBuilder.class);
         when(tracer.spanBuilder(any())).thenReturn(spanBuilder);
-
         Span span = mock(Span.class);
         when(spanBuilder.startSpan()).thenReturn(span);
     }

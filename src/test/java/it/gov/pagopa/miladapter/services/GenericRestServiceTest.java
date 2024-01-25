@@ -1,5 +1,8 @@
 package it.gov.pagopa.miladapter.services;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.Tracer;
 import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
@@ -38,6 +41,9 @@ class GenericRestServiceTest {
     @Mock
     RestTemplate restTemplateMock;
 
+    @Mock
+    Tracer tracer;
+
     @InjectMocks
     GenericRestServiceNoAuthImpl genericRestService;
 
@@ -45,6 +51,10 @@ class GenericRestServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        SpanBuilder spanBuilder = mock(SpanBuilder.class);
+        when(tracer.spanBuilder(any())).thenReturn(spanBuilder);
+        Span span = mock(Span.class);
+        when(spanBuilder.startSpan()).thenReturn(span);
     }
 
     @Test
