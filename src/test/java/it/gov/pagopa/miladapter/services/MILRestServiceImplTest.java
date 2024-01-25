@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.Logger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,6 +23,7 @@ import java.net.URI;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
@@ -68,5 +70,10 @@ class MILRestServiceImplTest {
         VariableMap output = milRestService.executeRestCall(configuration);
         assertEquals("BAD REQUEST", output.get("response"));
         assertEquals(400, output.get("statusCode"));
+    }
+
+    @Test
+    void getLoggerTest(){
+        assertInstanceOf(Logger.class,milRestService.getLogger());
     }
 }

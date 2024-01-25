@@ -1,6 +1,7 @@
 package it.gov.pagopa.miladapter;
 
 import it.gov.pagopa.miladapter.engine.task.impl.IDPayRestTaskHandler;
+import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.services.IDPayRestService;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
+import org.springframework.http.HttpMethod;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,5 +55,15 @@ class IDPayRestTaskHandlerTest {
     @Test
     void getHttpConfigurationTest() {
         Map<String, Object> variables = new HashMap<>();
+        variables.put("bankId","expectedAcquirer");
+        variables.put("channel","expectedChannel");
+        variables.put("terminalId","expectedTerminal");
+        variables.put("transactionId","expectedTransaction");
+        variables.put("url","expectedEndpoint");
+        variables.put("method","GET");
+        Configuration result=iDpayRestTaskHandler.getHttpConfiguration(variables);
+        assertEquals(HttpMethod.GET, result.getHttpMethod());
+        assertEquals("expectedEndpoint", result.getEndpoint());
+        assertEquals("expectedTransaction",result.getAuthParameters().getTransactionId());
     }
 }

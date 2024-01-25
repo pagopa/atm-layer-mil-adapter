@@ -4,6 +4,9 @@ import it.gov.pagopa.miladapter.model.AuthParameters;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
+import it.gov.pagopa.miladapter.services.TokenService;
+import it.gov.pagopa.miladapter.util.HttpRequestUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,8 +18,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class IDPayRestServiceImplTest {
@@ -24,6 +33,8 @@ class IDPayRestServiceImplTest {
     RestConfigurationProperties restConfigurationProperties;
     @Mock
     RestTemplateGenerator restTemplateGenerator;
+    @Mock
+    TokenService tokenService;
     @InjectMocks
     IDPayRestServiceImpl idPayRestService;
 
@@ -40,9 +51,10 @@ class IDPayRestServiceImplTest {
     }
 
     @Test
-    void injectAuthToken() {
-        when(restConfigurationProperties.getIdPayBasePath()).thenReturn("basepath/");
-        assertEquals(idPayRestService.prepareUri(configuration), (UriComponentsBuilder.fromUriString("basepath/endpoint").build().toUri()));
+    void injectAuthTokenTest() {
+      doNothing().when(tokenService).injectAuthToken(any(HttpHeaders.class),any(AuthParameters.class));
+      idPayRestService.injectAuthToken(configuration);
+      verify(tokenService, times(1)).injectAuthToken(configuration.getHeaders(),configuration.getAuthParameters());
     }
 
     @Test

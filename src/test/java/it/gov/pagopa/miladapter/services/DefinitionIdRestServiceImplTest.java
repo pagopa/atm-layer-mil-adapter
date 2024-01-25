@@ -1,6 +1,7 @@
 package it.gov.pagopa.miladapter.services;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
@@ -15,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.Logger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -90,5 +92,10 @@ class DefinitionIdRestServiceImplTest {
         VariableMap output = definitionIdRestService.executeRestCall(configuration);
         assertEquals("BAD REQUEST", output.get("response"));
         assertEquals(400, output.get("statusCode"));
+    }
+
+    @Test
+    void getLoggerTest(){
+        assertInstanceOf(Logger.class,definitionIdRestService.getLogger());
     }
 }

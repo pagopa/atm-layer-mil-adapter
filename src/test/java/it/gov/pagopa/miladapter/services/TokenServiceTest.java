@@ -27,23 +27,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 class TokenServiceTest {
-
     @InjectMocks
     private TokenService tokenService;
-
     @Mock
     private RestConfigurationProperties restConfigurationProperties;
-
     @Mock
     CacheService cacheService;
-
     @Mock
     RestTemplate restTemplate;
 
@@ -55,9 +48,9 @@ class TokenServiceTest {
     @Test
     void testInjectAuthTokenPresentInCache() {
         HttpHeaders restHeaders = new HttpHeaders();
-        AuthParameters authParameters=getAuthParameters();
-        AuthProperties authProperties=getAuthProperties();
-        Token validToken=getToken();
+        AuthParameters authParameters = getAuthParameters();
+        AuthProperties authProperties = getAuthProperties();
+        Token validToken = getToken();
         when(restConfigurationProperties.getAuth()).thenReturn(authProperties);
         ResponseEntity<Token> mockResponseEntity = new ResponseEntity<>(validToken, HttpStatus.OK);
         when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(Token.class)))
@@ -69,9 +62,9 @@ class TokenServiceTest {
     @Test
     void testInjectAuthTokenNotPresentInCacheOk() {
         HttpHeaders restHeaders = new HttpHeaders();
-        AuthParameters authParameters=getAuthParameters();
-        AuthProperties authProperties=getAuthProperties();
-        Token expectedToken=getToken();
+        AuthParameters authParameters = getAuthParameters();
+        AuthProperties authProperties = getAuthProperties();
+        Token expectedToken = getToken();
         when(restConfigurationProperties.getAuth()).thenReturn(authProperties);
         when(restConfigurationProperties.getMilAuthenticatorBasePath()).thenReturn("test");
         when(cacheService.getToken(any(KeyToken.class))).thenReturn(Optional.empty());
@@ -85,9 +78,9 @@ class TokenServiceTest {
     @Test
     void testInjectAuthTokenNotPresentInCacheKo() {
         HttpHeaders restHeaders = new HttpHeaders();
-        AuthParameters authParameters=getAuthParameters();
-        AuthProperties authProperties=getAuthProperties();
-        Token expectedToken=getToken();
+        AuthParameters authParameters = getAuthParameters();
+        AuthProperties authProperties = getAuthProperties();
+        Token expectedToken = getToken();
         when(restConfigurationProperties.getAuth()).thenReturn(authProperties);
         when(restConfigurationProperties.getMilAuthenticatorBasePath()).thenReturn("test");
         when(cacheService.getToken(any(KeyToken.class))).thenReturn(Optional.empty());
@@ -99,19 +92,20 @@ class TokenServiceTest {
         });
     }
 
-//    @Test
-//    void testGenerateToken(){
-//        AuthParameters authParameters=getAuthParameters();
-//        AuthProperties authProperties=getAuthProperties();
-//        KeyToken keyToken=getKeyToken();
-//        when(restConfigurationProperties.getMilAuthenticatorBasePath()).thenReturn("milAuthenticatorBasePath");
-//        when(restConfigurationProperties.getAuth()).thenReturn(authProperties);
-//        when(restTemplate.exchange(anyString(),any(HttpMethod.class),any(HttpEntity.class),eq(Token.class))).thenReturn();
-//        Token result=tokenService.generateToken(authParameters,keyToken);
-//        assertEquals(getToken(),result);
-//    }
+    @Test
+    void testGenerateToken() {
+        AuthParameters authParameters = getAuthParameters();
+        AuthProperties authProperties = getAuthProperties();
+        KeyToken keyToken = getKeyToken();
+        when(restConfigurationProperties.getMilAuthenticatorBasePath()).thenReturn("milAuthenticatorBasePath");
+        when(restConfigurationProperties.getAuth()).thenReturn(authProperties);
+        ResponseEntity<Token> expectedResponse = new ResponseEntity<>(getToken(), new HttpHeaders(), HttpStatus.OK);
+        when(restTemplate.exchange(anyString(), any(HttpMethod.class), any(HttpEntity.class), eq(Token.class))).thenReturn(expectedResponse);
+        Token result = tokenService.generateToken(authParameters, keyToken);
+        assertEquals(expectedResponse.getBody(), result);
+    }
 
-    private static AuthParameters getAuthParameters(){
+    private static AuthParameters getAuthParameters() {
         AuthParameters authParameters = new AuthParameters();
         authParameters.setRequestId("6762543c-2660-4622-b4d4-8b2bc596df29");
         authParameters.setTerminalId("64874412");
@@ -120,7 +114,8 @@ class TokenServiceTest {
         authParameters.setTransactionId("123");
         return authParameters;
     }
-    private static AuthProperties getAuthProperties(){
+
+    private static AuthProperties getAuthProperties() {
         AuthProperties authProperties = new AuthProperties();
         authProperties.setClientSecret("bea0fc26-fe22-4b26-8230-ef7d4461acf9");
         authProperties.setMilAuthenticatorPath("/MAP");
@@ -128,19 +123,20 @@ class TokenServiceTest {
         authProperties.setGrantType("client_credentials");
         return authProperties;
     }
-    private static Token getToken(){
+
+    private static Token getToken() {
         Token token = new Token();
         token.setAccess_token("valid_token_value");
         token.setToken_type("Bearer");
         return token;
     }
-    private static KeyToken getKeyToken(){
-        KeyToken keyToken=new KeyToken();
+
+    private static KeyToken getKeyToken() {
+        KeyToken keyToken = new KeyToken();
         keyToken.setTerminalId("terminalId");
         keyToken.setAcquirerId("acquirerId");
         keyToken.setChannel("channel");
         keyToken.setTransactionId("transactionId");
         return keyToken;
     }
-
 }
