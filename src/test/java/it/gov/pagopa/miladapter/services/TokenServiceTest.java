@@ -55,20 +55,9 @@ class TokenServiceTest {
     @Test
     void testInjectAuthTokenPresentInCache() {
         HttpHeaders restHeaders = new HttpHeaders();
-        AuthParameters authParameters = new AuthParameters();
-        authParameters.setRequestId("6762543c-2660-4622-b4d4-8b2bc596df29");
-        authParameters.setTerminalId("64874412");
-        authParameters.setAcquirerId("06789");
-        authParameters.setChannel("ATM");
-        authParameters.setTransactionId("123");
-        AuthProperties authProperties = new AuthProperties();
-        authProperties.setClientSecret("bea0fc26-fe22-4b26-8230-ef7d4461acf9");
-        authProperties.setMilAuthenticatorPath("/MAP");
-        authProperties.setClientId("83c0b10f-b398-4cc8-b356-a3e0f0291679");
-        authProperties.setGrantType("client_credentials");
-        Token validToken = new Token();
-        validToken.setAccess_token("valid_token_value");
-        validToken.setToken_type("Bearer");
+        AuthParameters authParameters=getAuthParameters();
+        AuthProperties authProperties=getAuthProperties();
+        Token validToken=getToken();
         when(restConfigurationProperties.getAuth()).thenReturn(authProperties);
         ResponseEntity<Token> mockResponseEntity = new ResponseEntity<>(validToken, HttpStatus.OK);
         when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(Token.class)))
@@ -80,20 +69,9 @@ class TokenServiceTest {
     @Test
     void testInjectAuthTokenNotPresentInCacheOk() {
         HttpHeaders restHeaders = new HttpHeaders();
-        AuthParameters authParameters = new AuthParameters();
-        authParameters.setRequestId("6762543c-2660-4622-b4d4-8b2bc596df29");
-        authParameters.setTerminalId("64874412");
-        authParameters.setAcquirerId("06789");
-        authParameters.setChannel("ATM");
-        authParameters.setTransactionId("123");
-        AuthProperties authProperties = new AuthProperties();
-        authProperties.setClientSecret("bea0fc26-fe22-4b26-8230-ef7d4461acf9");
-        authProperties.setMilAuthenticatorPath("/MAP");
-        authProperties.setClientId("83c0b10f-b398-4cc8-b356-a3e0f0291679");
-        authProperties.setGrantType("client_credentials");
-        Token expectedToken = new Token();
-        expectedToken.setAccess_token("valid_token_value");
-        expectedToken.setToken_type("Bearer");
+        AuthParameters authParameters=getAuthParameters();
+        AuthProperties authProperties=getAuthProperties();
+        Token expectedToken=getToken();
         when(restConfigurationProperties.getAuth()).thenReturn(authProperties);
         when(restConfigurationProperties.getMilAuthenticatorBasePath()).thenReturn("test");
         when(cacheService.getToken(any(KeyToken.class))).thenReturn(Optional.empty());
@@ -107,19 +85,9 @@ class TokenServiceTest {
     @Test
     void testInjectAuthTokenNotPresentInCacheKo() {
         HttpHeaders restHeaders = new HttpHeaders();
-        AuthParameters authParameters = new AuthParameters();
-        authParameters.setRequestId("6762543c-2660-4622-b4d4-8b2bc596df29");
-        authParameters.setTerminalId("64874412");
-        authParameters.setAcquirerId("06789");
-        authParameters.setChannel("ATM");
-        AuthProperties authProperties = new AuthProperties();
-        authProperties.setClientSecret("bea0fc26-fe22-4b26-8230-ef7d4461acf9");
-        authProperties.setMilAuthenticatorPath("/MAP");
-        authProperties.setClientId("83c0b10f-b398-4cc8-b356-a3e0f0291679");
-        authProperties.setGrantType("client_credentials");
-        Token expectedToken = new Token();
-        expectedToken.setAccess_token("valid_token_value");
-        expectedToken.setToken_type("Bearer");
+        AuthParameters authParameters=getAuthParameters();
+        AuthProperties authProperties=getAuthProperties();
+        Token expectedToken=getToken();
         when(restConfigurationProperties.getAuth()).thenReturn(authProperties);
         when(restConfigurationProperties.getMilAuthenticatorBasePath()).thenReturn("test");
         when(cacheService.getToken(any(KeyToken.class))).thenReturn(Optional.empty());
@@ -130,4 +98,49 @@ class TokenServiceTest {
             tokenService.injectAuthToken(restHeaders, authParameters);
         });
     }
+
+//    @Test
+//    void testGenerateToken(){
+//        AuthParameters authParameters=getAuthParameters();
+//        AuthProperties authProperties=getAuthProperties();
+//        KeyToken keyToken=getKeyToken();
+//        when(restConfigurationProperties.getMilAuthenticatorBasePath()).thenReturn("milAuthenticatorBasePath");
+//        when(restConfigurationProperties.getAuth()).thenReturn(authProperties);
+//        when(restTemplate.exchange(anyString(),any(HttpMethod.class),any(HttpEntity.class),eq(Token.class))).thenReturn();
+//        Token result=tokenService.generateToken(authParameters,keyToken);
+//        assertEquals(getToken(),result);
+//    }
+
+    private static AuthParameters getAuthParameters(){
+        AuthParameters authParameters = new AuthParameters();
+        authParameters.setRequestId("6762543c-2660-4622-b4d4-8b2bc596df29");
+        authParameters.setTerminalId("64874412");
+        authParameters.setAcquirerId("06789");
+        authParameters.setChannel("ATM");
+        authParameters.setTransactionId("123");
+        return authParameters;
+    }
+    private static AuthProperties getAuthProperties(){
+        AuthProperties authProperties = new AuthProperties();
+        authProperties.setClientSecret("bea0fc26-fe22-4b26-8230-ef7d4461acf9");
+        authProperties.setMilAuthenticatorPath("/MAP");
+        authProperties.setClientId("83c0b10f-b398-4cc8-b356-a3e0f0291679");
+        authProperties.setGrantType("client_credentials");
+        return authProperties;
+    }
+    private static Token getToken(){
+        Token token = new Token();
+        token.setAccess_token("valid_token_value");
+        token.setToken_type("Bearer");
+        return token;
+    }
+    private static KeyToken getKeyToken(){
+        KeyToken keyToken=new KeyToken();
+        keyToken.setTerminalId("terminalId");
+        keyToken.setAcquirerId("acquirerId");
+        keyToken.setChannel("channel");
+        keyToken.setTransactionId("transactionId");
+        return keyToken;
+    }
+
 }
