@@ -104,6 +104,8 @@ spec:
               value: "{{ .Values.milAuthenticator.basePath }}"
             - name: MIL_AUTHENTICATOR_RELATIVE_PATH
               value: "{{ .Values.milAuthenticator.relativePath }}"
+            - name: MIL_AUTHENTICATOR_RELATIVE_PATH
+              value: "{{ .Values.milAdapter.idPayBasePath }}"
           volumeMounts:
           - name: secrets-store-inline
             mountPath: "/mnt/secrets-store"
