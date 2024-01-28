@@ -39,7 +39,10 @@ public interface RestExternalTaskHandler extends ExternalTaskHandler {
                     () -> getRestService().executeRestCall(configuration), restPoolExecutor);
             Executor complPoolExecutor = this.getTaskComplExecutor();
             resultAsync
-                    .thenAcceptAsync(variableMap -> externalTaskService.complete(externalTask, variableMap), complPoolExecutor);
+                    .thenAcceptAsync(variableMap -> {
+                        getLogger().info("Completing task {} for process instance {}",externalTask.getId(),externalTask.getProcessInstanceId());
+                        externalTaskService.complete(externalTask, variableMap);
+                    }, complPoolExecutor);
 
         } catch (Exception e) {
             getLogger().error("Error on MIL-Adapter execution: {}", e.getMessage(), e);

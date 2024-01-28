@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
@@ -60,11 +61,11 @@ class GenericRestServiceTest {
     @Test
     void testExecuteRestCallSuccess() {
         Configuration configuration = mock(Configuration.class);
-        configuration.setHttpMethod(GET);
 
         when(restConfigurationProperties.getAsyncThreshold()).thenReturn(1000L);
         when(configuration.getDelayMilliseconds()).thenReturn(100);
         when(configuration.getEndpoint()).thenReturn("http://localtest");
+        when(configuration.getHttpMethod()).thenReturn(GET);
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt()))
                 .thenReturn(restTemplateMock);
 

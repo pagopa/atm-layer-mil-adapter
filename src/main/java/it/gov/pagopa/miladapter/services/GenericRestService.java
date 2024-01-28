@@ -11,6 +11,7 @@ import io.opentelemetry.api.trace.TraceState;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
+import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.model.ParentSpanContext;
@@ -54,27 +55,39 @@ public interface GenericRestService {
                     Thread.currentThread().interrupt();
                 }
             }
+            URI url = this.prepareUri(configuration);
+            HttpEntity<String> entity = this.buildHttpEntity(configuration);
+            serviceSpan.setAttribute(SemanticAttributes.HTTP_METHOD, configuration.getHttpMethod().name());
+            serviceSpan.setAttribute(SemanticAttributes.HTTP_URL, url.toString());
+            if (entity.hasBody()) {
+                serviceSpan.setAttribute("http.body", entity.getBody());
+            }
+            serviceSpan.setAttribute("http.headers", entity.getHeaders().toString());
+
             response = this.getRestTemplate(configuration)
-                    .exchange(this.prepareUri(configuration), configuration.getHttpMethod(), this.buildHttpEntity(configuration), String.class);
-            serviceSpan.setAttribute("response", response.toString());
+                    .exchange(url, configuration.getHttpMethod(), entity, String.class);
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             getLogger().error("Exception in HTTP request: ", e);
             response = new ResponseEntity<>(e.getResponseBodyAsString(), e.getStatusCode());
+            serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, e.getStatusCode().value());
+            serviceSpan.setAttribute("http.response.body", e.getResponseBodyAsString());
         } catch (Exception e) {
             getLogger().error("Exception in HTTP request: ", e);
             response = new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } finally {
-            serviceSpan.end();
         }
 
         VariableMap output = Variables.createVariables();
         if (response.getBody() == null) {
             response = new ResponseEntity<>(new JsonObject().toString(), response.getStatusCode());
         }
+        serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, response.getStatusCode().value());
+        serviceSpan.setAttribute("http.response.body", response.getBody());
+        serviceSpan.setAttribute("http.response.headers", response.getHeaders().toString());
         output.putValue(HttpVariablesEnum.RESPONSE.getValue(), response.getBody());
         output.putValue(HttpVariablesEnum.STATUS_CODE.getValue(), response.getStatusCode().value());
         SpinJsonNode headersJsonNode = JSON(response.getHeaders());
         output.putValue(HttpVariablesEnum.RESPONSE_HEADERS.getValue(), headersJsonNode.toString());
+        serviceSpan.end();
         return output;
     }
 
