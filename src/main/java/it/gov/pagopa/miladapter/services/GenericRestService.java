@@ -30,7 +30,6 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.Date;
 
 import static org.camunda.spin.Spin.JSON;
 
@@ -43,11 +42,11 @@ public interface GenericRestService {
         SpanBuilder spanBuilder = this.spanBuilder(configuration);
         Span serviceSpan = spanBuilder.startSpan();
 
-        long asyncTimeout  = getRestConfigurationProperties().getAsyncThreshold();
-        try (Scope scope = serviceSpan.makeCurrent()){
+        long asyncTimeout = getRestConfigurationProperties().getAsyncThreshold();
+        try (Scope scope = serviceSpan.makeCurrent()) {
             if (configuration.getDelayMilliseconds() != null) {
-                if (configuration.getDelayMilliseconds() > asyncTimeout/2) {
-                    throw new RuntimeException(String.format("The delay between consecutive retries must be lower than: %s ms", asyncTimeout/2));
+                if (configuration.getDelayMilliseconds() > asyncTimeout / 2) {
+                    throw new RuntimeException(String.format("The delay between consecutive retries must be lower than: %s ms", asyncTimeout / 2));
                 }
                 try {
                     Thread.sleep(configuration.getDelayMilliseconds());
@@ -113,7 +112,7 @@ public interface GenericRestService {
             }
         }
 
-        SpanBuilder spanBuilder = getTracer().spanBuilder("MIL-Adapter-RestCall-Execution" + new Date());
+        SpanBuilder spanBuilder = getTracer().spanBuilder("MIL-Adapter-RestCall-Execution");
         if (parentSpanContext.isNotNull()) {
             SpanContext parentContext = SpanContext.createFromRemoteParent(parentSpanContext.getTraceId(), parentSpanContext.getSpanId(), TraceFlags.getSampled(), TraceState.getDefault());
             Span parentSpan = Span.wrap(parentContext);

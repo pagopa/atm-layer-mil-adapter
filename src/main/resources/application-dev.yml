@@ -1,5 +1,5 @@
 server:
-  port: 8085
+  port: ${SERVER_PORT:8085}
 camunda:
   bpm:
     client:
@@ -10,7 +10,7 @@ camunda:
       basic-auth:
         username: ${MIL_ADAPTER_ENGINE_ACCOUNT_USER:admin}
         password: ${MIL_ADAPTER_ENGINE_ACCOUNT_PASSWORD:AurigaNtt.2023}
-      max-tasks: 1
+      max-tasks: 40
 rest-configuration:
   mil-base-path: ${MIL_ADAPTER_MIL_BASE_PATH:https://mil-d-apim.azure-api.net}
   interceptor-logging-enabled: ${MIL_ADAPTER_ENABLE_INTERCEPTOR_LOGGING:true}
@@ -44,6 +44,19 @@ spring:
     driverClassName: ${MIL_ADAPTER_ENGINE_DB_DRIVER:org.postgresql.Driver}
 tracing:
   url: ${MIL_ADAPTER_TRACING_BACKEND_URL:http://localhost:4317}
+
+adapter-pool-configuration:
+  rest:
+    core-pool-size: 5
+    max-pool-size: 25
+    thread-name: MILA-RestPool-
+    name: restThreadPool
+  completion:
+    core-pool-size: 5
+    max-pool-size: 25
+    thread-name: MILA-CompPool-
+    name: completionThreadPool
+
 
 management:
   tracing:
