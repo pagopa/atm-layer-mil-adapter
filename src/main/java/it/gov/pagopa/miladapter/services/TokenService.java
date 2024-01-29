@@ -57,24 +57,24 @@ public class TokenService {
         return generateToken(authParameters, keyToken).getAccess_token();
     }
 
-    private String getTokenMilAuth(AuthParameters authParameters) {
-        KeyToken keyToken = new KeyToken();
-        keyToken.setChannel(authParameters.getChannel());
-        keyToken.setAcquirerId(authParameters.getAcquirerId());
-        keyToken.setTerminalId(authParameters.getTerminalId());
-        keyToken.setTransactionId(authParameters.getTransactionId());
-        HttpHeaders headers = prepareAuthHeaders(authParameters);
-        HttpEntity<?> request = new HttpEntity<>(headers);
-        String externalApiUrl = restConfigurationProperties.getMilAuthenticatorBasePath() + restConfigurationProperties.getAuth().getMilAuthenticatorPath();
-        ResponseEntity<Token> response = restTemplate.exchange(externalApiUrl, HttpMethod.GET, request, Token.class);
-        if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
-            throw new RuntimeException("There was an error during the API call" + response.getStatusCode());
-        }
-        Token token = response.getBody();
-//        token.setExpires_in(cacheConfigurationProperties.getTokenSecurityThreshold());
-//        cacheService.insertToken(keyToken, token);
-        return token.getAccess_token();
-    }
+//    private String getTokenMilAuth(AuthParameters authParameters) {
+//        KeyToken keyToken = new KeyToken();
+//        keyToken.setChannel(authParameters.getChannel());
+//        keyToken.setAcquirerId(authParameters.getAcquirerId());
+//        keyToken.setTerminalId(authParameters.getTerminalId());
+//        keyToken.setTransactionId(authParameters.getTransactionId());
+//        HttpHeaders headers = prepareAuthHeaders(authParameters);
+//        HttpEntity<?> request = new HttpEntity<>(headers);
+//        String externalApiUrl = restConfigurationProperties.getMilAuthenticatorBasePath() + restConfigurationProperties.getAuth().getMilAuthenticatorPath();
+//        ResponseEntity<Token> response = restTemplate.exchange(externalApiUrl, HttpMethod.GET, request, Token.class);
+//        if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
+//            throw new RuntimeException("There was an error during the API call" + response.getStatusCode());
+//        }
+//        Token token = response.getBody();
+////        token.setExpires_in(cacheConfigurationProperties.getTokenSecurityThreshold());
+////        cacheService.insertToken(keyToken, token);
+//        return token.getAccess_token();
+//    }
 
     public Token generateToken(AuthParameters authParameters, KeyToken keyToken) {
         log.info("MIL Authentication flow started");
