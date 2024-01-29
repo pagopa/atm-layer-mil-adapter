@@ -24,7 +24,7 @@ milAdapter:
   disableBackoffStrategy: true
   lockDuration: 20000
   asyncResponseTimeout: 20000
-  milBasePath: https://mil-d-apim.azure-api.net
+  milBasePath: https://mil-u-apim.azure-api.net
   enableInterceptorLogging: true
   logEngineInputVariables: true
   restReadTimeout: 20000
@@ -34,7 +34,7 @@ milAdapter:
   tokenCacheName: token-cache
   tokenCacheMaxEntries: 100
   modelBasePath: http://pagopa-uat-atm-layer-model.pagopa.svc.cluster.local:8080
-  idPayBasePath: https://api-io.uat.cstar.pagopa.it
+  idPayBasePath: https://api-io.uat.cstar.pagopa.it/
   restPoolCorePoolSize: 5
   restPoolMaxPoolSize: 25
   completionPoolCorePoolSize: 5
