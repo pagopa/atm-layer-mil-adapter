@@ -38,25 +38,24 @@ public class TokenService {
 
 
     public void injectAuthToken(HttpHeaders restHeaders, AuthParameters authParameters) {
-        String accessToken = this.getTokenMilAuth(authParameters);
+        String accessToken = this.getToken(authParameters);
         log.info("MIL Authentication Completed. JWT Token acquired");
         restHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer".concat(" ").concat(accessToken));
     }
 
-//    private String getToken(AuthParameters authParameters) {
-//        KeyToken keyToken = new KeyToken();
-//        keyToken.setChannel(authParameters.getChannel());
-//        keyToken.setAcquirerId(authParameters.getAcquirerId());
-//        keyToken.setTerminalId(authParameters.getTerminalId());
+    private String getToken(AuthParameters authParameters) {
+        KeyToken keyToken = new KeyToken();
+        keyToken.setChannel(authParameters.getChannel());
+        keyToken.setAcquirerId(authParameters.getAcquirerId());
+        keyToken.setTerminalId(authParameters.getTerminalId());
 //        keyToken.setTransactionId(authParameters.getTransactionId());
-//        Optional<Token> optionalToken = cacheService.getToken(keyToken);
-//        if (optionalToken.isPresent()) {
-//            log.info("Recovering still valid access Token");
-//            return optionalToken.get().getAccess_token();
-//        }
-//        log.info("Recovering access Token from mil Auth");
-//        return getTokenMilAuth(authParameters);
-//    }
+        Optional<Token> optionalToken = cacheService.getToken(keyToken);
+        if (optionalToken.isPresent()) {
+            log.info("Recovering still valid access Token");
+            return optionalToken.get().getAccess_token();
+        }
+        return generateToken(authParameters, keyToken).getAccess_token();
+    }
 
     private String getTokenMilAuth(AuthParameters authParameters) {
         KeyToken keyToken = new KeyToken();
@@ -82,7 +81,7 @@ public class TokenService {
         HttpHeaders headers = prepareAuthHeaders(authParameters);
 
         HttpEntity<MultiValueMap<String, String>> request = prepareAuthBody(headers);
-        String externalApiUrl = restConfigurationProperties.getMilAuthenticatorBasePath() + restConfigurationProperties.getAuth().getMilAuthenticatorPath();
+        String externalApiUrl = restConfigurationProperties.getMilBasePath() + restConfigurationProperties.getAuth().getMilAuthPath();
         ResponseEntity<Token> response = restTemplate.exchange(externalApiUrl, HttpMethod.POST, request, Token.class);
 
         if (response.getStatusCode() != HttpStatus.OK) {
