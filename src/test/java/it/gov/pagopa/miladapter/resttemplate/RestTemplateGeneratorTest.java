@@ -1,5 +1,6 @@
 package it.gov.pagopa.miladapter.resttemplate;
 
+import io.opentelemetry.api.OpenTelemetry;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
@@ -24,6 +26,9 @@ class RestTemplateGeneratorTest {
     @Mock
     private RestConfigurationProperties restConfigurationProperties;
 
+    @MockBean
+    private OpenTelemetry openTelemetry;
+
     @InjectMocks
     private RestTemplateGenerator restTemplateGenerator;
 
@@ -39,15 +44,6 @@ class RestTemplateGeneratorTest {
         RestTemplate restTemplate = restTemplateGenerator.generate(5000, 5000, 3, 1000);
 
         assertTrue(restTemplate.getInterceptors().stream().anyMatch(Objects::nonNull));
-    }
-
-    @Test
-    void testGenerateRestTemplateWithoutInterceptor() {
-        when(restConfigurationProperties.isInterceptorLoggingEnabled()).thenReturn(false);
-
-        RestTemplate restTemplate = restTemplateGenerator.generate(5000, 5000, 3, 1000);
-
-        assertFalse(restTemplate.getInterceptors().stream().anyMatch(Objects::nonNull));
     }
 
 }

@@ -4,12 +4,14 @@ import it.gov.pagopa.miladapter.engine.task.impl.IDPayRestTaskHandler;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.services.IDPayRestService;
+import org.h2.util.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpMethod;
 
 import java.util.HashMap;
@@ -24,12 +26,32 @@ class IDPayRestTaskHandlerTest {
     IDPayRestService iDpayRestService;
     @Mock
     RestConfigurationProperties restConfigurationProperties;
+    @Mock
+    TaskExecutor taskRestExecutor;
+    @Mock
+    TaskExecutor taskComplExecutor;
     @InjectMocks
     IDPayRestTaskHandler iDpayRestTaskHandler;
+    private int maxTaskConfig;
 
     @BeforeEach
     void init() {
         MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void getTaskRestExecutorTest(){
+        assertEquals(taskRestExecutor,iDpayRestTaskHandler.getTaskRestExecutor());
+    }
+
+    @Test
+    void getTaskComplExecutorTest(){
+        assertEquals(taskComplExecutor,iDpayRestTaskHandler.getTaskComplExecutor());
+    }
+
+    @Test
+    void getMaxTasks(){
+        assertEquals(maxTaskConfig,iDpayRestTaskHandler.getMaxTasks());
     }
 
     @Test

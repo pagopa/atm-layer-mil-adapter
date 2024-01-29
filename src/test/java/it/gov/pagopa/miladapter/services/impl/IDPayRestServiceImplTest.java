@@ -1,5 +1,6 @@
 package it.gov.pagopa.miladapter.services.impl;
 
+import io.opentelemetry.api.trace.Tracer;
 import it.gov.pagopa.miladapter.model.AuthParameters;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
@@ -35,6 +36,8 @@ class IDPayRestServiceImplTest {
     RestTemplateGenerator restTemplateGenerator;
     @Mock
     TokenService tokenService;
+    @Mock
+    Tracer tracer;
     @InjectMocks
     IDPayRestServiceImpl idPayRestService;
 
@@ -66,6 +69,11 @@ class IDPayRestServiceImplTest {
     @Test
     void getLoggerTest() {
         assertInstanceOf(Logger.class,idPayRestService.getLogger());
+    }
+
+    @Test
+    void getTracerTest(){
+        assertEquals(tracer,idPayRestService.getTracer());
     }
 
     @Test

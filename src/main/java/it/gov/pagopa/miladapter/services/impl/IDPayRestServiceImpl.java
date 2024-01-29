@@ -1,5 +1,6 @@
 package it.gov.pagopa.miladapter.services.impl;
 
+import io.opentelemetry.api.trace.Tracer;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
@@ -23,6 +24,8 @@ public class IDPayRestServiceImpl implements IDPayRestService {
     RestTemplateGenerator restTemplateGenerator;
     @Autowired
     TokenService tokenService;
+    @Autowired
+    Tracer tracer;
 
     @Override
     public void injectAuthToken(Configuration configuration) {
@@ -37,6 +40,11 @@ public class IDPayRestServiceImpl implements IDPayRestService {
     @Override
     public Logger getLogger() {
         return log;
+    }
+
+    @Override
+    public Tracer getTracer() {
+        return this.tracer;
     }
 
     @Override
