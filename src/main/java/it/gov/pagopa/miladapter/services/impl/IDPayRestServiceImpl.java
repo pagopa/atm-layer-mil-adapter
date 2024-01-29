@@ -8,10 +8,11 @@ import it.gov.pagopa.miladapter.services.IDPayRestService;
 import it.gov.pagopa.miladapter.services.TokenService;
 import it.gov.pagopa.miladapter.util.HttpRequestUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.jvnet.hk2.annotations.Service;
+
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.stereotype.Service;
 
 import java.net.URI;
 
