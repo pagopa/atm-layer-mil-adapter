@@ -35,6 +35,12 @@ milAdapter:
   tokenCacheMaxEntries: 100
   modelBasePath: http://pagopa-dev-atm-layer-model.pagopa.svc.cluster.local:8080
   idPayBasePath: https://api-io.dev.cstar.pagopa.it
+  restPoolCorePoolSize: 5
+  restPoolMaxPoolSize: 25
+  completionPoolCorePoolSize: 5
+  completionPoolMaxPoolSize: 25
+  completionPoolThreadName: MILA-CompPool-
+  tracingBackendUrl: http://jaeger-collector.default.svc.cluster.local:4317
 
 milAuth:
   credentialsSecretName: "pagopa-dev-atm-layer-mil-adapter-mil-auth"
