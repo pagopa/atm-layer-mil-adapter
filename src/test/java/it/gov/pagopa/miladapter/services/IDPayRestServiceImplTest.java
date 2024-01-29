@@ -1,10 +1,11 @@
-package it.gov.pagopa.miladapter.services.impl;
+package it.gov.pagopa.miladapter.services;
 
 import it.gov.pagopa.miladapter.model.AuthParameters;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
 import it.gov.pagopa.miladapter.services.TokenService;
+import it.gov.pagopa.miladapter.services.impl.IDPayRestServiceImpl;
 import it.gov.pagopa.miladapter.util.HttpRequestUtils;
 import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;

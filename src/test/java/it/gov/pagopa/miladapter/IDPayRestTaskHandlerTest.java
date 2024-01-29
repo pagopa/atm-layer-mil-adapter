@@ -6,11 +6,13 @@ import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.services.IDPayRestService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.springframework.http.HttpMethod;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(SpringExtension.class)
 class IDPayRestTaskHandlerTest {
     @Mock
     IDPayRestService iDpayRestService;
