@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class OpenTelemetryConfig {
 
     @Bean
-    OtlpGrpcSpanExporter otlpHttpSpanExporter(@Value("${tracing.url}") String url) {
+    OtlpGrpcSpanExporter otlpGrpcSpanExporter(@Value("${tracing.url}") String url) {
         return OtlpGrpcSpanExporter.builder()
                 .setEndpoint(url)
                 .build();

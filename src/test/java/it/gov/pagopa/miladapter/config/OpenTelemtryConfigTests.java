@@ -10,7 +10,7 @@ class OpenTelemtryConfigTests {
 
     @Test
     void customPoolTest() {
-        OtlpGrpcSpanExporter otlpGrpcSpanExporter = openTelemetryConfig.otlpHttpSpanExporter("http://provaUrl");
+        OtlpGrpcSpanExporter otlpGrpcSpanExporter = openTelemetryConfig.otlpGrpcSpanExporter("http://provaUrl");
         assert (otlpGrpcSpanExporter != null);
 
     }
