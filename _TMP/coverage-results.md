@@ -6,10 +6,10 @@
       
 | Outcome                 | Value                                                               |
 |-------------------------|---------------------------------------------------------------------|
-| Code Coverage %         | 91.06%               |
-| :heavy_check_mark: Number of Lines Covered | 377    |
-| :x: Number of Lines Missed  | 37     |
-| Total Number of Lines   | 414     |
+| Code Coverage %         | 95.81%               |
+| :heavy_check_mark: Number of Lines Covered | 412    |
+| :x: Number of Lines Missed  | 18     |
+| Total Number of Lines   | 430     |
 
 
 ## Details:
@@ -237,6 +237,16 @@
 
 <details>
     <summary>
+:x: IDPayRestService.java
+    </summary>
+
+        
+</details>
+
+    
+
+<details>
+    <summary>
 :x: GenericRestServiceNoAuth.java
     </summary>
 
@@ -304,6 +314,18 @@
 
 <details>
     <summary>
+:heavy_check_mark: IDPayRestTaskHandler.java
+    </summary>
+
+        
+#### All Lines Covered!
+        
+</details>
+
+    
+
+<details>
+    <summary>
 :heavy_check_mark: MILRestTaskHandler.java
     </summary>
 
@@ -354,11 +376,11 @@
 
 <details>
     <summary>
-:x: MILRestServiceImpl.java
+:heavy_check_mark: MILRestServiceImpl.java
     </summary>
 
         
-#### Lines Missed:
+#### All Lines Covered!
         
 </details>
 
@@ -390,11 +412,23 @@
 
 <details>
     <summary>
-:x: DefinitionIdRestServiceImpl.java
+:heavy_check_mark: DefinitionIdRestServiceImpl.java
     </summary>
 
         
-#### Lines Missed:
+#### All Lines Covered!
+        
+</details>
+
+    
+
+<details>
+    <summary>
+:heavy_check_mark: IDPayRestServiceImpl.java
+    </summary>
+
+        
+#### All Lines Covered!
         
 </details>
 
