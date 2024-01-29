@@ -1,5 +1,5 @@
 server:
-  port: 8085
+  port: ${SERVER_PORT:8085}
 camunda:
   bpm:
     client:
@@ -10,7 +10,7 @@ camunda:
       basic-auth:
         username: ${MIL_ADAPTER_ENGINE_ACCOUNT_USER:admin}
         password: ${MIL_ADAPTER_ENGINE_ACCOUNT_PASSWORD:AurigaNtt.2023}
-      max-tasks: 1
+      max-tasks: 40
 rest-configuration:
   mil-authenticator-base-path: ${MIL_AUTHENTICATOR_BASE_PATH:http://pagopa-dev-atm-layer-mil-authenticator.pagopa.svc.cluster.local:8080}
   mil-base-path: ${MIL_ADAPTER_MIL_BASE_PATH:https://mil-d-apim.azure-api.net}
@@ -37,10 +37,35 @@ cache-configuration:
   max-entries: ${MIL_ADAPTER_TOKEN_CACHE_MAX_ENTRIES:100}
   token-security-threshold: ${MIL_ADAPTER_TOKEN_SECURITY_THRESHOLD_IN_SECONDS:30}
 
-
 spring:
+  application:
+    name: mil-adapter
   datasource:
     url: ${MIL_ADAPTER_ENGINE_DB_BASE_URL:jdbc:postgresql://localhost:5433}/${MIL_ADAPTER_ENGINE_DB_NAME:postgres}?currentSchema=${MIL_ADAPTER_ENGINE_DB_SCHEMA:atm_layer_camunda}
     username: ${MIL_ADAPTER_ENGINE_DB_USERNAME:postgres}
     password: ${MIL_ADAPTER_ENGINE_DB_PASSWORD:password}
     driverClassName: ${MIL_ADAPTER_ENGINE_DB_DRIVER:org.postgresql.Driver}
+tracing:
+  url: ${MIL_ADAPTER_TRACING_BACKEND_URL:http://localhost:4317}
+
+adapter-pool-configuration:
+  rest:
+    core-pool-size: 5
+    max-pool-size: 25
+    thread-name: MILA-RestPool-
+    name: restThreadPool
+  completion:
+    core-pool-size: 5
+    max-pool-size: 25
+    thread-name: MILA-CompPool-
+    name: completionThreadPool
+
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"

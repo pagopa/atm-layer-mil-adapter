@@ -1,5 +1,8 @@
 package it.gov.pagopa.miladapter.services;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.Tracer;
 import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
@@ -12,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
@@ -38,6 +42,9 @@ class GenericRestServiceTest {
     @Mock
     RestTemplate restTemplateMock;
 
+    @Mock
+    Tracer tracer;
+
     @InjectMocks
     GenericRestServiceNoAuthImpl genericRestService;
 
@@ -45,16 +52,20 @@ class GenericRestServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        SpanBuilder spanBuilder = mock(SpanBuilder.class);
+        when(tracer.spanBuilder(any())).thenReturn(spanBuilder);
+        Span span = mock(Span.class);
+        when(spanBuilder.startSpan()).thenReturn(span);
     }
 
     @Test
     void testExecuteRestCallSuccess() {
         Configuration configuration = mock(Configuration.class);
-        configuration.setHttpMethod(GET);
 
         when(restConfigurationProperties.getAsyncThreshold()).thenReturn(1000L);
         when(configuration.getDelayMilliseconds()).thenReturn(100);
         when(configuration.getEndpoint()).thenReturn("http://localtest");
+        when(configuration.getHttpMethod()).thenReturn(GET);
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt()))
                 .thenReturn(restTemplateMock);
 

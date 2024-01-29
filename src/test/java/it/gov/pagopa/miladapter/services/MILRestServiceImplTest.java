@@ -1,5 +1,8 @@
 package it.gov.pagopa.miladapter.services;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.Tracer;
 import it.gov.pagopa.miladapter.model.AuthParameters;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
@@ -26,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class MILRestServiceImplTest {
@@ -38,6 +42,8 @@ class MILRestServiceImplTest {
     private TokenService tokenService;
     @Mock
     private RestTemplateGenerator restTemplateGenerator;
+    @Mock
+    Tracer tracer;
     @InjectMocks
     MILRestServiceImpl milRestService;
     private Configuration configuration;
@@ -52,6 +58,10 @@ class MILRestServiceImplTest {
         configuration.setPathParams(new HashMap<>());
         configuration.setAuthParameters(new AuthParameters());
         when(restConfigurationProperties.getMilBasePath()).thenReturn("http://test-url:8080");
+        SpanBuilder spanBuilder = mock(SpanBuilder.class);
+        when(tracer.spanBuilder(any())).thenReturn(spanBuilder);
+        Span span = mock(Span.class);
+        when(spanBuilder.startSpan()).thenReturn(span);
     }
 
     @Test

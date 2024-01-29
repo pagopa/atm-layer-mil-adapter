@@ -1,8 +1,12 @@
 package it.gov.pagopa.miladapter.config;
 
+import io.opentelemetry.api.OpenTelemetry;
+import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.mock.http.client.MockClientHttpRequest;
 import org.springframework.mock.http.client.MockClientHttpResponse;
@@ -22,16 +26,25 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(classes = {HttpRequestInterceptor.class})
 class HttpRequestInterceptorTest {
 
+    @MockBean
+    OpenTelemetry openTelemetry;
+
+    @MockBean
+    RestConfigurationProperties restConfigurationProperties;
+
     @InjectMocks
     private HttpRequestInterceptor httpRequestInterceptor;
 
     @Test
     void testIntercept() throws IOException {
+        httpRequestInterceptor = new HttpRequestInterceptor(openTelemetry,restConfigurationProperties);
         MockClientHttpRequest request = new MockClientHttpRequest();
         byte[] body = "body".getBytes(StandardCharsets.UTF_8);
         ClientHttpRequestExecution clientHttpRequestExecution = mock(ClientHttpRequestExecution.class);
         MockClientHttpResponse mockClientHttpResponse = new MockClientHttpResponse();
         when(clientHttpRequestExecution.execute(any(), any())).thenReturn(mockClientHttpResponse);
+        when(restConfigurationProperties.isInterceptorLoggingEnabled()).thenReturn(true);
+
         assertSame(mockClientHttpResponse, httpRequestInterceptor.intercept(request, body, clientHttpRequestExecution));
         verify(clientHttpRequestExecution).execute(any(), any());
     }

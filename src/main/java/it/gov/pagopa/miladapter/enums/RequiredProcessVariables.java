@@ -16,6 +16,7 @@ public enum RequiredProcessVariables {
     BRANCH_ID("branchId", null, "branchId"),
     FUNCTION_ID("functionId", null, "functionType"),
     CODE("code", null, "code"),
+    ACTIVITY_PARENT_SPAN("activityParentSpan", null, null),
     TRANSACTION_ID("transactionId", "TransactionId", null);
 
     private String engineValue;
