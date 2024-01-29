@@ -55,8 +55,10 @@ class TokenServiceTest {
         ResponseEntity<Token> mockResponseEntity = new ResponseEntity<>(validToken, HttpStatus.OK);
         when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(Token.class)))
                 .thenReturn(mockResponseEntity);
+        when(cacheService.getToken(any(KeyToken.class))).thenReturn(Optional.of(validToken));
         tokenService.injectAuthToken(restHeaders, authParameters);
         assertTrue(restHeaders.containsKey(HttpHeaders.AUTHORIZATION));
+
     }
 
     @Test
@@ -67,9 +69,11 @@ class TokenServiceTest {
         Token expectedToken = getToken();
         when(restConfigurationProperties.getAuth()).thenReturn(authProperties);
         when(restConfigurationProperties.getMilAuthenticatorBasePath()).thenReturn("test");
+        when(restConfigurationProperties.getMilBasePath()).thenReturn("test");
         when(cacheService.getToken(any(KeyToken.class))).thenReturn(Optional.empty());
         ResponseEntity<Token> mockResponseEntity = new ResponseEntity<>(expectedToken, HttpStatus.OK);
-        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(Token.class)))
+        when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(Token.class)))
+//        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(), eq(Token.class)))
                 .thenReturn(mockResponseEntity);
         tokenService.injectAuthToken(restHeaders, authParameters);
         assertTrue(restHeaders.containsKey(HttpHeaders.AUTHORIZATION));
@@ -82,6 +86,7 @@ class TokenServiceTest {
         AuthProperties authProperties = getAuthProperties();
         Token expectedToken = getToken();
         when(restConfigurationProperties.getAuth()).thenReturn(authProperties);
+        when(restConfigurationProperties.getMilBasePath()).thenReturn("test");
         when(restConfigurationProperties.getMilAuthenticatorBasePath()).thenReturn("test");
         when(cacheService.getToken(any(KeyToken.class))).thenReturn(Optional.empty());
         ResponseEntity<Token> mockResponseEntity = new ResponseEntity<>(expectedToken, HttpStatus.BAD_REQUEST);
@@ -119,6 +124,7 @@ class TokenServiceTest {
         AuthProperties authProperties = new AuthProperties();
         authProperties.setClientSecret("bea0fc26-fe22-4b26-8230-ef7d4461acf9");
         authProperties.setMilAuthenticatorPath("/MAP");
+        authProperties.setMilAuthPath("/MAP");
         authProperties.setClientId("83c0b10f-b398-4cc8-b356-a3e0f0291679");
         authProperties.setGrantType("client_credentials");
         return authProperties;
