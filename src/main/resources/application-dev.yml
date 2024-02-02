@@ -2,6 +2,7 @@ server:
   port: ${SERVER_PORT:8085}
 camunda:
   bpm:
+    history-level: NONE
     client:
       base-url: ${MIL_ADAPTER_ENGINE_URL:http://localhost:8080}/engine-rest
       lock-duration: ${MIL_ADAPTER_LOCK_DURATION:20000}
