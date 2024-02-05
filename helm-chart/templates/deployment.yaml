@@ -9,7 +9,9 @@ metadata:
     {{- toYaml .Values.deployment.annotations | nindent 4 }}
 
 spec:
-  # replicas: {{ .Values.replicaCount }}
+  {{- if .Values.autoscaling.disabled -}}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
       App: {{ .Values.deployment.name }}
@@ -122,6 +124,7 @@ spec:
           - name: secrets-store-inline
             mountPath: "/mnt/secrets-store"
             readOnly: true
+          {{- if .Values.autoscaling.enabled }}
           resources:
             limits:
               cpu: {{ .Values.autoscaling.cpuLimits }}
@@ -129,6 +132,7 @@ spec:
             requests:
               cpu: {{ .Values.autoscaling.cpuRequest }}
               memory: {{ .Values.autoscaling.memoryRequests }}
+          {{- end }}
 
   strategy:
     type: Recreate
