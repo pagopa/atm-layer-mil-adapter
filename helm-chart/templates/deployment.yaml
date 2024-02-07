@@ -9,7 +9,9 @@ metadata:
     {{- toYaml .Values.deployment.annotations | nindent 4 }}
 
 spec:
-  # replicas: {{ .Values.replicaCount }}
+  {{- if .Values.autoscaling.disabled -}}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
       App: {{ .Values.deployment.name }}
@@ -21,12 +23,14 @@ spec:
     spec:
       serviceAccountName: {{ include "atm-layer-mil-adapter.serviceAccountName" . }}
       volumes:
+      {{- if .Values.secretProviderClass.enabled }}
       - name: secrets-store-inline
         csi:
           driver: secrets-store.csi.k8s.io
           readOnly: true 
           volumeAttributes:
             secretProviderClass: {{ .Values.secretProviderClass.name }}
+      {{- end }}
       containers:
         - name: {{ .Values.deployment.name }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -100,10 +104,31 @@ spec:
               value: "{{ .Values.milAdapter.tokenCacheMaxEntries }}"
             - name: MIL_ADAPTER_MODEL_BASE_PATH
               value: "{{ .Values.milAdapter.modelBasePath }}"
+            - name: MIL_AUTHENTICATOR_BASE_PATH
+              value: "{{ .Values.milAuthenticator.basePath }}"
+            - name: MIL_AUTHENTICATOR_RELATIVE_PATH
+              value: "{{ .Values.milAuthenticator.relativePath }}"
+            - name: MIL_ADAPTER_ID_PAY_BASE_PATH
+              value: "{{ .Values.milAdapter.idPayBasePath }}"
+            - name: MIL_ADAPTER_REST_POOL_CORE_POOL_SIZE
+              value: "{{ .Values.milAdapter.restPoolCorePoolSize }}"
+            - name: MIL_ADAPTER_REST_POOL_MAX_POOL_SIZE
+              value: "{{ .Values.milAdapter.restPoolMaxPoolSize }}"
+            - name: MIL_ADAPTER_COMPLETION_POOL_CORE_POOL_SIZE
+              value: "{{ .Values.milAdapter.completionPoolCorePoolSize }}"
+            - name: MIL_ADAPTER_COMPLETION_POOL_MAX_POOL_SIZE
+              value: "{{ .Values.milAdapter.completionPoolMaxPoolSize }}"
+            - name: MIL_ADAPTER_COMPLETION_POOL_THREAD_NAME
+              value: "{{ .Values.milAdapter.completionPoolThreadName }}"
+            - name: MIL_ADAPTER_TRACING_BACKEND_URL
+              value: "{{ .Values.milAdapter.tracingBackendUrl }}"
           volumeMounts:
+          {{- if .Values.secretProviderClass.enabled }}
           - name: secrets-store-inline
             mountPath: "/mnt/secrets-store"
             readOnly: true
+          {{- end }}
+          {{- if .Values.autoscaling.enabled }}
           resources:
             limits:
               cpu: {{ .Values.autoscaling.cpuLimits }}
@@ -111,6 +136,7 @@ spec:
             requests:
               cpu: {{ .Values.autoscaling.cpuRequest }}
               memory: {{ .Values.autoscaling.memoryRequests }}
+          {{- end }}
 
   strategy:
     type: Recreate

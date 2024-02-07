@@ -1,7 +1,8 @@
 server:
-  port: 8085
+  port: ${SERVER_PORT:8085}
 camunda:
   bpm:
+    history-level: NONE
     client:
       base-url: ${MIL_ADAPTER_ENGINE_URL:http://localhost:8080}/engine-rest
       lock-duration: ${MIL_ADAPTER_LOCK_DURATION:20000}
@@ -10,9 +11,11 @@ camunda:
       basic-auth:
         username: ${MIL_ADAPTER_ENGINE_ACCOUNT_USER:admin}
         password: ${MIL_ADAPTER_ENGINE_ACCOUNT_PASSWORD:AurigaNtt.2023}
-      max-tasks: 1
+      max-tasks: 40
 rest-configuration:
+  mil-authenticator-base-path: ${MIL_AUTHENTICATOR_BASE_PATH:http://pagopa-dev-atm-layer-mil-authenticator.pagopa.svc.cluster.local:8080}
   mil-base-path: ${MIL_ADAPTER_MIL_BASE_PATH:https://mil-d-apim.azure-api.net}
+  id-pay-base-path: ${MIL_ADAPTER_ID_PAY_BASE_PATH:https://api-io.dev.cstar.pagopa.it}
   interceptor-logging-enabled: ${MIL_ADAPTER_ENABLE_INTERCEPTOR_LOGGING:true}
   log-engine-input-variables-enabled: ${MIL_ADAPTER_LOG_ENGINE_INPUT_VARIABLES:true}
   connection-request-timeout-milliseconds: ${MIL_ADAPTER_REST_CONNECTION_REQUEST_TIMEOUT_MILLISECONDS:1000}
@@ -22,6 +25,7 @@ rest-configuration:
   async-threshold: ${MIL_ADAPTER_ASYNC_RESPONSE_TIMEOUT:20000}
   model-base-path: ${MIL_ADAPTER_MODEL_BASE_PATH:http://pagopa-dev-atm-layer-model.pagopa.svc.cluster.local:8080}
   auth:
+    mil-authenticator-path: ${MIL_AUTHENTICATOR_RELATIVE_PATH:/api/v1/mil-authenticator/token}
     mil-auth-path: ${MIL_ADAPTER_MIL_AUTH_RELATIVE_PATH:/mil-auth/token}
     client-id: ${MIL_ADAPTER_MIL_AUTH_CLIENT_ID:83c0b10f-b398-4cc8-b356-a3e0f0291679}
     client-secret: ${MIL_ADAPTER_MIL_AUTH_CLIENT_SECRET:bea0fc26-fe22-4b26-8230-ef7d4461acf9}
@@ -35,8 +39,34 @@ cache-configuration:
   token-security-threshold: ${MIL_ADAPTER_TOKEN_SECURITY_THRESHOLD_IN_SECONDS:30}
 
 spring:
+  application:
+    name: mil-adapter
   datasource:
     url: ${MIL_ADAPTER_ENGINE_DB_BASE_URL:jdbc:postgresql://localhost:5433}/${MIL_ADAPTER_ENGINE_DB_NAME:postgres}?currentSchema=${MIL_ADAPTER_ENGINE_DB_SCHEMA:atm_layer_camunda}
     username: ${MIL_ADAPTER_ENGINE_DB_USERNAME:postgres}
     password: ${MIL_ADAPTER_ENGINE_DB_PASSWORD:password}
     driverClassName: ${MIL_ADAPTER_ENGINE_DB_DRIVER:org.postgresql.Driver}
+tracing:
+  url: ${MIL_ADAPTER_TRACING_BACKEND_URL:http://localhost:4317}
+
+adapter-pool-configuration:
+  rest:
+    core-pool-size: 5
+    max-pool-size: 25
+    thread-name: MILA-RestPool-
+    name: restThreadPool
+  completion:
+    core-pool-size: 5
+    max-pool-size: 25
+    thread-name: MILA-CompPool-
+    name: completionThreadPool
+
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"

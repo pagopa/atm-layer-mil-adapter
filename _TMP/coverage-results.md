@@ -6,16 +6,26 @@
       
 | Outcome                 | Value                                                               |
 |-------------------------|---------------------------------------------------------------------|
-| Code Coverage %         | 95.47%               |
-| :heavy_check_mark: Number of Lines Covered | 379    |
-| :x: Number of Lines Missed  | 18     |
-| Total Number of Lines   | 397     |
+| Code Coverage %         | 91.73%               |
+| :heavy_check_mark: Number of Lines Covered | 477    |
+| :x: Number of Lines Missed  | 43     |
+| Total Number of Lines   | 520     |
 
 
 ## Details:
 
     
 ### it/gov/pagopa/miladapter/properties
+
+<details>
+    <summary>
+:x: AdapterPoolConfigurationProperties.java
+    </summary>
+
+        
+</details>
+
+    
 
 <details>
     <summary>
@@ -100,6 +110,18 @@
 
 <details>
     <summary>
+:x: ParentSpanContext.java
+    </summary>
+
+        
+#### Lines Missed:
+        
+</details>
+
+    
+
+<details>
+    <summary>
 :heavy_check_mark: KeyToken.java
     </summary>
 
@@ -129,48 +151,10 @@
         
 #### Lines Missed:
         
-- Line #14
+- Line #17
 ```
     }
 ```
-</details>
-
-    
-### it/gov/pagopa/miladapter/engine/task
-
-<details>
-    <summary>
-:heavy_check_mark: RestExternalTaskHandler.java
-    </summary>
-
-        
-#### All Lines Covered!
-        
-</details>
-
-    
-### it/gov/pagopa/miladapter/enums
-
-<details>
-    <summary>
-:heavy_check_mark: RequiredProcessVariables.java
-    </summary>
-
-        
-#### All Lines Covered!
-        
-</details>
-
-    
-
-<details>
-    <summary>
-:heavy_check_mark: HttpVariablesEnum.java
-    </summary>
-
-        
-#### All Lines Covered!
-        
 </details>
 
     
@@ -211,6 +195,48 @@
 </details>
 
     
+### it/gov/pagopa/miladapter/enums
+
+<details>
+    <summary>
+:heavy_check_mark: RequiredProcessVariables.java
+    </summary>
+
+        
+#### All Lines Covered!
+        
+</details>
+
+    
+
+<details>
+    <summary>
+:heavy_check_mark: HttpVariablesEnum.java
+    </summary>
+
+        
+#### All Lines Covered!
+        
+</details>
+
+    
+### it/gov/pagopa/miladapter/engine/task
+
+<details>
+    <summary>
+:x: RestExternalTaskHandler.java
+    </summary>
+
+        
+#### Lines Missed:
+        
+- Line #45
+```
+                    }, complPoolExecutor);
+```
+</details>
+
+    
 ### it/gov/pagopa/miladapter/services
 
 <details>
@@ -225,11 +251,21 @@
 
 <details>
     <summary>
-:heavy_check_mark: TokenService.java
+:x: TokenService.java
     </summary>
 
         
-#### All Lines Covered!
+#### Lines Missed:
+        
+</details>
+
+    
+
+<details>
+    <summary>
+:x: IDPayRestService.java
+    </summary>
+
         
 </details>
 
@@ -273,55 +309,26 @@
         
 #### Lines Missed:
         
-- Line #39
+- Line #54
 ```
                 } catch (InterruptedException e) {
 ```
-- Line #45
+- Line #69
 ```
         } catch (HttpClientErrorException | HttpServerErrorException e) {
 ```
-- Line #51
+- Line #77
 ```
         }
 ```
-</details>
-
-    
-### it/gov/pagopa/miladapter/engine/task/impl
-
-<details>
-    <summary>
-:heavy_check_mark: DefinitionIdRestTaskHandler.java
-    </summary>
-
-        
-#### All Lines Covered!
-        
-</details>
-
-    
-
-<details>
-    <summary>
-:heavy_check_mark: MILRestTaskHandler.java
-    </summary>
-
-        
-#### All Lines Covered!
-        
-</details>
-
-    
-
-<details>
-    <summary>
-:heavy_check_mark: GenericRestNoAuthTaskHandler.java
-    </summary>
-
-        
-#### All Lines Covered!
-        
+- Line #123
+```
+            } catch (JsonProcessingException e) {
+```
+- Line #125
+```
+            }
+```
 </details>
 
     
@@ -350,15 +357,64 @@
 </details>
 
     
-### it/gov/pagopa/miladapter/services/impl
+### it/gov/pagopa/miladapter/engine/task/impl
 
 <details>
     <summary>
-:x: MILRestServiceImpl.java
+:x: DefinitionIdRestTaskHandler.java
     </summary>
 
         
 #### Lines Missed:
+        
+</details>
+
+    
+
+<details>
+    <summary>
+:heavy_check_mark: IDPayRestTaskHandler.java
+    </summary>
+
+        
+#### All Lines Covered!
+        
+</details>
+
+    
+
+<details>
+    <summary>
+:x: MILRestTaskHandler.java
+    </summary>
+
+        
+#### Lines Missed:
+        
+</details>
+
+    
+
+<details>
+    <summary>
+:x: GenericRestNoAuthTaskHandler.java
+    </summary>
+
+        
+#### Lines Missed:
+        
+</details>
+
+    
+### it/gov/pagopa/miladapter/services/impl
+
+<details>
+    <summary>
+:heavy_check_mark: MILRestServiceImpl.java
+    </summary>
+
+        
+#### All Lines Covered!
         
 </details>
 
@@ -390,11 +446,23 @@
 
 <details>
     <summary>
-:x: DefinitionIdRestServiceImpl.java
+:heavy_check_mark: DefinitionIdRestServiceImpl.java
     </summary>
 
         
-#### Lines Missed:
+#### All Lines Covered!
+        
+</details>
+
+    
+
+<details>
+    <summary>
+:heavy_check_mark: IDPayRestServiceImpl.java
+    </summary>
+
+        
+#### All Lines Covered!
         
 </details>
 
@@ -427,7 +495,7 @@
 
 <details>
     <summary>
-:heavy_check_mark: HttpRequestInterceptor.java
+:heavy_check_mark: RestThreadPoolConfig.java
     </summary>
 
         
@@ -439,7 +507,47 @@
 
 <details>
     <summary>
+:heavy_check_mark: CompletionThreadPoolConfig.java
+    </summary>
+
+        
+#### All Lines Covered!
+        
+</details>
+
+    
+
+<details>
+    <summary>
+:x: HttpRequestInterceptor.java
+    </summary>
+
+        
+#### Lines Missed:
+        
+- Line #82
+```
+        }
+```
+</details>
+
+    
+
+<details>
+    <summary>
 :heavy_check_mark: RestTemplateConfig.java
+    </summary>
+
+        
+#### All Lines Covered!
+        
+</details>
+
+    
+
+<details>
+    <summary>
+:heavy_check_mark: OpenTelemetryConfig.java
     </summary>
 
         

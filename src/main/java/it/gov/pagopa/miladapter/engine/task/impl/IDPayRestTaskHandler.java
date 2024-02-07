@@ -4,7 +4,7 @@ import it.gov.pagopa.miladapter.engine.task.RestExternalTaskHandler;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.services.GenericRestService;
-import it.gov.pagopa.miladapter.services.MILRestService;
+import it.gov.pagopa.miladapter.services.IDPayRestService;
 import it.gov.pagopa.miladapter.util.EngineVariablesToHTTPConfigurationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
@@ -19,22 +19,17 @@ import java.util.Map;
 
 @Component
 @Slf4j
-@ExternalTaskSubscription(includeExtensionProperties = true, topicName = "mil-adapter")
-public class MILRestTaskHandler implements RestExternalTaskHandler {
-
+@ExternalTaskSubscription(includeExtensionProperties = true, topicName = "idpay-adapter")
+public class IDPayRestTaskHandler implements RestExternalTaskHandler {
     @Autowired
-    MILRestService milRestService;
-
+    IDPayRestService idPayRestService;
     @Autowired
     RestConfigurationProperties restConfigurationProperties;
-
     @Value("${camunda.bpm.client.max-tasks}")
     private int maxTasksConfig;
-
     @Autowired
     @Qualifier("#{adapter-pool-configuration.rest.name}")
     private TaskExecutor taskRestExecutor;
-
     @Autowired
     @Qualifier("#{adapter-pool-configuration.completion.name}")
     private TaskExecutor taskComplExecutor;
@@ -66,7 +61,7 @@ public class MILRestTaskHandler implements RestExternalTaskHandler {
 
     @Override
     public GenericRestService getRestService() {
-        return this.milRestService;
+        return this.idPayRestService;
     }
 
     @Override
@@ -78,5 +73,4 @@ public class MILRestTaskHandler implements RestExternalTaskHandler {
     public Configuration getHttpConfiguration(Map<String, Object> variables) {
         return EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCall(variables, isMILFlow());
     }
-
 }

@@ -8,8 +8,8 @@ public class AuthPropertiesTest {
     @Test
     public void testGetSetMilAuthPath() {
         AuthProperties authProperties = new AuthProperties();
-        authProperties.setMilAuthPath("testPath");
-        assertEquals("testPath", authProperties.getMilAuthPath());
+        authProperties.setMilAuthenticatorPath("testPath");
+        assertEquals("testPath", authProperties.getMilAuthenticatorPath());
     }
 
     @Test
@@ -37,7 +37,8 @@ public class AuthPropertiesTest {
     public void testToString() {
         AuthProperties authProperties = generateAuthPropertiesForTests();
         assertEquals("AuthProperties(" +
-                "milAuthPath=milAuthPath, " +
+                "milAuthenticatorPath=milAuthenticatorPath, " +
+                "milAuthPath=milAuthPath, "+
                 "clientId=clientId, " +
                 "clientSecret=clientSecret, " +
                 "grantType=grantType)", authProperties.toString());
@@ -59,6 +60,7 @@ public class AuthPropertiesTest {
 
     private static AuthProperties generateAuthPropertiesForTests() {
         AuthProperties authProperties = new AuthProperties();
+        authProperties.setMilAuthenticatorPath("milAuthenticatorPath");
         authProperties.setMilAuthPath("milAuthPath");
         authProperties.setClientId("clientId");
         authProperties.setClientSecret("clientSecret");
