@@ -1,13 +1,19 @@
 package it.gov.pagopa.miladapter.services;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
 import java.util.HashMap;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.Tracer;
 import org.camunda.bpm.engine.variable.VariableMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.Logger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -29,12 +36,15 @@ import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
 import it.gov.pagopa.miladapter.services.impl.DefinitionIdRestServiceImpl;
 
-public class DefinitionIdRestServiceImplTest {
+class DefinitionIdRestServiceImplTest {
 
     @Mock
     private RestConfigurationProperties restConfigurationProperties;
     @Mock
     private RestTemplate restTemplate;
+
+    @Mock
+    Tracer tracer;
 
     @Mock
     private TokenService tokenService;
@@ -46,7 +56,11 @@ public class DefinitionIdRestServiceImplTest {
 
     @BeforeEach
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
+        SpanBuilder spanBuilder = mock(SpanBuilder.class);
+        when(tracer.spanBuilder(any())).thenReturn(spanBuilder);
+        Span span = mock(Span.class);
+        when(spanBuilder.startSpan()).thenReturn(span);
         configuration = new Configuration();
         configuration.setHttpMethod(HttpMethod.GET);
         configuration.setHeaders(new HttpHeaders());
@@ -62,7 +76,7 @@ public class DefinitionIdRestServiceImplTest {
     }
 
     @Test
-    public void executeDefinitionIdCallTestOK() {
+    void executeDefinitionIdCallTestOK() {
         configuration.getAuthParameters().setBranchId("1234");
         configuration.getAuthParameters().setTerminalId("12345678");
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class)))
@@ -74,7 +88,7 @@ public class DefinitionIdRestServiceImplTest {
     }
 
     @Test
-    public void executeDefinitionIdCallTestOKNoBranchNoTerminalId() {
+    void executeDefinitionIdCallTestOKNoBranchNoTerminalId() {
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class)))
                 .thenReturn(new ResponseEntity("test response", HttpStatus.OK));
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
@@ -84,11 +98,16 @@ public class DefinitionIdRestServiceImplTest {
     }
 
     @Test
-    public void executeMILRestCallTestKO() {
+    void executeMILRestCallTestKO() {
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("BAD REQUEST", HttpStatus.BAD_REQUEST));
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
         VariableMap output = definitionIdRestService.executeRestCall(configuration);
         assertEquals("BAD REQUEST", output.get("response"));
         assertEquals(400, output.get("statusCode"));
+    }
+
+    @Test
+    void getLoggerTest(){
+        assertInstanceOf(Logger.class,definitionIdRestService.getLogger());
     }
 }

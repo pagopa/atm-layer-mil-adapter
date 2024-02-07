@@ -13,10 +13,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-public class CustomExpiryPolicyTest {
+class CustomExpiryPolicyTest {
 
     @Test
-    public void testGetExpiryForCreation() {
+    void testGetExpiryForCreation() {
         CustomExpiryPolicy customExpiryPolicy = new CustomExpiryPolicy();
         Token token = Mockito.mock(Token.class);
         when(token.getExpires_in()).thenReturn(900);
@@ -25,7 +25,7 @@ public class CustomExpiryPolicyTest {
     }
 
     @Test
-    public void testGetExpiryForAccess() {
+    void testGetExpiryForAccess() {
         CustomExpiryPolicy customExpiryPolicy = new CustomExpiryPolicy();
         Supplier<? extends Token> supplier = (Supplier<? extends Token>) mock(Supplier.class);
         Duration duration = customExpiryPolicy.getExpiryForAccess("String", supplier);

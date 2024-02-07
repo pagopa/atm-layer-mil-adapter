@@ -5,25 +5,63 @@ import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.Configuration;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.http.HttpMethod;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class EngineVariablesToHTTPConfigurationUtilsTest {
-    @Mock
-    HttpRequestUtils httpRequestUtils;
+class EngineVariablesToHTTPConfigurationUtilsTest {
 
     @Test
-    public void getHttpConfigurationEmptyPathParamsTest() {
+    void testGetIntegerValue_NullValue() {
+        assertNull(EngineVariablesToHTTPConfigurationUtils.getIntegerValue("TestVariable", null));
+    }
+
+    @Test
+    void testGetIntegerValue_EmptyValue() {
+        assertThrows(RuntimeException.class, () -> EngineVariablesToHTTPConfigurationUtils.getIntegerValue("TestVariable", ""));
+    }
+
+    @Test
+    void testGetIntegerValue_InvalidInteger() {
+        assertThrows(RuntimeException.class, () -> EngineVariablesToHTTPConfigurationUtils.getIntegerValue("TestVariable", "abc"));
+    }
+
+    @Test
+    void testGetIntegerValue_ValidInteger() {
+        assertEquals(123, EngineVariablesToHTTPConfigurationUtils.getIntegerValue("TestVariable", "123"));
+    }
+
+    @Test
+    void testParseIntegerWithValue() {
+        Long value = 12345L;
+
+        Integer result = EngineVariablesToHTTPConfigurationUtils.parseInteger(value);
+
+        assertNotNull(result);
+        assertEquals(value.intValue(), result);
+    }
+
+    @Test
+    void testParseIntegerWithNullValue() {
+        Integer result = null;
+
+        assertNull(result);
+    }
+
+    @Test
+    void getHttpConfigurationEmptyPathParamsTest() {
 
         Map<String, Object> variables = new CaseInsensitiveMap<>();
         variables.put(RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), "bank_id");
+        variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
         variables.put(RequiredProcessVariables.TERMINAL_ID.getEngineValue(), "term_id");
         variables.put(RequiredProcessVariables.CHANNEL.getEngineValue(), "ATM");
         variables.put(HttpVariablesEnum.URL.getValue(), "http://prova");
@@ -33,19 +71,20 @@ public class EngineVariablesToHTTPConfigurationUtilsTest {
                 .getHttpConfigurationExternalCall(variables, true);
         assertEquals("http://prova", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
-        assertEquals(null, configuration.getBody());
+        assertNull(configuration.getBody());
         assertEquals(1, configuration.getHeaders().size());
-        assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getMilValue()));
-        assertEquals(new MultivaluedHashMap(), configuration.getPathParams());
+        Assertions.assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue()));
+        assertEquals(new MultivaluedHashMap<>(), configuration.getPathParams());
 
     }
 
     @Test
-    public void getHttpConfigurationWithPathParamsTest() {
+    void getHttpConfigurationWithPathParamsTest() {
         Map<String, Object> variables = new CaseInsensitiveMap<>();
         variables.put(RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), "bank_id");
         variables.put(RequiredProcessVariables.TERMINAL_ID.getEngineValue(), "term_id");
         variables.put(RequiredProcessVariables.CHANNEL.getEngineValue(), "ATM");
+        variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
         variables.put(HttpVariablesEnum.URL.getValue(), "http://prova/{id}");
         variables.put(HttpVariablesEnum.METHOD.getValue(), "GET");
         Map<String, String> pathParams = new HashMap<>();
@@ -56,16 +95,16 @@ public class EngineVariablesToHTTPConfigurationUtilsTest {
                 .getHttpConfigurationExternalCall(variables, true);
         assertEquals("http://prova/{id}", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
-        assertEquals(null, configuration.getBody());
+        assertNull(configuration.getBody());
         assertEquals(1, configuration.getHeaders().size());
-        assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getMilValue()));
+        Assertions.assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue()));
         assertEquals(1, configuration.getPathParams().size());
-        assertTrue(configuration.getPathParams().containsKey("id"));
+        Assertions.assertTrue(configuration.getPathParams().containsKey("id"));
         assertEquals("1", configuration.getPathParams().get("id"));
     }
 
     @Test
-    public void getHttpConfigurationInternalCallWithPathParamsTest() {
+    void getHttpConfigurationInternalCallWithPathParamsTest() {
         Map<String, Object> variables = new CaseInsensitiveMap<>();
         variables.put(RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), "12345");
         variables.put(RequiredProcessVariables.TERMINAL_ID.getEngineValue(), "12345678");
@@ -81,12 +120,6 @@ public class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals("12345", configuration.getAuthParameters().getAcquirerId());
         assertEquals("12345678", configuration.getAuthParameters().getTerminalId());
         assertEquals("CODE", configuration.getAuthParameters().getCode());
-    }
-
-    @Test
-    public void defaultConstructorTest() {
-        Object engineVariablesToHTTPConfigurationUtils = new EngineVariablesToHTTPConfigurationUtils();
-        assertTrue(engineVariablesToHTTPConfigurationUtils instanceof EngineVariablesToHTTPConfigurationUtils);
     }
 
 }

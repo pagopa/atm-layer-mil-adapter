@@ -30,13 +30,13 @@ jobs:
         with:
           paths: target/site/jacoco/jacoco.xml
           token: ${{ secrets.GITHUB_TOKEN }}
-          min-coverage-overall: 75
+          min-coverage-overall: 90
           title: jacoco
           update-comment: true
 
-      - name: Fail PR if overall coverage is less than 75%
-        if: ${{ steps.jacoco.outputs.coverage-overall < 75.0 }}
+      - name: Fail PR if overall coverage is less than 90%
+        if: ${{ steps.jacoco.outputs.coverage-overall < 90.0 }}
         uses: actions/github-script@v6
         with:
           script: |
-            core.setFailed('Overall coverage is less than 75%!')
+            core.setFailed('Overall coverage is less than 90%!')

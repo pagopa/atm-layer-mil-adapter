@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
-public class RestTemplateConfigTest {
+class RestTemplateConfigTest {
 
     @InjectMocks
     private RestTemplateConfig restTemplateConfig;
@@ -30,12 +30,12 @@ public class RestTemplateConfigTest {
     }
 
     @Test
-    public void testRestTemplateGeneration() {
+    void testRestTemplateGeneration() {
         when(restConfigurationProperties.isInterceptorLoggingEnabled()).thenReturn(true);
         when(restConfigurationProperties.getConnectionResponseTimeoutMilliseconds()).thenReturn(5555);
         RestTemplate restTemplate = new RestTemplate();
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
-        RestTemplate restTemplateGenerated = restTemplateConfig.getRestTemplate();
+        RestTemplate restTemplateGenerated = restTemplateConfig.getRestTemplate(restTemplateGenerator, restConfigurationProperties);
         assertEquals(restTemplateGenerated, restTemplate);
     }
 }

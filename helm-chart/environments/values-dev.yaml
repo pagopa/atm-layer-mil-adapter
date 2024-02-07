@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 2
+replicaCount: 1
 
 image:
   repository: 00000000000.dkr.ecr.eu-south-1.amazonaws.com/xxxxxxx
@@ -16,11 +16,15 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+milAuthenticator:
+  basePath: http://pagopa-dev-atm-layer-mil-authenticator.pagopa.svc.cluster.local:8080
+  relativePath: /api/v1/mil-authenticator/token
+
 milAdapter:
   disableBackoffStrategy: true
   lockDuration: 20000
   asyncResponseTimeout: 20000
-  milBasePath: https://mil-d-apim.azure-api.net
+  milBasePath: https://mil-u-apim.azure-api.net
   enableInterceptorLogging: true
   logEngineInputVariables: true
   restReadTimeout: 20000
@@ -30,6 +34,13 @@ milAdapter:
   tokenCacheName: token-cache
   tokenCacheMaxEntries: 100
   modelBasePath: http://pagopa-dev-atm-layer-model.pagopa.svc.cluster.local:8080
+  idPayBasePath: https://api-io.uat.cstar.pagopa.it
+  restPoolCorePoolSize: 5
+  restPoolMaxPoolSize: 25
+  completionPoolCorePoolSize: 5
+  completionPoolMaxPoolSize: 25
+  completionPoolThreadName: MILA-CompPool-
+  tracingBackendUrl: http://jaeger-collector.default.svc.cluster.local:4317
 
 milAuth:
   credentialsSecretName: "pagopa-dev-atm-layer-mil-adapter-mil-auth"
@@ -55,6 +66,7 @@ database:
     password: DB_PASSWORD
 
 secretProviderClass:
+  enabled: true
   name: atm-layer-mil-adapter-secrets
   env: dev
 
@@ -125,11 +137,15 @@ resources: {}
   #   memory: 128Mi
 
 autoscaling:
-  enabled: false
+  enabled: true
   minReplicas: 1
-  maxReplicas: 100
+  maxReplicas: 2
   targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+  memoryLimits: 1000Mi
+  memoryRequests: 600Mi
+  cpuLimits: 500m
+  cpuRequest: 300m
 
 nodeSelector: {}
 

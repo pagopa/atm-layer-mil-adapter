@@ -1,6 +1,11 @@
 package it.gov.pagopa.miladapter.model;
 
-import lombok.*;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -15,8 +20,26 @@ public class KeyToken {
 
     private String channel;
 
+    private String transactionId;
+
     @Override
     public String toString() {
-        return this.channel.concat("_").concat(acquirerId).concat("_").concat(terminalId);
+        StringBuilder keyTokenBuilder = new StringBuilder();
+
+        appendIfNotNull(keyTokenBuilder, acquirerId);
+        appendIfNotNull(keyTokenBuilder, channel);
+        appendIfNotNull(keyTokenBuilder, terminalId);
+        appendIfNotNull(keyTokenBuilder, transactionId);
+
+        return keyTokenBuilder.toString();
+    }
+
+    private void appendIfNotNull(StringBuilder builder, String value) {
+        if (value != null && !value.isEmpty()) {
+            if (builder.length() > 0) {
+                builder.append("_");
+            }
+            builder.append(value);
+        }
     }
 }

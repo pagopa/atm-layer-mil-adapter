@@ -38,13 +38,27 @@ public class EngineVariablesToHTTPConfigurationUtils {
         return null;
     }
 
+    public static Integer parseInteger(Number input){
+        if (input == null) {
+            return null;
+        }
+        if (input instanceof Long) {
+            return Math.toIntExact((Long) input);
+        } else if (input instanceof Integer) {
+            return (Integer) input;
+        } else {
+            throw new IllegalArgumentException("Cannot cast delayMilliseconds value, input class: " + input.getClass().getName());
+        }
+    }
+
     public static Configuration getHttpConfigurationExternalCall(Map<String, Object> variables, boolean milFlow) {
 
         String requestId = UUID.randomUUID().toString();
         String acquirerId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), milFlow);
         String channel = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.CHANNEL.getEngineValue(), milFlow);
         String terminalId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.TERMINAL_ID.getEngineValue(), milFlow);
-        Long delayMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.DELAY_MILLISECONDS.getValue(), false);
+        String transactionId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), milFlow);
+        Number delayMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.DELAY_MILLISECONDS.getValue(), false);
 
 
         String endpointVariable = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.URL.getValue(), true);
@@ -53,20 +67,19 @@ public class EngineVariablesToHTTPConfigurationUtils {
         String body = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.BODY.getValue(), false);
         Map<String, String> headersMap = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.HEADERS.getValue(), false);
         HttpHeaders headers = HttpRequestUtils.createHttpHeaders(headersMap);
-        headers.add(RequiredProcessVariables.REQUEST_ID.getMilValue(), UUID.randomUUID().toString());
+        headers.add(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue(), UUID.randomUUID().toString());
         Map<String, String> pathParams = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.PATH_PARAMS.getValue(), false);
         if (CollectionUtils.isEmpty(pathParams)) {
             pathParams = new HashMap<>();
         }
         HttpRequestUtils.checkNotNullPathParams(pathParams);
-        // Map<String, String> queryParams = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.QUERY_PARAMS.getValue(), false);
 
-        Long connectionResponseTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS.getValue(), false);
-        Long connectionRequestTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_REQUEST_TIMEOUT_MILLISECONDS.getValue(), false);
-        Long maxRetry = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.MAX_RETRY.getValue(), false);
-        Long retryIntervalMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.RETRY_INTERVAL_MILLISECONDS.getValue(), false);
-
-        AuthParameters authParameters = AuthParameters.builder().requestId(requestId).acquirerId(acquirerId).terminalId(terminalId).channel(channel).build();
+        Number connectionResponseTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS.getValue(), false);
+        Number connectionRequestTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_REQUEST_TIMEOUT_MILLISECONDS.getValue(), false);
+        Number maxRetry = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.MAX_RETRY.getValue(), false);
+        Number retryIntervalMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.RETRY_INTERVAL_MILLISECONDS.getValue(), false);
+        String parentSpanContextString = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACTIVITY_PARENT_SPAN.getEngineValue(), false);
+        AuthParameters authParameters = AuthParameters.builder().requestId(requestId).acquirerId(acquirerId).terminalId(terminalId).channel(channel).transactionId(transactionId).build();
 
         return Configuration.builder()
                 .body(body)
@@ -80,6 +93,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .maxRetry(parseInteger(maxRetry))
                 .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds))
                 .delayMilliseconds(parseInteger(delayMilliseconds))
+                .parentSpanContextString(parentSpanContextString)
                 .build();
     }
 
@@ -91,12 +105,13 @@ public class EngineVariablesToHTTPConfigurationUtils {
         String code = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.CODE.getEngineValue(), false);
 
         String functionId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.FUNCTION_ID.getEngineValue(), false);
-        Long delayMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.DELAY_MILLISECONDS.getValue(), false);
+        Number delayMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.DELAY_MILLISECONDS.getValue(), false);
 
-        Long connectionResponseTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS.getValue(), false);
-        Long connectionRequestTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_REQUEST_TIMEOUT_MILLISECONDS.getValue(), false);
-        Long maxRetry = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.MAX_RETRY.getValue(), false);
-        Long retryIntervalMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.RETRY_INTERVAL_MILLISECONDS.getValue(), false);
+        Number connectionResponseTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS.getValue(), false);
+        Number connectionRequestTimeout = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.CONNECTION_REQUEST_TIMEOUT_MILLISECONDS.getValue(), false);
+        Number maxRetry = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.MAX_RETRY.getValue(), false);
+        Number retryIntervalMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.RETRY_INTERVAL_MILLISECONDS.getValue(), false);
+        String parentSpanContextString = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACTIVITY_PARENT_SPAN.getEngineValue(), false);
 
         AuthParameters authParameters = AuthParameters.builder().acquirerId(acquirerId).terminalId(terminalId).branchId(branchId).code(code).build();
 
@@ -108,6 +123,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds))
                 .function(functionId)
                 .delayMilliseconds(parseInteger(delayMilliseconds))
+                .parentSpanContextString(parentSpanContextString)
                 .build();
     }
 }

@@ -3,15 +3,13 @@ package it.gov.pagopa.miladapter.properties;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class AuthPropertiesTest {
     @Test
     public void testGetSetMilAuthPath() {
         AuthProperties authProperties = new AuthProperties();
-        authProperties.setMilAuthPath("testPath");
-        assertEquals("testPath", authProperties.getMilAuthPath());
+        authProperties.setMilAuthenticatorPath("testPath");
+        assertEquals("testPath", authProperties.getMilAuthenticatorPath());
     }
 
     @Test
@@ -39,7 +37,8 @@ public class AuthPropertiesTest {
     public void testToString() {
         AuthProperties authProperties = generateAuthPropertiesForTests();
         assertEquals("AuthProperties(" +
-                "milAuthPath=milAuthPath, " +
+                "milAuthenticatorPath=milAuthenticatorPath, " +
+                "milAuthPath=milAuthPath, "+
                 "clientId=clientId, " +
                 "clientSecret=clientSecret, " +
                 "grantType=grantType)", authProperties.toString());
@@ -58,20 +57,10 @@ public class AuthPropertiesTest {
         AuthProperties authProperties1 = generateAuthPropertiesForTests();
         assertEquals(authProperties1,authProperties);
     }
-/*
-    @Test
-    public void testCanEqual() {
-        AuthProperties authProperties = generateAuthPropertiesForTests();
-        AuthProperties authProperties1 = generateAuthPropertiesForTests();
-        authProperties1.setMilAuthPath("different value");
-        assertTrue(authProperties.canEqual(authProperties));
-        assertTrue(authProperties.canEqual(authProperties1));
-    }
-
- */
 
     private static AuthProperties generateAuthPropertiesForTests() {
         AuthProperties authProperties = new AuthProperties();
+        authProperties.setMilAuthenticatorPath("milAuthenticatorPath");
         authProperties.setMilAuthPath("milAuthPath");
         authProperties.setClientId("clientId");
         authProperties.setClientSecret("clientSecret");

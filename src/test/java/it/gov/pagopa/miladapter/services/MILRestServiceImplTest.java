@@ -1,5 +1,8 @@
 package it.gov.pagopa.miladapter.services;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.Tracer;
 import it.gov.pagopa.miladapter.model.AuthParameters;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
@@ -11,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.Logger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,11 +26,13 @@ import java.net.URI;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class MILRestServiceImplTest {
+class MILRestServiceImplTest {
     @Mock
     private RestConfigurationProperties restConfigurationProperties;
     @Mock
@@ -36,13 +42,15 @@ public class MILRestServiceImplTest {
     private TokenService tokenService;
     @Mock
     private RestTemplateGenerator restTemplateGenerator;
+    @Mock
+    Tracer tracer;
     @InjectMocks
     MILRestServiceImpl milRestService;
     private Configuration configuration;
 
     @BeforeEach
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         configuration = new Configuration();
         configuration.setEndpoint("/test");
         configuration.setHttpMethod(HttpMethod.GET);
@@ -50,10 +58,14 @@ public class MILRestServiceImplTest {
         configuration.setPathParams(new HashMap<>());
         configuration.setAuthParameters(new AuthParameters());
         when(restConfigurationProperties.getMilBasePath()).thenReturn("http://test-url:8080");
+        SpanBuilder spanBuilder = mock(SpanBuilder.class);
+        when(tracer.spanBuilder(any())).thenReturn(spanBuilder);
+        Span span = mock(Span.class);
+        when(spanBuilder.startSpan()).thenReturn(span);
     }
 
     @Test
-    public void executeMILRestCallTestOK() {
+    void executeMILRestCallTestOK() {
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("test response", HttpStatus.OK));
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
         VariableMap output = milRestService.executeRestCall(configuration);
@@ -62,11 +74,16 @@ public class MILRestServiceImplTest {
     }
 
     @Test
-    public void executeMILRestCallTestKO() {
+    void executeMILRestCallTestKO() {
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("BAD REQUEST", HttpStatus.BAD_REQUEST));
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
         VariableMap output = milRestService.executeRestCall(configuration);
         assertEquals("BAD REQUEST", output.get("response"));
         assertEquals(400, output.get("statusCode"));
+    }
+
+    @Test
+    void getLoggerTest(){
+        assertInstanceOf(Logger.class,milRestService.getLogger());
     }
 }

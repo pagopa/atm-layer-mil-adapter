@@ -1,5 +1,9 @@
 package it.gov.pagopa.miladapter.config;
 
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.context.Context;
+import io.opentelemetry.context.propagation.TextMapSetter;
+import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpRequest;
@@ -10,11 +14,26 @@ import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
 
 @Slf4j
 @Configuration
 public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
+    private final RestConfigurationProperties restConfigurationProperties;
+    private final OpenTelemetry openTelemetry;
+
+    public HttpRequestInterceptor(OpenTelemetry openTelemetry,RestConfigurationProperties restConfigurationProperties) {
+        this.openTelemetry=openTelemetry;
+        this.restConfigurationProperties = restConfigurationProperties;
+
+    }
+
+    TextMapSetter<HttpRequest> setter =
+            (request, key, value) -> request.getHeaders().add(key, value);
 
 
     private void logRequest(HttpRequest request, byte[] body) {
@@ -37,15 +56,29 @@ public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-        logRequest(request, body);
-        long timestampStart = System.currentTimeMillis();
-        log.info("Request started at : {}", timestampStart);
+        propagateTrace(request);
+        LocalDateTime timestampStart = LocalDateTime.now();
+        LocalDateTime timestampEnd = LocalDateTime.now();
+        if (restConfigurationProperties.isInterceptorLoggingEnabled()) {
+            logRequest(request, body);
+            log.info("Request started at : {}", timestampStart);
+        }
         ClientHttpResponse response = execution.execute(request, body);
-        logResponse(response);
-        long timestampEnd = System.currentTimeMillis();
-        log.info("Request finished at : {}", timestampEnd);
-        long duration = timestampEnd - timestampStart;
-        log.info("Request duration : {}", duration);
+        if (restConfigurationProperties.isInterceptorLoggingEnabled()) {
+            logResponse(response);
+            log.info("Request finished at : {}", timestampEnd);
+            long duration = Duration.between(timestampStart, timestampEnd).toMillis();
+            log.info("Request duration : {}", duration);
+        }
         return response;
+    }
+
+    private void propagateTrace(HttpRequest request) {
+        try {
+            openTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), request, setter);
+
+        } catch (Exception e) {
+            log.error("Unable to propagate tracing informations in HttpRequestInterceptor");
+        }
     }
 }
