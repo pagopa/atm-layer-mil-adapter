@@ -66,6 +66,7 @@ database:
     password: DB_PASSWORD
 
 secretProviderClass:
+  enabled: true
   name: atm-layer-mil-adapter-secrets
   env: prod
 
