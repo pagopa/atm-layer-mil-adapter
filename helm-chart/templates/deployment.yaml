@@ -122,6 +122,8 @@ spec:
               value: "{{ .Values.milAdapter.completionPoolThreadName }}"
             - name: MIL_ADAPTER_TRACING_BACKEND_URL
               value: "{{ .Values.milAdapter.tracingBackendUrl }}"
+            - name: SPRING_PROFILES_ACTIVE
+              value: "{{ .Values.springProfilesActive }}"
           volumeMounts:
           {{- if .Values.secretProviderClass.enabled }}
           - name: secrets-store-inline

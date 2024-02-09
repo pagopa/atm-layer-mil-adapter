@@ -20,6 +20,8 @@ milAuthenticator:
   basePath: http://pagopa-dev-atm-layer-mil-authenticator.pagopa.svc.cluster.local:8080
   relativePath: /api/v1/mil-authenticator/token
 
+springProfilesActive: dev
+
 milAdapter:
   disableBackoffStrategy: true
   lockDuration: 20000
