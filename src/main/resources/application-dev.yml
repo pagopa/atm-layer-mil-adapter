@@ -8,10 +8,10 @@ camunda:
       lock-duration: ${MIL_ADAPTER_LOCK_DURATION:20000}
       disable-backoff-strategy: ${MIL_ADAPTER_DISABLE_BACKOFF_STRATEGY:true}
       async-response-timeout: ${MIL_ADAPTER_ASYNC_RESPONSE_TIMEOUT:500}
+      max-tasks: 1
       basic-auth:
         username: ${MIL_ADAPTER_ENGINE_ACCOUNT_USER:admin}
         password: ${MIL_ADAPTER_ENGINE_ACCOUNT_PASSWORD:AurigaNtt.2023}
-      max-tasks: 40
 rest-configuration:
   mil-authenticator-base-path: ${MIL_AUTHENTICATOR_BASE_PATH:http://pagopa-dev-atm-layer-mil-authenticator.pagopa.svc.cluster.local:8080}
   mil-base-path: ${MIL_ADAPTER_MIL_BASE_PATH:https://mil-d-apim.azure-api.net}
@@ -26,7 +26,6 @@ rest-configuration:
   model-base-path: ${MIL_ADAPTER_MODEL_BASE_PATH:http://pagopa-dev-atm-layer-model.pagopa.svc.cluster.local:8080}
   auth:
     mil-authenticator-path: ${MIL_AUTHENTICATOR_RELATIVE_PATH:/api/v1/mil-authenticator/token}
-    mil-auth-path: ${MIL_ADAPTER_MIL_AUTH_RELATIVE_PATH:/mil-auth/token}
     client-id: ${MIL_ADAPTER_MIL_AUTH_CLIENT_ID:83c0b10f-b398-4cc8-b356-a3e0f0291679}
     client-secret: ${MIL_ADAPTER_MIL_AUTH_CLIENT_SECRET:bea0fc26-fe22-4b26-8230-ef7d4461acf9}
     grant-type: ${MIL_ADAPTER_MIL_AUTH_CLIENT_CREDENTIALS:client_credentials}
@@ -36,7 +35,6 @@ rest-configuration:
 cache-configuration:
   cache-name: ${MIL_ADAPTER_TOKEN_CACHE_NAME:token-cache}
   max-entries: ${MIL_ADAPTER_TOKEN_CACHE_MAX_ENTRIES:100}
-  token-security-threshold: ${MIL_ADAPTER_TOKEN_SECURITY_THRESHOLD_IN_SECONDS:30}
 
 spring:
   application:
@@ -47,25 +45,24 @@ spring:
     password: ${MIL_ADAPTER_ENGINE_DB_PASSWORD:password}
     driverClassName: ${MIL_ADAPTER_ENGINE_DB_DRIVER:org.postgresql.Driver}
 tracing:
-  url: ${MIL_ADAPTER_TRACING_BACKEND_URL:http://localhost:4317}
-
-adapter-pool-configuration:
-  rest:
-    core-pool-size: 5
-    max-pool-size: 25
-    thread-name: MILA-RestPool-
-    name: restThreadPool
-  completion:
-    core-pool-size: 5
-    max-pool-size: 25
-    thread-name: MILA-CompPool-
-    name: completionThreadPool
-
+  url: ${MIL_ADAPTER_TRACING_BACKEND_URL}
 
 management:
   tracing:
     sampling:
       probability: 1.0
+
+adapter-pool-configuration:
+  rest:
+    core-pool-size: ${MIL_ADAPTER_REST_POOL_CORE_POOL_SIZE:5}
+    max-pool-size: ${MIL_ADAPTER_REST_POOL_MAX_POOL_SIZE:25}
+    thread-name: ${MIL_ADAPTER_REST_POOL_THREAD_NAME:MILA-RestPool-}
+    name: ${MIL_ADAPTER_REST_POOL_THREAD_NAME:restThreadPool}
+  completion:
+    core-pool-size: ${MIL_ADAPTER_COMPLETION_POOL_CORE_POOL_SIZE:5}
+    max-pool-size: ${MIL_ADAPTER_COMPLETION_POOL_MAX_POOL_SIZE:25}
+    thread-name: ${MIL_ADAPTER_COMPLETION_POOL_THREAD_NAME:MILA-CompPool-}
+    name: ${MIL_ADAPTER_REST_POOL_THREAD_NAME:completionThreadPool}
 
 logging:
   pattern:
