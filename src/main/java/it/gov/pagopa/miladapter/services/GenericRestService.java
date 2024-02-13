@@ -68,12 +68,12 @@ public interface GenericRestService {
                     .exchange(url, configuration.getHttpMethod(), entity, String.class);
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             getLogger().error("Exception in HTTP request: ", e);
-            response = new ResponseEntity<>(e.getResponseBodyAsString(), e.getStatusCode());
+            response = new ResponseEntity<>("\"output\":"+"\""+e.getResponseBodyAsString()+"\"", e.getStatusCode());
             serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, e.getStatusCode().value());
             serviceSpan.setAttribute("http.response.body", e.getResponseBodyAsString());
         } catch (Exception e) {
             getLogger().error("Exception in HTTP request: ", e);
-            response = new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("\"output\":"+"\""+e.getMessage()+"\"", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         VariableMap output = Variables.createVariables();
@@ -83,9 +83,12 @@ public interface GenericRestService {
         serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, response.getStatusCode().value());
         serviceSpan.setAttribute("http.response.body", response.getBody());
         serviceSpan.setAttribute("http.response.headers", response.getHeaders().toString());
-
-        SpinJsonNode jsonNode = JSON(response.getBody());
-        output.putValue(HttpVariablesEnum.RESPONSE.getValue(), jsonNode);
+        if(response.getBody()!=null) {
+            SpinJsonNode jsonNode = JSON(response.getBody());
+            output.putValue(HttpVariablesEnum.RESPONSE.getValue(), jsonNode);
+        }
+        else
+            output.putValue(HttpVariablesEnum.RESPONSE.getValue(), null);
         output.putValue(HttpVariablesEnum.STATUS_CODE.getValue(), response.getStatusCode().value());
         SpinJsonNode headersJsonNode = JSON(response.getHeaders());
         output.putValue(HttpVariablesEnum.RESPONSE_HEADERS.getValue(), headersJsonNode.toString());
