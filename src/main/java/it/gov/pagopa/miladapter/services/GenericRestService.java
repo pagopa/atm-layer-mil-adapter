@@ -3,12 +3,7 @@ package it.gov.pagopa.miladapter.services;
 import camundajar.impl.com.google.gson.JsonObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.SpanBuilder;
-import io.opentelemetry.api.trace.SpanContext;
-import io.opentelemetry.api.trace.TraceFlags;
-import io.opentelemetry.api.trace.TraceState;
-import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.api.trace.*;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
@@ -22,6 +17,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.variable.VariableMap;
 import org.camunda.bpm.engine.variable.Variables;
 import org.camunda.spin.json.SpinJsonNode;
+import org.camunda.spin.plugin.variable.SpinValues;
+import org.camunda.spin.plugin.variable.value.JsonValue;
 import org.slf4j.Logger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -34,7 +31,7 @@ import java.net.URI;
 
 import static org.camunda.spin.Spin.JSON;
 
-public interface GenericRestService {
+public interface GenericRestService  {
 
     default VariableMap executeRestCall(Configuration configuration) {
 
@@ -83,12 +80,12 @@ public interface GenericRestService {
         serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, response.getStatusCode().value());
         serviceSpan.setAttribute("http.response.body", response.getBody());
         serviceSpan.setAttribute("http.response.headers", response.getHeaders().toString());
-        if(response.getBody()!=null) {
-            SpinJsonNode jsonNode = JSON(response.getBody());
-            output.putValue(HttpVariablesEnum.RESPONSE.getValue(), jsonNode);
-        }
+        JsonValue jsonValue;
+        if(response.getBody()!=null)
+            jsonValue = SpinValues.jsonValue(response.getBody()).create();
         else
-            output.putValue(HttpVariablesEnum.RESPONSE.getValue(), null);
+            jsonValue = SpinValues.jsonValue("{}").create();
+        output.putValue(HttpVariablesEnum.RESPONSE.getValue(), jsonValue);
         output.putValue(HttpVariablesEnum.STATUS_CODE.getValue(), response.getStatusCode().value());
         SpinJsonNode headersJsonNode = JSON(response.getHeaders());
         output.putValue(HttpVariablesEnum.RESPONSE_HEADERS.getValue(), headersJsonNode.toString());
