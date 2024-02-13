@@ -83,7 +83,9 @@ public interface GenericRestService {
         serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, response.getStatusCode().value());
         serviceSpan.setAttribute("http.response.body", response.getBody());
         serviceSpan.setAttribute("http.response.headers", response.getHeaders().toString());
-        output.putValue(HttpVariablesEnum.RESPONSE.getValue(), response.getBody());
+
+        SpinJsonNode jsonNode = JSON(response.getBody());
+        output.putValue(HttpVariablesEnum.RESPONSE.getValue(), jsonNode);
         output.putValue(HttpVariablesEnum.STATUS_CODE.getValue(), response.getStatusCode().value());
         SpinJsonNode headersJsonNode = JSON(response.getHeaders());
         output.putValue(HttpVariablesEnum.RESPONSE_HEADERS.getValue(), headersJsonNode.toString());
