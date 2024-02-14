@@ -93,6 +93,7 @@ public interface GenericRestService  {
         output.putValue(HttpVariablesEnum.STATUS_CODE.getValue(), response.getStatusCode().value());
         SpinJsonNode headersJsonNode = JSON(response.getHeaders());
         output.putValue(HttpVariablesEnum.RESPONSE_HEADERS.getValue(), headersJsonNode.toString());
+        getLogger().info("LOGGING OUTPUT - Response Object: {}",jsonValue);
         serviceSpan.end();
         return output;
     }
