@@ -309,23 +309,23 @@
         
 #### Lines Missed:
         
-- Line #54
+- Line #56
 ```
                 } catch (InterruptedException e) {
 ```
-- Line #70
+- Line #72
 ```
         } catch (HttpClientErrorException | HttpServerErrorException e) {
 ```
-- Line #78
+- Line #80
 ```
         }
 ```
-- Line #130
+- Line #132
 ```
             } catch (JsonProcessingException e) {
 ```
-- Line #132
+- Line #134
 ```
             }
 ```
