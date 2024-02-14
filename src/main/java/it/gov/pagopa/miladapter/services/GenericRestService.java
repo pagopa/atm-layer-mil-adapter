@@ -15,11 +15,13 @@ import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
 import it.gov.pagopa.miladapter.util.HttpRequestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.camunda.bpm.client.variable.ClientValues;
+import org.camunda.bpm.client.variable.value.JsonValue;
 import org.camunda.bpm.engine.variable.VariableMap;
 import org.camunda.bpm.engine.variable.Variables;
 import org.camunda.spin.json.SpinJsonNode;
 import org.camunda.spin.plugin.variable.SpinValues;
-import org.camunda.spin.plugin.variable.value.JsonValue;
+
 import org.slf4j.Logger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -86,9 +88,9 @@ public interface GenericRestService  {
         serviceSpan.setAttribute("http.response.headers", response.getHeaders().toString());
         JsonValue jsonValue;
         if(response.getBody()!=null)
-            jsonValue = SpinValues.jsonValue(response.getBody()).create();
+            jsonValue = ClientValues.jsonValue(response.getBody());
         else
-            jsonValue = SpinValues.jsonValue("{}").create();
+            jsonValue = ClientValues.jsonValue("{}");
         output.putValue(HttpVariablesEnum.RESPONSE.getValue(), jsonValue);
         output.putValue(HttpVariablesEnum.STATUS_CODE.getValue(), response.getStatusCode().value());
         SpinJsonNode headersJsonNode = JSON(response.getHeaders());
