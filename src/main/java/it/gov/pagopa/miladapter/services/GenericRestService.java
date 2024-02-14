@@ -13,6 +13,7 @@ import it.gov.pagopa.miladapter.model.ParentSpanContext;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
 import it.gov.pagopa.miladapter.util.HttpRequestUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.camunda.bpm.engine.variable.VariableMap;
 import org.camunda.bpm.engine.variable.Variables;
@@ -44,14 +45,17 @@ public interface GenericRestService  {
         try (Scope scope = serviceSpan.makeCurrent()) {
             if (configuration.getDelayMilliseconds() != null) {
                 if (configuration.getDelayMilliseconds() > asyncTimeout / 2) {
+                    getLogger().info("Throwing exception: "+String.format("The delay between consecutive retries must be lower than: %s ms", asyncTimeout / 2));
                     throw new RuntimeException(String.format("The delay between consecutive retries must be lower than: %s ms", asyncTimeout / 2));
                 }
                 try {
+                    getLogger().info(String.format("Starting thread sleep %s ms", configuration.getDelayMilliseconds()));
                     Thread.sleep(configuration.getDelayMilliseconds());
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
             }
+            getLogger().info("Preparing http request");
             URI url = this.prepareUri(configuration);
             HttpEntity<String> entity = this.buildHttpEntity(configuration);
             serviceSpan.setAttribute(SemanticAttributes.HTTP_METHOD, configuration.getHttpMethod().name());
