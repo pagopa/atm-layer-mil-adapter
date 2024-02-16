@@ -8,7 +8,7 @@ camunda:
       lock-duration: ${MIL_ADAPTER_LOCK_DURATION:20000}
       disable-backoff-strategy: ${MIL_ADAPTER_DISABLE_BACKOFF_STRATEGY:true}
       async-response-timeout: ${MIL_ADAPTER_ASYNC_RESPONSE_TIMEOUT:20000}
-      max-tasks: 15
+      max-tasks: 10
       basic-auth:
         username: ${MIL_ADAPTER_ENGINE_ACCOUNT_USER}
         password: ${MIL_ADAPTER_ENGINE_ACCOUNT_PASSWORD}
@@ -22,7 +22,7 @@ rest-configuration:
   connection-response-timeout-milliseconds: ${MIL_ADAPTER_REST_CONNECTION_RESPONSE_TIMEOUT_MILLISECONDS:4000}
   max-retry: ${MIL_ADAPTER_REST_MAX_RETRY:1}
   retry-interval-milliseconds: ${MIL_ADAPTER_REST_RETRY_INTERVAL_MILLISECONDS:500}
-  async-threshold: ${MIL_ADAPTER_ASYNC_RESPONSE_TIMEOUT:20000}
+  async-threshold: 1000
   model-base-path: ${MIL_ADAPTER_MODEL_BASE_PATH}
   auth:
     mil-authenticator-path: ${MIL_AUTHENTICATOR_RELATIVE_PATH:/api/v1/mil-authenticator/token}
