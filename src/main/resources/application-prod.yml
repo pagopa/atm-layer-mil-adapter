@@ -37,6 +37,8 @@ cache-configuration:
   max-entries: ${MIL_ADAPTER_TOKEN_CACHE_MAX_ENTRIES:100}
 
 spring:
+  application:
+    name: mil-adapter
   datasource:
     url: ${MIL_ADAPTER_ENGINE_DB_BASE_URL}/${MIL_ADAPTER_ENGINE_DB_NAME}?currentSchema=${MIL_ADAPTER_ENGINE_DB_SCHEMA}
     username: ${MIL_ADAPTER_ENGINE_DB_USERNAME}
