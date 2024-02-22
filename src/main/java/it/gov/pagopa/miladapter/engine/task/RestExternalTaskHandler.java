@@ -41,7 +41,7 @@ public interface RestExternalTaskHandler extends ExternalTaskHandler {
             resultAsync
                     .thenAcceptAsync(variableMap -> {
                         getLogger().info("Completing task {} for process instance {}",externalTask.getId(),externalTask.getProcessInstanceId());
-                        getLogger().info("Variables: ",variableMap);
+                        getLogger().info("Variables: {}",variableMap);
                         externalTaskService.complete(externalTask, null, variableMap);
                     }, complPoolExecutor);
 
