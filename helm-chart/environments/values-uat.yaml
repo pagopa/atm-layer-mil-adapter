@@ -67,6 +67,12 @@ database:
     username: DB_USERNAME
     password: DB_PASSWORD
 
+idPay:
+  basePath: https://api-io.uat.cstar.pagopa.it
+  credentialsSecretName: "pagopa-uat-atm-layer-mil-adapter-idpay"
+  credentialsSecretKeys:
+    apiKey: API_KEY
+
 secretProviderClass:
   enabled: true
   name: atm-layer-mil-adapter-secrets
@@ -99,7 +105,7 @@ deployment:
   name: pagopa-uat-atm-layer-mil-adapter
   annotations:
     reloader.stakater.com/auto: "true"
-    secret.reloader.stakater.com/reload: pagopa-uat-atm-layer-mil-adapter-database, pagopa-uat-atm-layer-mil-adapter-camunda, pagopa-uat-atm-layer-mil-adapter-mil-auth
+    secret.reloader.stakater.com/reload: pagopa-uat-atm-layer-mil-adapter-database, pagopa-uat-atm-layer-mil-adapter-camunda, pagopa-uat-atm-layer-mil-adapter-mil-auth, pagopa-uat-atm-layer-mil-adapter-idpay
 
 service:
   name: pagopa-uat-atm-layer-mil-adapter
