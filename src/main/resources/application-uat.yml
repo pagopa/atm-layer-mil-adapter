@@ -2,12 +2,13 @@ server:
   port: ${SERVER_PORT:8085}
 camunda:
   bpm:
+    history-level: NONE
     client:
       base-url: ${MIL_ADAPTER_ENGINE_URL:http://localhost:8080}/engine-rest
       lock-duration: ${MIL_ADAPTER_LOCK_DURATION:20000}
       disable-backoff-strategy: ${MIL_ADAPTER_DISABLE_BACKOFF_STRATEGY:true}
       async-response-timeout: ${MIL_ADAPTER_ASYNC_RESPONSE_TIMEOUT:500}
-      max-tasks: 6
+      max-tasks: 1
       basic-auth:
         username: ${MIL_ADAPTER_ENGINE_ACCOUNT_USER:admin}
         password: ${MIL_ADAPTER_ENGINE_ACCOUNT_PASSWORD:AurigaNtt.2023}
@@ -34,7 +35,6 @@ rest-configuration:
 cache-configuration:
   cache-name: ${MIL_ADAPTER_TOKEN_CACHE_NAME:token-cache}
   max-entries: ${MIL_ADAPTER_TOKEN_CACHE_MAX_ENTRIES:100}
-  token-security-threshold: ${MIL_ADAPTER_TOKEN_SECURITY_THRESHOLD_IN_SECONDS:30}
 
 spring:
   application:

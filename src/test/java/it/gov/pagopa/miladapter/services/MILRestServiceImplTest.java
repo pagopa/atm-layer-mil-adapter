@@ -66,19 +66,19 @@ class MILRestServiceImplTest {
 
     @Test
     void executeMILRestCallTestOK() {
-        when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("test response", HttpStatus.OK));
+        when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("{\"output\":\"SUCCESS\"}", HttpStatus.OK));
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
         VariableMap output = milRestService.executeRestCall(configuration);
-        assertEquals("test response", output.get("response"));
+        assertEquals("{\"output\":\"SUCCESS\"}", output.get("response").toString());
         assertEquals(200, output.get("statusCode"));
     }
 
     @Test
     void executeMILRestCallTestKO() {
-        when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("BAD REQUEST", HttpStatus.BAD_REQUEST));
+        when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("{\"output\":\"BAD_REQUEST\"}", HttpStatus.BAD_REQUEST));
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
         VariableMap output = milRestService.executeRestCall(configuration);
-        assertEquals("BAD REQUEST", output.get("response"));
+        assertEquals("{\"output\":\"BAD_REQUEST\"}", output.get("response").toString());
         assertEquals(400, output.get("statusCode"));
     }
 

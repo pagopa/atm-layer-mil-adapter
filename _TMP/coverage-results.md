@@ -6,10 +6,10 @@
       
 | Outcome                 | Value                                                               |
 |-------------------------|---------------------------------------------------------------------|
-| Code Coverage %         | 91.73%               |
-| :heavy_check_mark: Number of Lines Covered | 477    |
-| :x: Number of Lines Missed  | 43     |
-| Total Number of Lines   | 520     |
+| Code Coverage %         | 91.59%               |
+| :heavy_check_mark: Number of Lines Covered | 479    |
+| :x: Number of Lines Missed  | 44     |
+| Total Number of Lines   | 523     |
 
 
 ## Details:
@@ -80,7 +80,7 @@
 
 <details>
     <summary>
-:x: AuthParameters.java
+:x: Token.java
     </summary>
 
         
@@ -90,7 +90,7 @@
 
 <details>
     <summary>
-:x: Token.java
+:x: AuthParameters.java
     </summary>
 
         
@@ -158,6 +158,31 @@
 </details>
 
     
+### it/gov/pagopa/miladapter/enums
+
+<details>
+    <summary>
+:heavy_check_mark: RequiredProcessVariables.java
+    </summary>
+
+        
+#### All Lines Covered!
+        
+</details>
+
+    
+
+<details>
+    <summary>
+:heavy_check_mark: HttpVariablesEnum.java
+    </summary>
+
+        
+#### All Lines Covered!
+        
+</details>
+
+    
 ### it/gov/pagopa/miladapter/util
 
 <details>
@@ -187,31 +212,6 @@
 <details>
     <summary>
 :heavy_check_mark: EngineVariablesUtils.java
-    </summary>
-
-        
-#### All Lines Covered!
-        
-</details>
-
-    
-### it/gov/pagopa/miladapter/enums
-
-<details>
-    <summary>
-:heavy_check_mark: RequiredProcessVariables.java
-    </summary>
-
-        
-#### All Lines Covered!
-        
-</details>
-
-    
-
-<details>
-    <summary>
-:heavy_check_mark: HttpVariablesEnum.java
     </summary>
 
         
@@ -309,23 +309,23 @@
         
 #### Lines Missed:
         
-- Line #54
+- Line #52
 ```
                 } catch (InterruptedException e) {
 ```
-- Line #69
+- Line #67
 ```
         } catch (HttpClientErrorException | HttpServerErrorException e) {
 ```
-- Line #77
+- Line #75
 ```
         }
 ```
-- Line #123
+- Line #126
 ```
             } catch (JsonProcessingException e) {
 ```
-- Line #125
+- Line #128
 ```
             }
 ```
@@ -483,7 +483,7 @@
 
 <details>
     <summary>
-:heavy_check_mark: CustomExpiryPolicy.java
+:heavy_check_mark: RestThreadPoolConfig.java
     </summary>
 
         
@@ -495,7 +495,7 @@
 
 <details>
     <summary>
-:heavy_check_mark: RestThreadPoolConfig.java
+:heavy_check_mark: CustomExpiryPolicy.java
     </summary>
 
         
