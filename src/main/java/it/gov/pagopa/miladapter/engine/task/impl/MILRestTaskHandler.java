@@ -75,8 +75,13 @@ public class MILRestTaskHandler implements RestExternalTaskHandler {
     }
 
     @Override
+    public boolean isIdPayFlow() {
+        return false;
+    }
+
+    @Override
     public Configuration getHttpConfiguration(Map<String, Object> variables) {
-        return EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCall(variables, isMILFlow());
+        return EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCall(variables, isMILFlow(),isIdPayFlow());
     }
 
 }
