@@ -8,7 +8,7 @@ camunda:
       lock-duration: ${MIL_ADAPTER_LOCK_DURATION:20000}
       disable-backoff-strategy: ${MIL_ADAPTER_DISABLE_BACKOFF_STRATEGY:true}
       async-response-timeout: ${MIL_ADAPTER_ASYNC_RESPONSE_TIMEOUT:500}
-      max-tasks: 6
+      max-tasks: 10
       basic-auth:
         username: ${MIL_ADAPTER_ENGINE_ACCOUNT_USER:admin}
         password: ${MIL_ADAPTER_ENGINE_ACCOUNT_PASSWORD:AurigaNtt.2023}
