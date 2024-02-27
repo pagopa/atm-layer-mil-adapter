@@ -29,7 +29,7 @@ public class CustomHttpRequestRetryStrategy implements HttpRequestRetryStrategy 
 
     @Override
     public boolean retryRequest(HttpResponse httpResponse, int i, HttpContext httpContext) {
-        boolean statusOk = httpResponse.getCode() >= 200 && httpResponse.getCode() < 400;
+        boolean statusOk = httpResponse.getCode() >= 200 && httpResponse.getCode() < 400 && httpResponse.getCode()!=202;
         if (!statusOk) {
             boolean retryWillBeDone = i <= maxRetry;
             log.error("Failure on Rest call for statusCode, evaluating retry number {}, max retry attempts {}, retry will be done? : {}", i, maxRetry, retryWillBeDone);
