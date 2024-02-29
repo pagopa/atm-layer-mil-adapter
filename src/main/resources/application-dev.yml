@@ -5,7 +5,7 @@ camunda:
     client:
       base-url: ${MIL_ADAPTER_ENGINE_URL:http://localhost:8080}/engine-rest
       lock-duration: ${MIL_ADAPTER_LOCK_DURATION:20000}
-      disable-backoff-strategy: false
+      disable-backoff-strategy: ${MIL_ADAPTER_DISABLE_BACKOFF_STRATEGY:true}
       async-response-timeout: ${MIL_ADAPTER_ASYNC_RESPONSE_TIMEOUT:500}
       max-tasks: 6
       basic-auth:
