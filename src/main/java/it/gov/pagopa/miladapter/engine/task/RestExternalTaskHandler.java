@@ -4,6 +4,7 @@ import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.services.GenericRestService;
 import it.gov.pagopa.miladapter.util.EngineVariablesUtils;
+import jakarta.persistence.OptimisticLockException;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskHandler;
 import org.camunda.bpm.client.task.ExternalTaskService;
@@ -18,6 +19,7 @@ import java.util.concurrent.Executor;
 
 public interface RestExternalTaskHandler extends ExternalTaskHandler {
 
+    Integer MAX_RETRY=5;
     TaskExecutor getTaskRestExecutor();
 
     TaskExecutor getTaskComplExecutor();
@@ -40,12 +42,25 @@ public interface RestExternalTaskHandler extends ExternalTaskHandler {
             Executor complPoolExecutor = this.getTaskComplExecutor();
             resultAsync
                     .thenAcceptAsync(variableMap -> {
+                        Integer retryCount =0;
+                        Boolean success = false;
                         getLogger().info("Completing task {} for process instance {}",externalTask.getId(),externalTask.getProcessInstanceId());
                         getLogger().info("Variables: {}",variableMap);
-                        externalTaskService.complete(externalTask, null, variableMap);
+                        while(!success && retryCount < MAX_RETRY) {
+                            try {
+                                externalTaskService.complete(externalTask, null, variableMap);
+                                success = true;
+                            } catch (OptimisticLockException e) {
+                                getLogger().info("Retry for OptimisticLockException");
+                                retryCount++;
+                            }
+                        }
+                        if (!success)
+                            throw new OptimisticLockException();
                     }, complPoolExecutor);
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             getLogger().error("Error on MIL-Adapter execution: {}", e.getMessage(), e);
             externalTaskService.handleFailure(externalTask, e.getMessage(),
                     e.getMessage().concat(Arrays.toString(e.getStackTrace())), 0, 0);
