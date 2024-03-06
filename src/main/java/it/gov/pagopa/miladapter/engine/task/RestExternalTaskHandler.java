@@ -48,7 +48,7 @@ public interface RestExternalTaskHandler extends ExternalTaskHandler {
         } catch (Exception e) {
             getLogger().error("Error on MIL-Adapter execution: {}", e.getMessage(), e);
             externalTaskService.handleFailure(externalTask, e.getMessage(),
-                    e.getMessage().concat(Arrays.toString(e.getStackTrace())), 0, 0);
+                    Arrays.toString(e.getStackTrace()), 0, 0);
         }
 
     }

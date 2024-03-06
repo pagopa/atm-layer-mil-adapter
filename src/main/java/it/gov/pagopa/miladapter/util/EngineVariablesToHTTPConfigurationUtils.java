@@ -4,6 +4,7 @@ import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
 import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.AuthParameters;
 import it.gov.pagopa.miladapter.model.Configuration;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 public class EngineVariablesToHTTPConfigurationUtils {
 //    @Value("${id-pay.api-key}")
 //    private static String idPayKey;
@@ -56,6 +58,8 @@ private static String idPayKey = "test_idpay_apikey";
     }
 
     public static Configuration getHttpConfigurationExternalCall(Map<String, Object> variables, boolean milFlow, boolean idPayFlow) {
+        log.info(String.format("TEMPORARY - starting configuration with idPayFlow= %s", idPayFlow));
+        log.info(String.format("TEMPORARY - starting configuration with idPayKey= %s", idPayKey));
         String requestId = UUID.randomUUID().toString();
         String acquirerId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), milFlow);
         String channel = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.CHANNEL.getEngineValue(), milFlow);
@@ -70,6 +74,7 @@ private static String idPayKey = "test_idpay_apikey";
         HttpHeaders headers = HttpRequestUtils.createHttpHeaders(headersMap);
         headers.add(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue(), UUID.randomUUID().toString());
         if (idPayFlow) {
+            log.info(String.format("TEMPORARY - starting idPayFlow with idPayKey= %s", idPayKey));
             headers.add("Ocp-Apim-Subscription-Key", idPayKey);
         }
         Map<String, String> pathParams = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.PATH_PARAMS.getValue(), false);
@@ -83,6 +88,7 @@ private static String idPayKey = "test_idpay_apikey";
         Number retryIntervalMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.RETRY_INTERVAL_MILLISECONDS.getValue(), false);
         String parentSpanContextString = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACTIVITY_PARENT_SPAN.getEngineValue(), false);
         AuthParameters authParameters = AuthParameters.builder().requestId(requestId).acquirerId(acquirerId).terminalId(terminalId).channel(channel).transactionId(transactionId).build();
+        log.info(String.format("TEMPORARY - Prepared config with headers= %s", headers));
         return Configuration.builder()
                 .body(body)
                 .endpoint(endpointVariable)
