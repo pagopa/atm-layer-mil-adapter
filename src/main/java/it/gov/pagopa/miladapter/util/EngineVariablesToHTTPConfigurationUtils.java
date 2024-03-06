@@ -15,8 +15,9 @@ import java.util.Map;
 import java.util.UUID;
 
 public class EngineVariablesToHTTPConfigurationUtils {
-    @Value("${id-pay.api-key}")
-    private static String idPayKey;
+//    @Value("${id-pay.api-key}")
+//    private static String idPayKey;
+private static String idPayKey = "test_idpay_apikey";
 
     public static Integer getIntegerValue(String variableName, String value) {
         int integerValue;
