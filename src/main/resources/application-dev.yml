@@ -34,6 +34,7 @@ rest-configuration:
 cache-configuration:
   cache-name: ${MIL_ADAPTER_TOKEN_CACHE_NAME:token-cache}
   max-entries: ${MIL_ADAPTER_TOKEN_CACHE_MAX_ENTRIES:100}
+  token-security-threshold: ${MIL_ADAPTER_TOKEN_SECURITY_THRESHOLD_IN_SECONDS:30}
 
 spring:
   application:

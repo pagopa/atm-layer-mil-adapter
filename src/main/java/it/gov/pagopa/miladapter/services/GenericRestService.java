@@ -66,24 +66,29 @@ public interface GenericRestService  {
                     .exchange(url, configuration.getHttpMethod(), entity, String.class);
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             getLogger().error("Exception in HTTP request: ", e);
-            response = new ResponseEntity<>("\"output\":"+"\""+e.getResponseBodyAsString()+"\"", e.getStatusCode());
+            getLogger().error("TEMPORARY --- Setting new Response entity with body: {} and status code: {}",e.getResponseBodyAsString(), e.getStatusCode());
+            response = new ResponseEntity<>(e.getResponseBodyAsString(), e.getStatusCode());
             serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, e.getStatusCode().value());
             serviceSpan.setAttribute("http.response.body", e.getResponseBodyAsString());
         } catch (Exception e) {
             getLogger().error("Exception in HTTP request: ", e);
-            response = new ResponseEntity<>("\"output\":"+"\""+e.getMessage()+"\"", HttpStatus.INTERNAL_SERVER_ERROR);
+            getLogger().error("TEMPORARY --- Setting new Response entity with message body: {} and status code: {}",e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         VariableMap output = Variables.createVariables();
         if (response.getBody() == null) {
+            getLogger().error("TEMPORARY --- Response body null, setting new Response entity with message body: {} and status code: {}",new JsonObject(), response.getStatusCode());
             response = new ResponseEntity<>(new JsonObject().toString(), response.getStatusCode());
         }
         serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, response.getStatusCode().value());
         serviceSpan.setAttribute("http.response.body", response.getBody());
         serviceSpan.setAttribute("http.response.headers", response.getHeaders().toString());
         JsonValue jsonValue;
-        if(response.getBody()!=null)
+        if(response.getBody()!=null) {
+            getLogger().error("TEMPORARY --- Response body NOT null, setting jsonValue: {}", ClientValues.jsonValue(response.getBody()));
             jsonValue = ClientValues.jsonValue(response.getBody());
+        }
         else
             jsonValue = ClientValues.jsonValue("{}");
         output.putValue(HttpVariablesEnum.RESPONSE.getValue(), jsonValue);
@@ -91,6 +96,8 @@ public interface GenericRestService  {
         SpinJsonNode headersJsonNode = JSON(response.getHeaders());
         output.putValue(HttpVariablesEnum.RESPONSE_HEADERS.getValue(), headersJsonNode.toString());
         serviceSpan.end();
+        getLogger().error("TEMPORARY --- Executed request, returning map with response: {}, status: {}, headers: {}", output.get(HttpVariablesEnum.RESPONSE.getValue()), output.get(HttpVariablesEnum.STATUS_CODE.getValue()),
+                output.get(HttpVariablesEnum.RESPONSE_HEADERS.getValue()));
         return output;
     }
 
