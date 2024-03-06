@@ -73,10 +73,13 @@ private static String idPayKey = "test_idpay_apikey";
         Map<String, String> headersMap = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.HEADERS.getValue(), false);
         HttpHeaders headers = HttpRequestUtils.createHttpHeaders(headersMap);
         headers.add(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue(), UUID.randomUUID().toString());
+        log.info(String.format("TEMPORARY - Preparing config, headers before idPayFlow: %s", headers));
         if (idPayFlow) {
             log.info(String.format("TEMPORARY - starting idPayFlow with idPayKey= %s", idPayKey));
             headers.add("Ocp-Apim-Subscription-Key", idPayKey);
+            log.info(String.format("TEMPORARY - finishing idPayFlow with idPayKey= %s", idPayKey));
         }
+        log.info(String.format("TEMPORARY - Preparing config, headers after idPayFlow: %s", headers));
         Map<String, String> pathParams = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.PATH_PARAMS.getValue(), false);
         if (CollectionUtils.isEmpty(pathParams)) {
             pathParams = new HashMap<>();
