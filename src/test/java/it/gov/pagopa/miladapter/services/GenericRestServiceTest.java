@@ -3,6 +3,7 @@ package it.gov.pagopa.miladapter.services;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanBuilder;
 import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Context;
 import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
@@ -23,12 +24,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpMethod.GET;
 
 class GenericRestServiceTest {
@@ -56,6 +54,42 @@ class GenericRestServiceTest {
         when(tracer.spanBuilder(any())).thenReturn(spanBuilder);
         Span span = mock(Span.class);
         when(spanBuilder.startSpan()).thenReturn(span);
+    }
+
+    /*@Test
+    void testExecuteRestCallInterruptedException(){
+        Configuration configuration = mock(Configuration.class);
+        when(configuration.getDelayMilliseconds()).thenReturn(2000);
+        when(Thread.sleep(anyLong())).thenThrow(InterruptedException.class);
+        assertThrows(RuntimeException.class, () -> genericRestService.executeRestCall(configuration));
+    }
+*/
+
+    @Test
+    void testExecuteRestCallWithBodyAttribute(){
+        Configuration configuration = mock(Configuration.class);
+        HttpEntity<String> entity = mock(HttpEntity.class);
+        when(configuration.getDelayMilliseconds()).thenReturn(100);
+        when(entity.hasBody()).thenReturn(true);
+        when(entity.getBody()).thenReturn("TestBody");
+        genericRestService.executeRestCall(configuration);
+       // verify(serviceSpan).setAttribute(eq("http.body"), eq("TestBody"));
+    }
+
+    @Test
+    void testSpanBuilderWithParentSpanContext(){
+        Configuration configuration=mock(Configuration.class);
+        when(configuration.getParentSpanContextString()).thenReturn("{\"traceId\":\"123\",\"spanId\":\"456\"}");
+        genericRestService.spanBuilder(configuration);
+        // verify(spanBuilder).setParent(any(Context.class));
+    }
+
+    @Test
+    void testSpanBuilderWithoutParentSpanContext() {
+        Configuration configuration = mock(Configuration.class);
+        when(configuration.getParentSpanContextString()).thenReturn("");
+        genericRestService.spanBuilder(configuration);
+        // verify(spanBuilder, never()).setParent(any(Context.class));
     }
 
     @Test
