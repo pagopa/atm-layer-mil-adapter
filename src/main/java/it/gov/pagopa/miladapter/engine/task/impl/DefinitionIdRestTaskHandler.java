@@ -76,6 +76,11 @@ public class DefinitionIdRestTaskHandler implements RestExternalTaskHandler {
     }
 
     @Override
+    public boolean isIdPayFlow() {
+        return false;
+    }
+
+    @Override
     public Configuration getHttpConfiguration(Map<String, Object> variables) {
         return EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationInternalCall(variables, isMILFlow());
     }

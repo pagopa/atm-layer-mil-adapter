@@ -61,6 +61,8 @@ public interface RestExternalTaskHandler extends ExternalTaskHandler {
 
     boolean isMILFlow();
 
+    boolean isIdPayFlow();
+
     Configuration getHttpConfiguration(Map<String, Object> variables);
 
 }
