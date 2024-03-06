@@ -70,7 +70,7 @@ private static String idPayKey = "test_idpay_apikey";
         HttpHeaders headers = HttpRequestUtils.createHttpHeaders(headersMap);
         headers.add(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue(), UUID.randomUUID().toString());
         if (idPayFlow) {
-            headers.add(RequiredProcessVariables.IDPAY_KEY.getEngineValue(), idPayKey);
+            headers.add("Ocp-Apim-Subscription-Key", idPayKey);
         }
         Map<String, String> pathParams = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.PATH_PARAMS.getValue(), false);
         if (CollectionUtils.isEmpty(pathParams)) {
