@@ -6,10 +6,10 @@
       
 | Outcome                 | Value                                                               |
 |-------------------------|---------------------------------------------------------------------|
-| Code Coverage %         | 91.13%               |
-| :heavy_check_mark: Number of Lines Covered | 483    |
-| :x: Number of Lines Missed  | 47     |
-| Total Number of Lines   | 530     |
+| Code Coverage %         | 90.76%               |
+| :heavy_check_mark: Number of Lines Covered | 491    |
+| :x: Number of Lines Missed  | 50     |
+| Total Number of Lines   | 541     |
 
 
 ## Details:
@@ -80,7 +80,7 @@
 
 <details>
     <summary>
-:x: Token.java
+:x: AuthParameters.java
     </summary>
 
         
@@ -90,7 +90,7 @@
 
 <details>
     <summary>
-:x: AuthParameters.java
+:x: Token.java
     </summary>
 
         
@@ -110,11 +110,11 @@
 
 <details>
     <summary>
-:x: ParentSpanContext.java
+:heavy_check_mark: ParentSpanContext.java
     </summary>
 
         
-#### Lines Missed:
+#### All Lines Covered!
         
 </details>
 
@@ -158,31 +158,6 @@
 </details>
 
     
-### it/gov/pagopa/miladapter/enums
-
-<details>
-    <summary>
-:heavy_check_mark: RequiredProcessVariables.java
-    </summary>
-
-        
-#### All Lines Covered!
-        
-</details>
-
-    
-
-<details>
-    <summary>
-:heavy_check_mark: HttpVariablesEnum.java
-    </summary>
-
-        
-#### All Lines Covered!
-        
-</details>
-
-    
 ### it/gov/pagopa/miladapter/util
 
 <details>
@@ -220,6 +195,31 @@
 </details>
 
     
+### it/gov/pagopa/miladapter/enums
+
+<details>
+    <summary>
+:heavy_check_mark: RequiredProcessVariables.java
+    </summary>
+
+        
+#### All Lines Covered!
+        
+</details>
+
+    
+
+<details>
+    <summary>
+:heavy_check_mark: HttpVariablesEnum.java
+    </summary>
+
+        
+#### All Lines Covered!
+        
+</details>
+
+    
 ### it/gov/pagopa/miladapter/engine/task
 
 <details>
@@ -230,7 +230,11 @@
         
 #### Lines Missed:
         
-- Line #46
+- Line #53
+```
+                            } catch (OptimisticLockException e) {
+```
+- Line #60
 ```
                     }, complPoolExecutor);
 ```
@@ -324,10 +328,6 @@
 - Line #133
 ```
             } catch (JsonProcessingException e) {
-```
-- Line #135
-```
-            }
 ```
 </details>
 
@@ -525,7 +525,7 @@
         
 #### Lines Missed:
         
-- Line #82
+- Line #79
 ```
         }
 ```
