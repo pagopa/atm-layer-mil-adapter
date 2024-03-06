@@ -6,10 +6,10 @@
       
 | Outcome                 | Value                                                               |
 |-------------------------|---------------------------------------------------------------------|
-| Code Coverage %         | 90.76%               |
-| :heavy_check_mark: Number of Lines Covered | 491    |
-| :x: Number of Lines Missed  | 50     |
-| Total Number of Lines   | 541     |
+| Code Coverage %         | 92.36%               |
+| :heavy_check_mark: Number of Lines Covered | 496    |
+| :x: Number of Lines Missed  | 41     |
+| Total Number of Lines   | 537     |
 
 
 ## Details:
@@ -151,7 +151,7 @@
         
 #### Lines Missed:
         
-- Line #17
+- Line #14
 ```
     }
 ```
@@ -230,11 +230,7 @@
         
 #### Lines Missed:
         
-- Line #53
-```
-                            } catch (OptimisticLockException e) {
-```
-- Line #60
+- Line #46
 ```
                     }, complPoolExecutor);
 ```
