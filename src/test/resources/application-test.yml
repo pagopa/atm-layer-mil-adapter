@@ -11,3 +11,5 @@ spring:
     cache-configuration:
       cache-name: token-cache
       max-entries: 100
+id-pay:
+  api-key: "testIdPayToken"

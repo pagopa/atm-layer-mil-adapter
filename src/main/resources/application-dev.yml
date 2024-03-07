@@ -69,4 +69,4 @@ logging:
     level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
 
 id-pay:
-  api-key: ${ID_PAY_API_KEY}
+  api-key: "idpayToken"

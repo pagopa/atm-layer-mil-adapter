@@ -1,7 +1,9 @@
 package it.gov.pagopa.miladapter.engine.task.impl;
 
 import it.gov.pagopa.miladapter.engine.task.RestExternalTaskHandler;
+import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.Configuration;
+import it.gov.pagopa.miladapter.properties.IDPayFlowProperties;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.services.GenericRestService;
 import it.gov.pagopa.miladapter.services.IDPayRestService;
@@ -25,6 +27,11 @@ public class IDPayRestTaskHandler implements RestExternalTaskHandler {
     IDPayRestService idPayRestService;
     @Autowired
     RestConfigurationProperties restConfigurationProperties;
+//    @Autowired
+//    IDPayFlowProperties idPayFlowProperties;
+
+    @Value("${id-pay.api-key}")
+    private int idPayApiKey;
     @Value("${camunda.bpm.client.max-tasks}")
     private int maxTasksConfig;
     @Autowired
@@ -76,6 +83,7 @@ public class IDPayRestTaskHandler implements RestExternalTaskHandler {
 
     @Override
     public Configuration getHttpConfiguration(Map<String, Object> variables) {
+        variables.put(RequiredProcessVariables.IDPAY_KEY.getEngineValue(), idPayApiKey);
         return EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCall(variables, isMILFlow(), isIdPayFlow());
     }
 }

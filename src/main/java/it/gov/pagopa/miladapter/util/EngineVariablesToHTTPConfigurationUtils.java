@@ -4,8 +4,11 @@ import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
 import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.AuthParameters;
 import it.gov.pagopa.miladapter.model.Configuration;
+import it.gov.pagopa.miladapter.properties.IDPayFlowProperties;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -17,9 +20,17 @@ import java.util.UUID;
 
 @Slf4j
 public class EngineVariablesToHTTPConfigurationUtils {
-    @Value("${id-pay.api-key}")
-    private static String idPayKey;
-//private static String idPayKey = "test_idpay_apikey";
+
+//    private static IDPayFlowProperties idPayFlowProperties;
+//
+//    @Autowired
+//    private IDPayFlowProperties idPayFlowProperties0;
+//
+//    @PostConstruct
+//    private void initStaticIDPayFlowProperties () {
+//        idPayFlowProperties = this.idPayFlowProperties0;
+//    }
+
 
     public static Integer getIntegerValue(String variableName, String value) {
         int integerValue;
@@ -59,7 +70,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
 
     public static Configuration getHttpConfigurationExternalCall(Map<String, Object> variables, boolean milFlow, boolean idPayFlow) {
         log.info(String.format("TEMPORARY - starting configuration with idPayFlow= %s", idPayFlow));
-        log.info(String.format("TEMPORARY - starting configuration with idPayKey= %s", idPayKey));
+        log.info(String.format("TEMPORARY - starting configuration with idPayKey= %s", variables.get(RequiredProcessVariables.IDPAY_KEY.getEngineValue()).toString()));
         String requestId = UUID.randomUUID().toString();
         String acquirerId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), milFlow);
         String channel = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.CHANNEL.getEngineValue(), milFlow);
@@ -75,9 +86,9 @@ public class EngineVariablesToHTTPConfigurationUtils {
         headers.add(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue(), UUID.randomUUID().toString());
         log.info(String.format("TEMPORARY - Preparing config, headers before idPayFlow: %s", headers));
         if (idPayFlow) {
-            log.info(String.format("TEMPORARY - starting idPayFlow with idPayKey= %s", idPayKey));
-            headers.add("Ocp-Apim-Subscription-Key", idPayKey);
-            log.info(String.format("TEMPORARY - finishing idPayFlow with idPayKey= %s", idPayKey));
+            log.info(String.format("TEMPORARY - starting idPayFlow with idPayKey= %s", variables.get(RequiredProcessVariables.IDPAY_KEY.getEngineValue()).toString()));
+            headers.add("Ocp-Apim-Subscription-Key", variables.get(RequiredProcessVariables.IDPAY_KEY.getEngineValue()).toString());
+            log.info(String.format("TEMPORARY - finishing idPayFlow with idPayKey= %s", variables.get(RequiredProcessVariables.IDPAY_KEY.getEngineValue()).toString()));
         }
         log.info(String.format("TEMPORARY - Preparing config, headers after idPayFlow: %s", headers));
         Map<String, String> pathParams = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.PATH_PARAMS.getValue(), false);
