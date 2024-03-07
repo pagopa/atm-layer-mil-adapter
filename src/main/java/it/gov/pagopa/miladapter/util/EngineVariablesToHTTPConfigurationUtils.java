@@ -17,9 +17,12 @@ import java.util.UUID;
 
 @Slf4j
 public class EngineVariablesToHTTPConfigurationUtils {
-    @Value("${id-pay.api-key}")
     private static String idPayKey;
-//private static String idPayKey = "test_idpay_apikey";
+
+    @Value("${id-pay.api-key}")
+    public void setIdPayKey(String idPayKey) {
+        EngineVariablesToHTTPConfigurationUtils.idPayKey = idPayKey;
+    }
 
     public static Integer getIntegerValue(String variableName, String value) {
         int integerValue;
