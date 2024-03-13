@@ -92,26 +92,6 @@ jobs:
           git commit -m "Chart.yaml updated with new version v${{ steps.semantic-release-dryrun.outputs.new_release_version }}"
           git push
 
-      - name: Commit with "${{ inputs.commit }}:" prefix
-        run: |
-          git config user.name "GitHub Action"
-          git config user.email "action@github.com"
-          git pull
-          git add .
-          git commit --allow-empty -m "${{ inputs.commit }}: docker-image: v${{ steps.semantic-release-dryrun.outputs.new_release_version }}, chart: v${{ steps.semantic-release-dryrun.outputs.new_release_version }}"
-          git push
-
-      - name: Semantic Release
-        id: semantic-release
-        uses: cycjimmy/semantic-release-action@bdd914ff2423e2792c73475f11e8da603182f32d
-        with:
-          semantic_version: 19
-          extra_plugins: |
-            @semantic-release/release-notes-generator@10.0.3
-            @semantic-release/git@10.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Test execution
         run: |
           mvn test
@@ -143,6 +123,26 @@ jobs:
           DOCKER_IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$DOCKER_IMAGE_TAG .
+
+      - name: Commit with "${{ inputs.commit }}:" prefix
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git pull
+          git add .
+          git commit --allow-empty -m "${{ inputs.commit }}: docker-image: v${{ steps.semantic-release-dryrun.outputs.new_release_version }}, chart: v${{ steps.semantic-release-dryrun.outputs.new_release_version }}"
+          git push
+
+      - name: Semantic Release
+        id: semantic-release
+        uses: cycjimmy/semantic-release-action@bdd914ff2423e2792c73475f11e8da603182f32d
+        with:
+          semantic_version: 19
+          extra_plugins: |
+            @semantic-release/release-notes-generator@10.0.3
+            @semantic-release/git@10.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838
