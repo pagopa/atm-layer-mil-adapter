@@ -51,38 +51,6 @@ jobs:
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Test execution
-        run: |
-          mvn test
-
-      - name: JaCoCo Code Coverage Report
-        id: jacoco_reporter
-        uses: PavanMudigonda/jacoco-reporter@v4.9
-        with:
-          coverage_results_path: target/site/jacoco/jacoco.xml
-          coverage_report_name: 'Coverage create pre-release: ${{ github.run_number }}'
-          coverage_report_title: JaCoCo
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          skip_check_run: false
-          minimum_coverage: 90
-          fail_below_threshold: false
-          publish_only_summary: false
-
-      - name: Fail Build if overall coverage is less than 90%
-        if: steps.jacoco_reporter.outputs.coverage_percentage < 90.0 
-        uses: actions/github-script@v6
-        with:
-          script: |
-            core.setFailed('Overall coverage is less than 90%!')
-
-      - name: Build docker image
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ vars.DOCKER_IMAGE_NAME}}
-          DOCKER_IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -t $REGISTRY/$REPOSITORY:$DOCKER_IMAGE_TAG .
-
       - name: Commit with "${{ inputs.commit }}:" prefix
         run: |
           git config user.name "GitHub Action"
@@ -143,6 +111,38 @@ jobs:
           git add "helm-chart/Chart.yaml"
           git commit -m "Chart.yaml updated with new version v${{ steps.semantic-release.outputs.new_release_version }}"
           git push
+
+      - name: Test execution
+        run: |
+          mvn test
+
+      - name: JaCoCo Code Coverage Report
+        id: jacoco_reporter
+        uses: PavanMudigonda/jacoco-reporter@v4.9
+        with:
+          coverage_results_path: target/site/jacoco/jacoco.xml
+          coverage_report_name: 'Coverage create pre-release: ${{ github.run_number }}'
+          coverage_report_title: JaCoCo
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          skip_check_run: false
+          minimum_coverage: 90
+          fail_below_threshold: false
+          publish_only_summary: false
+
+      - name: Fail Build if overall coverage is less than 90%
+        if: steps.jacoco_reporter.outputs.coverage_percentage < 90.0 
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.setFailed('Overall coverage is less than 90%!')
+
+      - name: Build docker image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ vars.DOCKER_IMAGE_NAME}}
+          DOCKER_IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$DOCKER_IMAGE_TAG .
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838
