@@ -85,7 +85,7 @@ public interface GenericRestService  {
         serviceSpan.setAttribute("http.response.body", response.getBody());
         serviceSpan.setAttribute("http.response.headers", response.getHeaders().toString());
         JsonValue jsonValue;
-        if(response.getBody()!=null) {
+        if(StringUtils.isNotBlank(response.getBody())) {
             getLogger().error("TEMPORARY --- Response body NOT null, setting jsonValue: {}", ClientValues.jsonValue(response.getBody()));
             jsonValue = ClientValues.jsonValue(response.getBody());
         }
