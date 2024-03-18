@@ -22,7 +22,7 @@ class CustomHttpRequestRetryStrategyTest {
     private CustomHttpRequestRetryStrategy customHttpRequestRetryStrategy;
     @BeforeEach
     public void setup() {
-        int maxRetry = 1;
+        int maxRetry = 2;
         int retryInterval = 500;
         customHttpRequestRetryStrategy = new CustomHttpRequestRetryStrategy(maxRetry, retryInterval);
     }
