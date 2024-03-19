@@ -158,31 +158,6 @@
 </details>
 
     
-### it/gov/pagopa/miladapter/enums
-
-<details>
-    <summary>
-:heavy_check_mark: RequiredProcessVariables.java
-    </summary>
-
-        
-#### All Lines Covered!
-        
-</details>
-
-    
-
-<details>
-    <summary>
-:heavy_check_mark: HttpVariablesEnum.java
-    </summary>
-
-        
-#### All Lines Covered!
-        
-</details>
-
-    
 ### it/gov/pagopa/miladapter/util
 
 <details>
@@ -212,6 +187,31 @@
 <details>
     <summary>
 :heavy_check_mark: EngineVariablesUtils.java
+    </summary>
+
+        
+#### All Lines Covered!
+        
+</details>
+
+    
+### it/gov/pagopa/miladapter/enums
+
+<details>
+    <summary>
+:heavy_check_mark: RequiredProcessVariables.java
+    </summary>
+
+        
+#### All Lines Covered!
+        
+</details>
+
+    
+
+<details>
+    <summary>
+:heavy_check_mark: HttpVariablesEnum.java
     </summary>
 
         
@@ -483,7 +483,7 @@
 
 <details>
     <summary>
-:heavy_check_mark: RestThreadPoolConfig.java
+:heavy_check_mark: CustomExpiryPolicy.java
     </summary>
 
         
@@ -495,7 +495,7 @@
 
 <details>
     <summary>
-:heavy_check_mark: CustomExpiryPolicy.java
+:heavy_check_mark: RestThreadPoolConfig.java
     </summary>
 
         
