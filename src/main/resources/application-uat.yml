@@ -1,6 +1,5 @@
 server:
   port: ${SERVER_PORT:8085}
-  max-threads: 1000
 camunda:
   bpm:
     history-level: NONE
