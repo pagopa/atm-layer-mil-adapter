@@ -6,10 +6,10 @@
       
 | Outcome                 | Value                                                               |
 |-------------------------|---------------------------------------------------------------------|
-| Code Coverage %         | 92.05%               |
+| Code Coverage %         | 91.38%               |
 | :heavy_check_mark: Number of Lines Covered | 498    |
-| :x: Number of Lines Missed  | 43     |
-| Total Number of Lines   | 541     |
+| :x: Number of Lines Missed  | 47     |
+| Total Number of Lines   | 545     |
 
 
 ## Details:
@@ -234,9 +234,9 @@
         
 #### Lines Missed:
         
-- Line #46
+- Line #47
 ```
-                    }, complPoolExecutor);
+                        catch (Exception e) {
 ```
 </details>
 
