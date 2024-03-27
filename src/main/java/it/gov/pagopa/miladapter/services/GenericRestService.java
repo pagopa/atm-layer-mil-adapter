@@ -3,12 +3,7 @@ package it.gov.pagopa.miladapter.services;
 import camundajar.impl.com.google.gson.JsonObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.SpanBuilder;
-import io.opentelemetry.api.trace.SpanContext;
-import io.opentelemetry.api.trace.TraceFlags;
-import io.opentelemetry.api.trace.TraceState;
-import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.api.trace.*;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
@@ -19,9 +14,12 @@ import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
 import it.gov.pagopa.miladapter.util.HttpRequestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.camunda.bpm.client.variable.ClientValues;
+import org.camunda.bpm.client.variable.value.JsonValue;
 import org.camunda.bpm.engine.variable.VariableMap;
 import org.camunda.bpm.engine.variable.Variables;
 import org.camunda.spin.json.SpinJsonNode;
+
 import org.slf4j.Logger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -34,7 +32,7 @@ import java.net.URI;
 
 import static org.camunda.spin.Spin.JSON;
 
-public interface GenericRestService {
+public interface GenericRestService  {
 
     default VariableMap executeRestCall(Configuration configuration) {
 
@@ -68,12 +66,12 @@ public interface GenericRestService {
                     .exchange(url, configuration.getHttpMethod(), entity, String.class);
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             getLogger().error("Exception in HTTP request: ", e);
-            response = new ResponseEntity<>(e.getResponseBodyAsString(), e.getStatusCode());
+            response = new ResponseEntity<>("\"output\":"+"\""+e.getResponseBodyAsString()+"\"", e.getStatusCode());
             serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, e.getStatusCode().value());
             serviceSpan.setAttribute("http.response.body", e.getResponseBodyAsString());
         } catch (Exception e) {
             getLogger().error("Exception in HTTP request: ", e);
-            response = new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>("\"output\":"+"\""+e.getMessage()+"\"", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         VariableMap output = Variables.createVariables();
@@ -83,7 +81,12 @@ public interface GenericRestService {
         serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, response.getStatusCode().value());
         serviceSpan.setAttribute("http.response.body", response.getBody());
         serviceSpan.setAttribute("http.response.headers", response.getHeaders().toString());
-        output.putValue(HttpVariablesEnum.RESPONSE.getValue(), response.getBody());
+        JsonValue jsonValue;
+        if(response.getBody()!=null)
+            jsonValue = ClientValues.jsonValue(response.getBody());
+        else
+            jsonValue = ClientValues.jsonValue("{}");
+        output.putValue(HttpVariablesEnum.RESPONSE.getValue(), jsonValue);
         output.putValue(HttpVariablesEnum.STATUS_CODE.getValue(), response.getStatusCode().value());
         SpinJsonNode headersJsonNode = JSON(response.getHeaders());
         output.putValue(HttpVariablesEnum.RESPONSE_HEADERS.getValue(), headersJsonNode.toString());

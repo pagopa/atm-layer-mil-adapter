@@ -80,29 +80,29 @@ class DefinitionIdRestServiceImplTest {
         configuration.getAuthParameters().setBranchId("1234");
         configuration.getAuthParameters().setTerminalId("12345678");
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class)))
-                .thenReturn(new ResponseEntity("test response", HttpStatus.OK));
+                .thenReturn(new ResponseEntity("{\"output\":\"test\"}", HttpStatus.OK));
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
         VariableMap output = definitionIdRestService.executeRestCall(configuration);
-        assertEquals("test response", output.get("response"));
+        assertEquals("{\"output\":\"test\"}", output.get("response").toString());
         assertEquals(200, output.get("statusCode"));
     }
 
     @Test
     void executeDefinitionIdCallTestOKNoBranchNoTerminalId() {
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class)))
-                .thenReturn(new ResponseEntity("test response", HttpStatus.OK));
+                .thenReturn(new ResponseEntity("{\"output\":\"test\"}", HttpStatus.OK));
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
         VariableMap output = definitionIdRestService.executeRestCall(configuration);
-        assertEquals("test response", output.get("response"));
+        assertEquals("{\"output\":\"test\"}", output.get("response").toString());
         assertEquals(200, output.get("statusCode"));
     }
 
     @Test
     void executeMILRestCallTestKO() {
-        when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("BAD REQUEST", HttpStatus.BAD_REQUEST));
+        when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("{\"output\":\"BAD REQUEST\"}", HttpStatus.BAD_REQUEST));
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
         VariableMap output = definitionIdRestService.executeRestCall(configuration);
-        assertEquals("BAD REQUEST", output.get("response"));
+        assertEquals("{\"output\":\"BAD REQUEST\"}", output.get("response").toString());
         assertEquals(400, output.get("statusCode"));
     }
 

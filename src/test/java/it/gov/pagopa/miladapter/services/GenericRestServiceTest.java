@@ -69,13 +69,13 @@ class GenericRestServiceTest {
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt()))
                 .thenReturn(restTemplateMock);
 
-        ResponseEntity<String> successfulResponse = new ResponseEntity<>("Success", HttpStatus.OK);
+        ResponseEntity<String> successfulResponse = new ResponseEntity<>("{\"output\":\"SUCCESS\"}", HttpStatus.OK);
         when(restTemplateMock.exchange(any(URI.class), any(), any(HttpEntity.class), eq(String.class)))
                 .thenReturn(successfulResponse);
 
         VariableMap output = genericRestService.executeRestCall(configuration);
         assertEquals(200, output.get(HttpVariablesEnum.STATUS_CODE.getValue()));
-        assertEquals("Success", output.get(HttpVariablesEnum.RESPONSE.getValue()));
+        assertEquals("{\"output\":\"SUCCESS\"}", output.get(HttpVariablesEnum.RESPONSE.getValue()).toString());
     }
 
 
