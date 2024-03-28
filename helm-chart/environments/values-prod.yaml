@@ -68,7 +68,7 @@ database:
     password: DB_PASSWORD
 
 idPay:
-  basePath: https://api-io.prod.cstar.pagopa.it
+  basePath: https://api-io.uat.cstar.pagopa.it
   credentialsSecretName: "pagopa-prod-atm-layer-mil-adapter-idpay"
   credentialsSecretKeys:
     apiKey: API_KEY
