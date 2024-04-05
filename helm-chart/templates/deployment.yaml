@@ -38,6 +38,8 @@ spec:
             - containerPort: {{ .Values.service.port }}
           imagePullPolicy: Always
           env:
+            - name: TZ
+              value: Europe/Rome
             - name: MIL_ADAPTER_ENGINE_URL
               value: "{{ .Values.camundaWebUser.address }}"
             - name: MIL_ADAPTER_DISABLE_BACKOFF_STRATEGY
