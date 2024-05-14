@@ -1,4 +1,4 @@
-FROM maven:3.11.0-amazoncorretto-21-al2023 AS buildtime
+FROM maven:3.9.4-amazoncorretto-21-al2023 AS buildtime
 
 WORKDIR /build
 COPY . .
