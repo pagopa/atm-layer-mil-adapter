@@ -24,6 +24,7 @@
         <httpclient5.version>5.2.1</httpclient5.version>
         <camunda.spin.version>1.22.0</camunda.spin.version>
         <micrometer.tracing.version>1.2.2</micrometer.tracing.version>
+        <lombok.version>1.18.30</lombok.version>
     </properties>
 
     <parent>
@@ -136,6 +137,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+            <version>${lombok.version}</version>
         </dependency>
 
         <dependency>
