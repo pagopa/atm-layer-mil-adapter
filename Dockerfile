@@ -1,4 +1,4 @@
-FROM maven:3.11.0-openjdk-21@sha256:c7719f952f62e301c6c24b86ef9a2ea1cd0a314a862ed12e51f0ffbc3fbb96b5 AS buildtime
+FROM maven:3.9.4-amazoncorretto-21-al2023@sha256:c7719f952f62e301c6c24b86ef9a2ea1cd0a314a862ed12e51f0ffbc3fbb96b5 AS buildtime
 
 WORKDIR /build
 COPY . .
