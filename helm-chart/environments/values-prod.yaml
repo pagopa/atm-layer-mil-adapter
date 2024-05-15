@@ -45,7 +45,6 @@ milAdapter:
   tracingBackendUrl: http://jaeger-collector.default.svc.cluster.local:4317
 
 milAuth:
-  credentialsSecretEnabled: true
   credentialsSecretName: "pagopa-prod-atm-layer-mil-adapter-mil-auth"
   credentialsSecretKeys:
     clientId: CLIENT_ID
@@ -53,7 +52,6 @@ milAuth:
 
 camundaWebUser:
   address: http://pagopa-prod-atm-layer-wf-engine.pagopa.svc.cluster.local:8080
-  credentialsSecretEnabled: true
   credentialsSecretName: "pagopa-prod-atm-layer-mil-adapter-camunda"
   credentialsSecretKeys:
     username: WEB_USER
@@ -64,7 +62,6 @@ database:
   url: jdbc:postgresql://pagopa-prod-atm-layer-rds.cluster-cjww3kikqdtw.eu-south-1.rds.amazonaws.com:5432
   db_name: pagopadb
   schema: atm_layer_engine
-  credentialsSecretEnabled: true
   credentialsSecretName: "pagopa-prod-atm-layer-mil-adapter-database"
   credentialsSecretKeys:
     username: DB_USERNAME
@@ -72,7 +69,6 @@ database:
 
 idPay:
   basePath: https://api-io.uat.cstar.pagopa.it
-  credentialsSecretEnabled: true
   credentialsSecretName: "pagopa-prod-atm-layer-mil-adapter-idpay"
   credentialsSecretKeys:
     apiKey: API_KEY
@@ -142,17 +138,17 @@ resources:
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   limits:
-    cpu: 200m
+    cpu: 500m
     memory: 1000Mi
   requests:
-    cpu: 100m
-    memory: 700Mi
+    cpu: 300m
+    memory: 600Mi
 
 autoscaling:
   enabled: true
   minReplicas: 2
   maxReplicas: 4
-  targetCPUUtilizationPercentage: 45
+  targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}
