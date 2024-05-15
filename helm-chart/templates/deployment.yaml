@@ -38,6 +38,8 @@ spec:
             - containerPort: {{ .Values.service.port }}
           imagePullPolicy: Always
           env:
+            - name: TZ
+              value: Europe/Rome
             - name: MIL_ADAPTER_ENGINE_URL
               value: "{{ .Values.camundaWebUser.address }}"
             - name: MIL_ADAPTER_DISABLE_BACKOFF_STRATEGY
@@ -46,6 +48,7 @@ spec:
               value: "{{ .Values.milAdapter.lockDuration }}"
             - name: MIL_ADAPTER_ASYNC_RESPONSE_TIMEOUT
               value: "{{ .Values.milAdapter.asyncResponseTimeout }}"
+            {{- if .Values.camundaWebUser.credentialsSecretEnabled }}
             - name: MIL_ADAPTER_ENGINE_ACCOUNT_USER
               valueFrom:
                 secretKeyRef:
@@ -56,8 +59,10 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.camundaWebUser.credentialsSecretName }}
                   key: {{ .Values.camundaWebUser.credentialsSecretKeys.password }}
+            {{- end }}
             - name: MIL_ADAPTER_MIL_BASE_PATH
               value: "{{ .Values.milAdapter.milBasePath }}"
+            {{- if .Values.milAuth.credentialsSecretEnabled }}
             - name: MIL_ADAPTER_MIL_AUTH_CLIENT_ID
               valueFrom:
                 secretKeyRef:
@@ -68,12 +73,14 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.milAuth.credentialsSecretName }}
                   key: {{ .Values.milAuth.credentialsSecretKeys.clientSecret }}
+            {{- end }}
             - name: MIL_ADAPTER_ENGINE_DB_BASE_URL
               value: "{{ .Values.database.url }}"
             - name: MIL_ADAPTER_ENGINE_DB_NAME
               value: "{{ .Values.database.db_name }}"
             - name: MIL_ADAPTER_ENGINE_DB_SCHEMA
               value: "{{ .Values.database.schema }}"
+            {{- if .Values.database.credentialsSecretEnabled }}
             - name: MIL_ADAPTER_ENGINE_DB_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -84,11 +91,14 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.database.credentialsSecretName }}
                   key: {{ .Values.database.credentialsSecretKeys.password }}
+            {{- end }}
+            {{- if .Values.idPay.credentialsSecretEnabled }}
             - name: ID_PAY_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.idPay.credentialsSecretName }}
                   key: {{ .Values.idPay.credentialsSecretKeys.apiKey }}
+            {{- end }}
             - name: MIL_ADAPTER_ENGINE_DB_DRIVER
               value: "{{ .Values.database.driver }}"
             - name: MIL_ADAPTER_ENABLE_INTERCEPTOR_LOGGING

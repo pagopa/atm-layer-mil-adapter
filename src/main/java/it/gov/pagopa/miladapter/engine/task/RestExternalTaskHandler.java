@@ -40,14 +40,20 @@ public interface RestExternalTaskHandler extends ExternalTaskHandler {
             Executor complPoolExecutor = this.getTaskComplExecutor();
             resultAsync
                     .thenAcceptAsync(variableMap -> {
+                        try {
                         getLogger().info("Completing task {} for process instance {}",externalTask.getId(),externalTask.getProcessInstanceId());
-                        externalTaskService.complete(externalTask, null, variableMap);
-                    }, complPoolExecutor);
+                        getLogger().info("Variables: {}",variableMap);
+                        externalTaskService.complete(externalTask, null, variableMap);}
+                        catch (Exception e) {
+                            getLogger().error("Error on MIL-Adapter execution: {}", e.getMessage(), e);
+                            externalTaskService.handleFailure(externalTask, e.getMessage(),
+                                    e.getMessage().concat(Arrays.toString(e.getStackTrace())), 0, 0);
+                        }}, complPoolExecutor);
 
         } catch (Exception e) {
             getLogger().error("Error on MIL-Adapter execution: {}", e.getMessage(), e);
             externalTaskService.handleFailure(externalTask, e.getMessage(),
-                    e.getMessage().concat(Arrays.toString(e.getStackTrace())), 0, 0);
+                    Arrays.toString(e.getStackTrace()), 0, 0);
         }
 
     }
@@ -59,6 +65,8 @@ public interface RestExternalTaskHandler extends ExternalTaskHandler {
     GenericRestService getRestService();
 
     boolean isMILFlow();
+
+    boolean isIdPayFlow();
 
     Configuration getHttpConfiguration(Map<String, Object> variables);
 

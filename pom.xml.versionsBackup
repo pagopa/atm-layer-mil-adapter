@@ -7,7 +7,7 @@
     <groupId>it.gov.pagopa</groupId>
     <artifactId>mil-adapter</artifactId>
 
-    <version>1.4.0-dev.23</version>
+    <version>1.4.0-dev.15</version>
 
 
     <packaging>jar</packaging>
@@ -16,7 +16,7 @@
     <properties>
         <camunda.platform.version>7.20.0</camunda.platform.version>
         <jaxb.api.version>2.3.1</jaxb.api.version>
-        <java.version>21</java.version>
+        <java.version>17</java.version>
         <apache.common.collections.version>4.4</apache.common.collections.version>
         <easy.random.version>5.0.0</easy.random.version>
         <junit.version>4.13.2</junit.version>
@@ -24,13 +24,12 @@
         <httpclient5.version>5.2.1</httpclient5.version>
         <camunda.spin.version>1.22.0</camunda.spin.version>
         <micrometer.tracing.version>1.2.2</micrometer.tracing.version>
-        <lombok.version>1.18.30</lombok.version>
     </properties>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.4</version>
     </parent>
 
     <dependencyManagement>
@@ -137,7 +136,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
-            <version>${lombok.version}</version>
         </dependency>
 
         <dependency>

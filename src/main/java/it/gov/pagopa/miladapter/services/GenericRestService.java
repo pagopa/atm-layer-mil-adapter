@@ -66,12 +66,12 @@ public interface GenericRestService  {
                     .exchange(url, configuration.getHttpMethod(), entity, String.class);
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             getLogger().error("Exception in HTTP request: ", e);
-            response = new ResponseEntity<>("\"output\":"+"\""+e.getResponseBodyAsString()+"\"", e.getStatusCode());
+            response = new ResponseEntity<>(new JsonObject().toString(), e.getStatusCode());
             serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, e.getStatusCode().value());
             serviceSpan.setAttribute("http.response.body", e.getResponseBodyAsString());
         } catch (Exception e) {
             getLogger().error("Exception in HTTP request: ", e);
-            response = new ResponseEntity<>("\"output\":"+"\""+e.getMessage()+"\"", HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>(new JsonObject().toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         VariableMap output = Variables.createVariables();
@@ -82,10 +82,14 @@ public interface GenericRestService  {
         serviceSpan.setAttribute("http.response.body", response.getBody());
         serviceSpan.setAttribute("http.response.headers", response.getHeaders().toString());
         JsonValue jsonValue;
-        if(response.getBody()!=null)
+        if(StringUtils.isNotBlank(response.getBody())
+                && response.getStatusCode()!=null
+                    && response.getStatusCode().is2xxSuccessful()) {
             jsonValue = ClientValues.jsonValue(response.getBody());
-        else
+        }
+        else {
             jsonValue = ClientValues.jsonValue("{}");
+        }
         output.putValue(HttpVariablesEnum.RESPONSE.getValue(), jsonValue);
         output.putValue(HttpVariablesEnum.STATUS_CODE.getValue(), response.getStatusCode().value());
         SpinJsonNode headersJsonNode = JSON(response.getHeaders());
