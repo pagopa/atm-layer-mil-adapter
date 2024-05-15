@@ -44,6 +44,7 @@ milAdapter:
   tracingBackendUrl: http://jaeger-collector.default.svc.cluster.local:4317
 
 milAuth:
+  credentialsSecretEnabled: true
   credentialsSecretName: "pagopa-dev-atm-layer-mil-adapter-mil-auth"
   credentialsSecretKeys:
     clientId: CLIENT_ID
@@ -51,6 +52,7 @@ milAuth:
 
 camundaWebUser:
   address: http://pagopa-dev-atm-layer-wf-engine.pagopa.svc.cluster.local:8080
+  credentialsSecretEnabled: true
   credentialsSecretName: "pagopa-dev-atm-layer-mil-adapter-camunda"
   credentialsSecretKeys:
     username: WEB_USER
@@ -61,6 +63,7 @@ database:
   url: jdbc:postgresql://pagopa-dev-atm-layer-rds.cluster-cyezwzpjc2tj.eu-south-1.rds.amazonaws.com:5431
   db_name: pagopadb
   schema: atm_layer_engine
+  credentialsSecretEnabled: true
   credentialsSecretName: "pagopa-dev-atm-layer-mil-adapter-database"
   credentialsSecretKeys:
     username: DB_USERNAME
@@ -68,6 +71,7 @@ database:
 
 idPay:
   basePath: https://api-io.uat.cstar.pagopa.it
+  credentialsSecretEnabled: true
   credentialsSecretName: "pagopa-dev-atm-layer-mil-adapter-idpay"
   credentialsSecretKeys:
     apiKey: API_KEY

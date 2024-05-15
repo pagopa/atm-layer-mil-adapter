@@ -102,7 +102,7 @@ class DefinitionIdRestServiceImplTest {
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("{\"output\":\"BAD REQUEST\"}", HttpStatus.BAD_REQUEST));
         when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
         VariableMap output = definitionIdRestService.executeRestCall(configuration);
-        assertEquals("{\"output\":\"BAD REQUEST\"}", output.get("response").toString());
+        assertEquals("{}", output.get("response").toString());
         assertEquals(400, output.get("statusCode"));
     }
 

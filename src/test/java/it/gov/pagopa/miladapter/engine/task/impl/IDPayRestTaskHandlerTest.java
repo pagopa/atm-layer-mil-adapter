@@ -1,4 +1,4 @@
-package it.gov.pagopa.miladapter;
+package it.gov.pagopa.miladapter.engine.task.impl;
 
 import it.gov.pagopa.miladapter.engine.task.impl.IDPayRestTaskHandler;
 import it.gov.pagopa.miladapter.model.Configuration;

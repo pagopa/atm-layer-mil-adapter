@@ -70,7 +70,12 @@ public class IDPayRestTaskHandler implements RestExternalTaskHandler {
     }
 
     @Override
+    public boolean isIdPayFlow() {
+        return true;
+    }
+
+    @Override
     public Configuration getHttpConfiguration(Map<String, Object> variables) {
-        return EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCall(variables, isMILFlow());
+        return EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCall(variables, isMILFlow(), isIdPayFlow());
     }
 }

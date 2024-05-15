@@ -6,10 +6,10 @@
       
 | Outcome                 | Value                                                               |
 |-------------------------|---------------------------------------------------------------------|
-| Code Coverage %         | 91.59%               |
-| :heavy_check_mark: Number of Lines Covered | 479    |
+| Code Coverage %         | 91.87%               |
+| :heavy_check_mark: Number of Lines Covered | 497    |
 | :x: Number of Lines Missed  | 44     |
-| Total Number of Lines   | 523     |
+| Total Number of Lines   | 541     |
 
 
 ## Details:
@@ -80,7 +80,7 @@
 
 <details>
     <summary>
-:x: Token.java
+:x: AuthParameters.java
     </summary>
 
         
@@ -90,7 +90,7 @@
 
 <details>
     <summary>
-:x: AuthParameters.java
+:x: Token.java
     </summary>
 
         
@@ -110,11 +110,11 @@
 
 <details>
     <summary>
-:x: ParentSpanContext.java
+:heavy_check_mark: ParentSpanContext.java
     </summary>
 
         
-#### Lines Missed:
+#### All Lines Covered!
         
 </details>
 
@@ -151,7 +151,7 @@
         
 #### Lines Missed:
         
-- Line #17
+- Line #14
 ```
     }
 ```
@@ -205,6 +205,10 @@
         
 #### Lines Missed:
         
+- Line #27
+```
+    }
+```
 </details>
 
     
@@ -230,9 +234,9 @@
         
 #### Lines Missed:
         
-- Line #45
+- Line #47
 ```
-                    }, complPoolExecutor);
+                        catch (Exception e) {
 ```
 </details>
 
@@ -321,13 +325,9 @@
 ```
         }
 ```
-- Line #126
+- Line #130
 ```
             } catch (JsonProcessingException e) {
-```
-- Line #128
-```
-            }
 ```
 </details>
 
@@ -525,7 +525,7 @@
         
 #### Lines Missed:
         
-- Line #82
+- Line #79
 ```
         }
 ```
