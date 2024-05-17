@@ -102,7 +102,7 @@ jobs:
       #       mvn clean verify sonar:sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
       - name: Code Review
-        uses: pagopa/github-actions-template/maven-code-review@1.8.3
+        uses: pagopa/github-actions-template/maven-code-review@v1.10.4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
