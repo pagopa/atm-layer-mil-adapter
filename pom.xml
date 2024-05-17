@@ -29,6 +29,8 @@
 
         <sonar.sources>src/main/</sonar.sources>
         <sonar.cpd.exclusions>src/test/</sonar.cpd.exclusions>
+        <sonar.organization>pagopa</sonar.organization>
+        <sonar.projectKey>pagopa_atm-layer-mil-integration</sonar.projectKey>
     </properties>
 
     <parent>
