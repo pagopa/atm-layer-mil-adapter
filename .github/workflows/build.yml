@@ -85,10 +85,14 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
-      - name: Code Review
-        uses: pagopa/github-actions-template/maven-code-review@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          sonar_token: ${{ secrets.SONAR_TOKEN }}
-          project_key: pagopa_atm-layer-mil-adapter
-          cpd_exclusions: "src/test/"
+      # - name: Code Review
+      #   uses: pagopa/github-actions-template/maven-code-review@v1
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     sonar_token: ${{ secrets.SONAR_TOKEN }}
+      #     project_key: pagopa_atm-layer-mil-adapter
+      #     cpd_exclusions: "src/test/"
+
+      - name: Build docker image
+        run: |
+          mvn clean verify sonar:sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }}
