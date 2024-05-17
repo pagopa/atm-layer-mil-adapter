@@ -81,9 +81,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ matrix.environment }}
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      # - uses: actions/checkout@v3
+      #   with:
+      #     fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
       # - name: Analyze with SonarCloud
       #   run: |
@@ -96,13 +96,13 @@ jobs:
 
       #     mvn clean verify sonar:sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
-      - name: Code Review
-        run: |
-            mvn clean install -X
+      # - name: Code Review
+      #   run: |
+      #       mvn clean install -X
+      #       mvn clean verify sonar:sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
-
       - name: Code Review
-        uses: pagopa/github-actions-template/maven-code-review@main
+        uses: pagopa/github-actions-template/maven-code-review@1.8.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
