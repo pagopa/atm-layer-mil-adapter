@@ -98,11 +98,11 @@ jobs:
       #     mvn clean verify sonar:sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
       - name: Code Review
-        uses: pagopa/github-actions-template/maven-code-review@v1.10.6
+        uses: pagopa/github-actions-template/maven-code-review@main
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
-          project_key: 'pagopa_atm-layer-mil-integration'
+          project_key: pagopa_atm-layer-mil-integration
           cpd_exclusions: "src/test/"
           java_distribution: 'graalvm'
           java_version: 21
