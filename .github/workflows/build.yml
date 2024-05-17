@@ -85,11 +85,12 @@ jobs:
           script: |
             core.setFailed('Overall coverage is less than 90%!')
 
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Code Review
+        uses: pagopa/github-actions-template/maven-code-review@v1
         with:
-            args: >
-              -Dsonar.qualitygate.wait=true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+          project_key: pagopa_atm-layer-mil-adapter
+          cpd_exclusions: "src/test/"
+          java_distribution: 'graalvm'
+          java_version: '21'
