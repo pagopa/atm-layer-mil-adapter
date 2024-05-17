@@ -86,7 +86,7 @@ jobs:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Code Review
-        uses: pagopa/github-actions-template/maven-code-review@vv1.10.4
+        uses: pagopa/github-actions-template/maven-code-review@v1.10.4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
