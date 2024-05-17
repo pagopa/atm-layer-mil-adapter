@@ -25,6 +25,7 @@
         <camunda.spin.version>1.22.0</camunda.spin.version>
         <micrometer.tracing.version>1.2.2</micrometer.tracing.version>
         <lombok.version>1.18.30</lombok.version>
+        <sonarsource.scanner.version>3.11.0.3922</sonarsource.scanner.version>
     </properties>
 
     <parent>
@@ -205,6 +206,12 @@
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
             <version>3.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.sonarsource.scanner.maven</groupId>
+            <artifactId>sonar-maven-plugin</artifactId>
+            <version>${sonarsource.scanner.version}</version>
         </dependency>
 
 
