@@ -85,13 +85,19 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
-      - name: Code Review
-        uses: pagopa/github-actions-template/maven-code-review@v1.10.4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          sonar_token: ${{ secrets.SONAR_TOKEN }}
-          project_key: pagopa_atm-layer-mil-adapter
-          cpd_exclusions: "src/test/"
+      - name: Analyze with SonarCloud
+        run: ./mvnw -B verify sonar:sonar -Dsonar.projectKey=pagopa_atm-layer-mil-integration -Dsonar.organization=pagopa -Dsonar.login=$SONAR_TOKEN
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # - name: Code Review
+      #   uses: pagopa/github-actions-template/maven-code-review@v1.10.4
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     sonar_token: ${{ secrets.SONAR_TOKEN }}
+      #     project_key: pagopa_atm-layer-mil-adapter
+      #     cpd_exclusions: "src/test/"
 
       # - name: Code Review
       #   run: |
