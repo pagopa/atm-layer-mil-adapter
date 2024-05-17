@@ -34,6 +34,26 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Build docker image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ vars.DOCKER_IMAGE_NAME}}
+          DOCKER_IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$DOCKER_IMAGE_TAG .
+
+  coverage:
+    strategy:
+      matrix:
+        environment: [dev]
+    name: "coverage"
+    runs-on: ubuntu-latest
+    environment: ${{ matrix.environment }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
       - name: Setup JDK
         uses: graalvm/setup-graalvm@v1
         with:
@@ -65,25 +85,6 @@ jobs:
           script: |
             core.setFailed('Overall coverage is less than 90%!')
 
-      - name: Build docker image
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ vars.DOCKER_IMAGE_NAME}}
-          DOCKER_IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -t $REGISTRY/$REPOSITORY:$DOCKER_IMAGE_TAG .
-
-  coverage:
-    strategy:
-      matrix:
-        environment: [dev]
-    name: "coverage"
-    runs-on: ubuntu-latest
-    environment: ${{ matrix.environment }}
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
