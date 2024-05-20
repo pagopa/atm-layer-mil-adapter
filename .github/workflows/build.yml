@@ -106,7 +106,8 @@ jobs:
 
       - name: Code Review
         run: |
-          mvn sonar:sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }} -Dsonar.projectKey=pagopa_atm-layer-mil-integration -D-Dsonar.organization=pagopa -Dsonar.java.binaries=src/main
+          mvn sonar:sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }} -Dsonar.projectKey=pagopa_atm-layer-mil-integration \
+          -Dsonar.organization=pagopa -Dsonar.java.binaries=src/main -Pcoverage
 
       # - name: Code Review
       #   uses: pagopa/github-actions-template/maven-code-review@v1.10.4
