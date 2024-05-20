@@ -106,7 +106,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
-          project_key: pagopa_atm-layer-mil-integration
+          project_key: pagopa_atm-layer-mil-adapter
           cpd_exclusions: "src/test/"
           java_distribution: 'graalvm'
           java_version: 21
