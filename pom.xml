@@ -24,6 +24,7 @@
         <camunda.spin.version>1.22.0</camunda.spin.version>
         <micrometer.tracing.version>1.2.2</micrometer.tracing.version>
         <lombok.version>1.18.30</lombok.version>
+
         <sonarsource.scanner.version>3.11.0.3922</sonarsource.scanner.version>
 
         <sonar.sources>src/main/</sonar.sources>
@@ -39,6 +40,7 @@
         <sonar.cpd.exclusions>src/test/</sonar.cpd.exclusions>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+
     </properties>
 
     <parent>
