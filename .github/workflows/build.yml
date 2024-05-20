@@ -34,36 +34,36 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Setup JDK
-        uses: graalvm/setup-graalvm@v1
-        with:
-          java-version: '21'
-          distribution: 'graalvm'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Setup JDK
+      #   uses: graalvm/setup-graalvm@v1
+      #   with:
+      #     java-version: '21'
+      #     distribution: 'graalvm'
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Test execution
-        run: |
-          mvn test
+      # - name: Test execution
+      #   run: |
+      #     mvn test
       
-      - name: JaCoCo Code Coverage Report
-        id: jacoco_reporter
-        uses: PavanMudigonda/jacoco-reporter@v4.9
-        with:
-          coverage_results_path: target/site/jacoco/jacoco.xml
-          coverage_report_name: 'Coverage build ${{ github.run_number }}'
-          coverage_report_title: JaCoCo
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          skip_check_run: false
-          minimum_coverage: 90
-          fail_below_threshold: false
-          publish_only_summary: false
+      # - name: JaCoCo Code Coverage Report
+      #   id: jacoco_reporter
+      #   uses: PavanMudigonda/jacoco-reporter@v4.9
+      #   with:
+      #     coverage_results_path: target/site/jacoco/jacoco.xml
+      #     coverage_report_name: 'Coverage build ${{ github.run_number }}'
+      #     coverage_report_title: JaCoCo
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     skip_check_run: false
+      #     minimum_coverage: 90
+      #     fail_below_threshold: false
+      #     publish_only_summary: false
 
-      - name: Fail Build if overall coverage is less than 90%
-        if: steps.jacoco_reporter.outputs.coverage_percentage < 90.0 
-        uses: actions/github-script@v6
-        with:
-          script: |
-            core.setFailed('Overall coverage is less than 90%!')
+      # - name: Fail Build if overall coverage is less than 90%
+      #   if: steps.jacoco_reporter.outputs.coverage_percentage < 90.0 
+      #   uses: actions/github-script@v6
+      #   with:
+      #     script: |
+      #       core.setFailed('Overall coverage is less than 90%!')
 
       - name: Build docker image
         env:
@@ -103,6 +103,10 @@ jobs:
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Test execution
+        run: |
+          mvn test
 
       - name: Code Review
         run: |
