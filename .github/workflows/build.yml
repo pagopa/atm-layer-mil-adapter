@@ -82,12 +82,19 @@ jobs:
     environment: ${{ matrix.environment }}
     steps:
 
-      - name: Checkout code
-        uses: actions/checkout@v2
+      # - name: Checkout code
+      #   uses: actions/checkout@v2
 
-      # - uses: actions/checkout@v3
-      #   with:
-      #     fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Setup JDK
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '21'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: Analyze with SonarCloud
       #   run: |
@@ -97,17 +104,16 @@ jobs:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
+      # - name: Code Review
+      #   run: |
+      #     mvn sonar:sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }} -Dsonar.projectKey=pagopa_atm-layer-mil-integration    -D-Dsonar.organization=pagopa
 
       - name: Code Review
-        run: |
-          mvn sonar:sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }} -Dsonar.projectKey=pagopa_atm-layer-mil-integration    -D-Dsonar.organization=pagopa
-
-      # - name: Code Review
-      #   uses: pagopa/github-actions-template/maven-code-review@v1.10.4
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     sonar_token: ${{ secrets.SONAR_TOKEN }}
-      #     project_key: pagopa_atm-layer-mil-integration
-      #     cpd_exclusions: "src/test/"
-      #     java_distribution: 'graalvm'
-      #     java_version: 21
+        uses: pagopa/github-actions-template/maven-code-review@v1.10.4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+          project_key: pagopa_atm-layer-mil-integration
+          cpd_exclusions: "src/test/"
+          java_distribution: 'graalvm'
+          java_version: 21
