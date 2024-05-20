@@ -106,6 +106,7 @@ jobs:
 
       - name: Code Review
         run: |
+          mvn test
           mvn sonar:sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }} -Dsonar.projectKey=pagopa_atm-layer-mil-integration    -D-Dsonar.organization=pagopa
 
       # - name: Code Review
