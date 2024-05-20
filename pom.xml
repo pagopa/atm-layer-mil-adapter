@@ -34,11 +34,12 @@
 
         <sonar.projectKey>pagopa_atm-layer-mil-integration</sonar.projectKey>
         <sonar.projectName>ATM Layer MIL Integration</sonar.projectName>
-        <sonar.organization>pagopa</sonar.organization> <!-- Assicurati che l'organizzazione sia corretta -->
+        <sonar.organization>pagopa</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.sources>src/main/</sonar.sources>
         <sonar.cpd.exclusions>src/test/</sonar.cpd.exclusions>
-
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
     </properties>
 
     <parent>
