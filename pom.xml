@@ -7,8 +7,7 @@
     <groupId>it.gov.pagopa</groupId>
     <artifactId>mil-adapter</artifactId>
 
-    <version>1.4.0-dev.23</version>
-
+    <version>1.7.0-dev.2</version>
 
     <packaging>jar</packaging>
 
@@ -25,6 +24,21 @@
         <camunda.spin.version>1.22.0</camunda.spin.version>
         <micrometer.tracing.version>1.2.2</micrometer.tracing.version>
         <lombok.version>1.18.30</lombok.version>
+        <sonarsource.scanner.version>3.11.0.3922</sonarsource.scanner.version>
+
+        <sonar.sources>src/main/</sonar.sources>
+        <sonar.cpd.exclusions>src/test/</sonar.cpd.exclusions>
+        <sonar.organization>pagopa</sonar.organization>
+        <sonar.projectKey>pagopa_atm-layer-mil-integration</sonar.projectKey>
+
+        <sonar.projectKey>pagopa_atm-layer-mil-integration</sonar.projectKey>
+        <sonar.projectName>ATM Layer MIL Integration</sonar.projectName>
+        <sonar.organization>pagopa</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.sources>src/main/</sonar.sources>
+        <sonar.cpd.exclusions>src/test/</sonar.cpd.exclusions>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
     </properties>
 
     <parent>
@@ -205,6 +219,12 @@
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
             <version>3.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.sonarsource.scanner.maven</groupId>
+            <artifactId>sonar-maven-plugin</artifactId>
+            <version>${sonarsource.scanner.version}</version>
         </dependency>
 
 

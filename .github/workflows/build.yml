@@ -34,6 +34,61 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      # - name: Setup JDK
+      #   uses: graalvm/setup-graalvm@v1
+      #   with:
+      #     java-version: '21'
+      #     distribution: 'graalvm'
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # - name: Test execution
+      #   run: |
+      #     mvn test
+      
+      # - name: JaCoCo Code Coverage Report
+      #   id: jacoco_reporter
+      #   uses: PavanMudigonda/jacoco-reporter@v4.9
+      #   with:
+      #     coverage_results_path: target/site/jacoco/jacoco.xml
+      #     coverage_report_name: 'Coverage build ${{ github.run_number }}'
+      #     coverage_report_title: JaCoCo
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     skip_check_run: false
+      #     minimum_coverage: 90
+      #     fail_below_threshold: false
+      #     publish_only_summary: false
+
+      # - name: Fail Build if overall coverage is less than 90%
+      #   if: steps.jacoco_reporter.outputs.coverage_percentage < 90.0 
+      #   uses: actions/github-script@v6
+      #   with:
+      #     script: |
+      #       core.setFailed('Overall coverage is less than 90%!')
+
+      - name: Build docker image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ vars.DOCKER_IMAGE_NAME}}
+          DOCKER_IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$DOCKER_IMAGE_TAG .
+
+  test-and-coverage:
+    strategy:
+      matrix:
+        environment: [dev]
+    name: "coverage"
+    runs-on: ubuntu-latest
+    environment: ${{ matrix.environment }}
+    steps:
+
+      # - name: Checkout code
+      #   uses: actions/checkout@v2
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
       - name: Setup JDK
         uses: graalvm/setup-graalvm@v1
         with:
@@ -41,10 +96,18 @@ jobs:
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      # - name: Analyze with SonarCloud
+      #   run: |
+      #     mvn -N io.takari:maven:wrapper
+      #     ./mvnw -B verify sonar:sonar -Dsonar.projectKey=pagopa_atm-layer-mil-integration -Dsonar.organization=pagopa -Dsonar.login=$SONAR_TOKEN
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
       - name: Test execution
         run: |
           mvn test
-      
+
       - name: JaCoCo Code Coverage Report
         id: jacoco_reporter
         uses: PavanMudigonda/jacoco-reporter@v4.9
@@ -65,10 +128,17 @@ jobs:
           script: |
             core.setFailed('Overall coverage is less than 90%!')
 
-      - name: Build docker image
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ vars.DOCKER_IMAGE_NAME}}
-          DOCKER_IMAGE_TAG: ${{ github.sha }}
+      - name: Code Review
         run: |
-          docker build -t $REGISTRY/$REPOSITORY:$DOCKER_IMAGE_TAG .
+          mvn sonar:sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }} -Dsonar.projectKey=pagopa_atm-layer-mil-integration \
+          -Dsonar.organization=pagopa -Dsonar.java.binaries=src/main -Pcoverage
+
+      # - name: Code Review
+      #   uses: pagopa/github-actions-template/maven-code-review@v1.10.4
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     sonar_token: ${{ secrets.SONAR_TOKEN }}
+      #     project_key: pagopa_atm-layer-mil-integration
+      #     cpd_exclusions: "src/test/"
+      #     java_distribution: 'graalvm'
+      #     java_version: 21
