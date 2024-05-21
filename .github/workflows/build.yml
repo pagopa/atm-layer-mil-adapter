@@ -89,4 +89,4 @@ jobs:
         run: |
           mvn sonar:sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }} -Dsonar.projectKey=pagopa_atm-layer-mil-integration \
           -Dsonar.organization=pagopa -Dsonar.java.binaries=src/main -Pcoverage \
-          -Dsonar.cpd.exclusions=src/test/, src/main/java/it/gov/pagopa/miladapter/engine/task/impl/*, src/main/java/it/gov/pagopa/miladapter/services/impl/*
+          -Dsonar.cpd.exclusions=src/test/,src/main/java/it/gov/pagopa/miladapter/engine/task/impl/*,src/main/java/it/gov/pagopa/miladapter/services/impl/*
