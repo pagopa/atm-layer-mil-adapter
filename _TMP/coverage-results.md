@@ -209,10 +209,6 @@
         
 #### All Lines Covered!
         
-- Line #27
-```
-    }
-```
 </details>
 
     

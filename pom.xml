@@ -7,7 +7,7 @@
     <groupId>it.gov.pagopa</groupId>
     <artifactId>mil-adapter</artifactId>
 
-    <version>1.8.0</version>
+    <version>1.9.0</version>
 
     <packaging>jar</packaging>
 
@@ -24,22 +24,9 @@
         <camunda.spin.version>1.22.0</camunda.spin.version>
         <micrometer.tracing.version>1.2.2</micrometer.tracing.version>
         <lombok.version>1.18.30</lombok.version>
-
         <sonarsource.scanner.version>3.11.0.3922</sonarsource.scanner.version>
 
-        <sonar.sources>src/main/</sonar.sources>
-        <sonar.cpd.exclusions>src/test/</sonar.cpd.exclusions>
-        <sonar.organization>pagopa</sonar.organization>
-        <sonar.projectKey>pagopa_atm-layer-mil-integration</sonar.projectKey>
-
-        <sonar.projectKey>pagopa_atm-layer-mil-integration</sonar.projectKey>
-        <sonar.projectName>ATM Layer MIL Integration</sonar.projectName>
-        <sonar.organization>pagopa</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.sources>src/main/</sonar.sources>
-        <sonar.cpd.exclusions>src/test/</sonar.cpd.exclusions>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
 
     </properties>
 
