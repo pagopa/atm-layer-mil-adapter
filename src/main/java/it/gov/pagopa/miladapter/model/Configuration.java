@@ -1,16 +1,10 @@
 package it.gov.pagopa.miladapter.model;
 
-import java.util.Map;
-
-import io.opentelemetry.api.trace.Span;
+import lombok.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.Map;
 
 @Builder
 @Setter
