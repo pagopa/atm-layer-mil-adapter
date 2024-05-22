@@ -6,10 +6,10 @@
       
 | Outcome                 | Value                                                               |
 |-------------------------|---------------------------------------------------------------------|
-| Code Coverage %         | 91.87%               |
-| :heavy_check_mark: Number of Lines Covered | 497    |
-| :x: Number of Lines Missed  | 44     |
-| Total Number of Lines   | 541     |
+| Code Coverage %         | 92.23%               |
+| :heavy_check_mark: Number of Lines Covered | 487    |
+| :x: Number of Lines Missed  | 41     |
+| Total Number of Lines   | 528     |
 
 
 ## Details:
@@ -313,19 +313,19 @@
         
 #### Lines Missed:
         
-- Line #52
+- Line #51
 ```
                 } catch (InterruptedException e) {
 ```
-- Line #67
+- Line #66
 ```
         } catch (HttpClientErrorException | HttpServerErrorException e) {
 ```
-- Line #75
+- Line #74
 ```
         }
 ```
-- Line #130
+- Line #129
 ```
             } catch (JsonProcessingException e) {
 ```
@@ -366,6 +366,18 @@
 
         
 #### Lines Missed:
+        
+</details>
+
+    
+
+<details>
+    <summary>
+:heavy_check_mark: GenericHandler.java
+    </summary>
+
+        
+#### All Lines Covered!
         
 </details>
 

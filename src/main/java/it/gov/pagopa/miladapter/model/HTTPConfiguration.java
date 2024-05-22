@@ -1,11 +1,6 @@
 package it.gov.pagopa.miladapter.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 

@@ -1,10 +1,8 @@
 package it.gov.pagopa.miladapter.engine.task.impl;
 
-import it.gov.pagopa.miladapter.engine.task.impl.IDPayRestTaskHandler;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.services.IDPayRestService;
-import org.h2.util.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,9 +15,7 @@ import org.springframework.http.HttpMethod;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class IDPayRestTaskHandlerTest {
     @Mock
