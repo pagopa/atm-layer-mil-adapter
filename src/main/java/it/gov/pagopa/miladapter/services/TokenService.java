@@ -4,24 +4,16 @@ import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.AuthParameters;
 import it.gov.pagopa.miladapter.model.KeyToken;
 import it.gov.pagopa.miladapter.model.Token;
-import it.gov.pagopa.miladapter.properties.CacheConfigurationProperties;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Calendar;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @Slf4j

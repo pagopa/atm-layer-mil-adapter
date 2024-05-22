@@ -1,19 +1,14 @@
 package it.gov.pagopa.miladapter.services;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.net.URI;
-import java.util.HashMap;
-
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanBuilder;
 import io.opentelemetry.api.trace.Tracer;
+import it.gov.pagopa.miladapter.model.AuthParameters;
+import it.gov.pagopa.miladapter.model.Configuration;
+import it.gov.pagopa.miladapter.properties.DefinitionIdProperties;
+import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
+import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
+import it.gov.pagopa.miladapter.services.impl.DefinitionIdRestServiceImpl;
 import org.camunda.bpm.engine.variable.VariableMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,19 +17,18 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
-import it.gov.pagopa.miladapter.model.AuthParameters;
-import it.gov.pagopa.miladapter.model.Configuration;
-import it.gov.pagopa.miladapter.properties.DefinitionIdProperties;
-import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
-import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
-import it.gov.pagopa.miladapter.services.impl.DefinitionIdRestServiceImpl;
+import java.net.URI;
+import java.util.HashMap;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class DefinitionIdRestServiceImplTest {
 
