@@ -446,6 +446,18 @@
 
 <details>
     <summary>
+:heavy_check_mark: GenericRestServiceAbstract.java
+    </summary>
+
+        
+#### All Lines Covered!
+        
+</details>
+
+    
+
+<details>
+    <summary>
 :heavy_check_mark: CacheServiceImpl.java
     </summary>
 

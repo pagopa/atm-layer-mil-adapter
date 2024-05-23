@@ -55,15 +55,6 @@ class GenericRestServiceTest {
         when(spanBuilder.startSpan()).thenReturn(span);
     }
 
-    /*@Test
-    void testExecuteRestCallInterruptedException(){
-        Configuration configuration = mock(Configuration.class);
-        when(configuration.getDelayMilliseconds()).thenReturn(2000);
-        when(Thread.sleep(anyLong())).thenThrow(InterruptedException.class);
-        assertThrows(RuntimeException.class, () -> genericRestService.executeRestCall(configuration));
-    }
-*/
-
     @Test
     void testExecuteRestCallWithBodyAttribute(){
         Configuration configuration = mock(Configuration.class);
@@ -72,7 +63,6 @@ class GenericRestServiceTest {
         when(entity.hasBody()).thenReturn(true);
         when(entity.getBody()).thenReturn("TestBody");
         genericRestService.executeRestCall(configuration);
-       // verify(serviceSpan).setAttribute(eq("http.body"), eq("TestBody"));
     }
 
     @Test
