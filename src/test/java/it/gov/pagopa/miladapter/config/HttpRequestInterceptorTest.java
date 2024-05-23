@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
@@ -44,8 +45,8 @@ class HttpRequestInterceptorTest {
         when(httpRequest.getHeaders()).thenReturn(httpHeaders);
         TextMapSetter<HttpRequest> setter = (request, key, value) -> request.getHeaders().add(key, value);
         setter.set(httpRequest, "Test-Key", "Test-Value");
-        assert(httpHeaders.containsKey("Test-Key"));
-        assert(httpHeaders.get("Test-Key").contains("Test-Value"));
+        assertTrue(httpHeaders.containsKey("Test-Key"));
+        assertTrue(httpHeaders.get("Test-Key").contains("Test-Value"));
     }
 
     @Test

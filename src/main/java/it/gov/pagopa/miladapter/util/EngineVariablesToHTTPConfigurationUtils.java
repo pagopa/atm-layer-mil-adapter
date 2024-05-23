@@ -22,7 +22,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
     private static String idPayKey;
 
     @Value("${id-pay.api-key}")
-    public void setIdPayKey(String idPayKey) {
+    public static void setIdPayKey(String idPayKey) {
         EngineVariablesToHTTPConfigurationUtils.idPayKey = idPayKey;
     }
 

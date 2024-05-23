@@ -4,6 +4,8 @@ import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 class OpenTelemtryConfigTests {
     @InjectMocks
     OpenTelemetryConfig openTelemetryConfig = new OpenTelemetryConfig();
@@ -11,7 +13,7 @@ class OpenTelemtryConfigTests {
     @Test
     void customPoolTest() {
         OtlpGrpcSpanExporter otlpGrpcSpanExporter = openTelemetryConfig.otlpGrpcSpanExporter("http://provaUrl");
-        assert (otlpGrpcSpanExporter != null);
+        assertTrue(otlpGrpcSpanExporter != null);
 
     }
 }
