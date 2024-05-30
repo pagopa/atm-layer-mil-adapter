@@ -45,7 +45,7 @@ spring:
     password: ${MIL_ADAPTER_ENGINE_DB_PASSWORD:password}
     driverClassName: ${MIL_ADAPTER_ENGINE_DB_DRIVER:org.postgresql.Driver}
     hikari:
-      maximum-pool-size: 10
+      maximum-pool-size: 2
       minimum-idle: 5
       idle-timeout: 30000
       pool-name: SpringBootHikariCP
