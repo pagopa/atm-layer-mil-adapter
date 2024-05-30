@@ -7,7 +7,9 @@
     <groupId>it.gov.pagopa</groupId>
     <artifactId>mil-adapter</artifactId>
 
-    <version>1.10.0</version>
+
+    <version>1.12.0-dev.2</version>
+
 
     <packaging>jar</packaging>
 
@@ -118,7 +120,6 @@
         </dependency>
 
 
-
         <dependency>
             <groupId>org.camunda.bpm.springboot</groupId>
             <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
@@ -146,6 +147,11 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
         </dependency>
 
         <dependency>
