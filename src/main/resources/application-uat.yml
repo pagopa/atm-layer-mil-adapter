@@ -44,13 +44,13 @@ spring:
     username: ${MIL_ADAPTER_ENGINE_DB_USERNAME:postgres}
     password: ${MIL_ADAPTER_ENGINE_DB_PASSWORD:password}
     driverClassName: ${MIL_ADAPTER_ENGINE_DB_DRIVER:org.postgresql.Driver}
-    hikari:
-      maximum-pool-size: 2
-      minimum-idle: 2
-      idle-timeout: 30000
-      pool-name: SpringBootHikariCP
-      max-lifetime: 1800000
-      connection-timeout: 30000
+#    hikari:
+#      maximum-pool-size: 2
+#      minimum-idle: 2
+#      idle-timeout: 30000
+#      pool-name: SpringBootHikariCP
+#      max-lifetime: 1800000
+#      connection-timeout: 30000
 tracing:
   url: ${MIL_ADAPTER_TRACING_BACKEND_URL}
 
