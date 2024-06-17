@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Slf4j
 @Configuration
@@ -34,10 +35,13 @@ public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
 
     private void logRequest(HttpRequest request, byte[] body) {
+        Map<String, String> filteredHeaders = request.getHeaders().toSingleValueMap();
+        filteredHeaders.remove("Ocp-Apim-Subscription-Key");
+        filteredHeaders.remove("Authorization");
         log.info("===========================request begin================================================");
         log.info("URI         : {}", request.getURI());
         log.info("Method      : {}", request.getMethod());
-        log.info("Headers     : {}", request.getHeaders());
+        log.info("Headers     : {}", filteredHeaders);
         log.info("Request body: {}", new String(body, StandardCharsets.UTF_8));
         log.info("==========================request end================================================");
     }

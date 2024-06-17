@@ -90,7 +90,6 @@ public class EngineVariablesToHTTPConfigurationUtils {
         Number retryIntervalMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.RETRY_INTERVAL_MILLISECONDS.getValue(), false);
         String parentSpanContextString = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACTIVITY_PARENT_SPAN.getEngineValue(), false);
         AuthParameters authParameters = AuthParameters.builder().requestId(requestId).acquirerId(acquirerId).terminalId(terminalId).channel(channel).transactionId(transactionId).build();
-        log.info(String.format("TEMPORARY - Prepared config with headers= %s", headers));
         return Configuration.builder()
                 .body(body)
                 .endpoint(endpointVariable)
