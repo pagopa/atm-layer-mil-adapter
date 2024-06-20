@@ -26,7 +26,7 @@ milAdapter:
   disableBackoffStrategy: true
   lockDuration: 20000
   asyncResponseTimeout: 20000
-  milBasePath: https://mil-d-perf-ca.agreeablestone-406ca858.westeurope.azurecontainerapps.io/perf
+  milBasePath: https://mil-d-apim.azure-api.net
   enableInterceptorLogging: true
   logEngineInputVariables: true
   restReadTimeout: 20000
