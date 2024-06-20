@@ -41,7 +41,7 @@ milAdapter:
   completionPoolCorePoolSize: 5
   completionPoolMaxPoolSize: 25
   completionPoolThreadName: MILA-CompPool-
-  tracingBackendUrl: http://15.160.150.167:16686/search
+  tracingBackendUrl: http://15.160.150.167:4317
 
 milAuth:
   credentialsSecretEnabled: true
