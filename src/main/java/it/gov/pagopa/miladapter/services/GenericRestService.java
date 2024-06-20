@@ -35,7 +35,6 @@ public interface GenericRestService  {
 
     default VariableMap executeRestCall(Configuration configuration) {
 
-        this.injectAuthToken(configuration);
         ResponseEntity<String> response;
         SpanBuilder spanBuilder = this.spanBuilder(configuration);
         Span serviceSpan = spanBuilder.startSpan();
@@ -52,6 +51,7 @@ public interface GenericRestService  {
                     Thread.currentThread().interrupt();
                 }
             }
+            this.injectAuthToken(configuration);
             URI url = this.prepareUri(configuration);
             HttpEntity<String> entity = this.buildHttpEntity(configuration);
             serviceSpan.setAttribute(SemanticAttributes.HTTP_METHOD, configuration.getHttpMethod().name());
