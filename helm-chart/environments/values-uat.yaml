@@ -24,8 +24,8 @@ springProfilesActive: uat
 
 milAdapter:
   disableBackoffStrategy: true
-  lockDuration: 5000
-  asyncResponseTimeout: 1000
+  lockDuration: 20000
+  asyncResponseTimeout: 20000
   milBasePath: https://mil-d-perf-ca.agreeablestone-406ca858.westeurope.azurecontainerapps.io/perf
   enableInterceptorLogging: true
   logEngineInputVariables: true
