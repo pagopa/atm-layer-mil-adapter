@@ -507,7 +507,7 @@
 
 <details>
     <summary>
-:heavy_check_mark: CustomExpiryPolicy.java
+:heavy_check_mark: RestThreadPoolConfig.java
     </summary>
 
         
@@ -519,7 +519,7 @@
 
 <details>
     <summary>
-:heavy_check_mark: RestThreadPoolConfig.java
+:heavy_check_mark: CustomExpiryPolicy.java
     </summary>
 
         
