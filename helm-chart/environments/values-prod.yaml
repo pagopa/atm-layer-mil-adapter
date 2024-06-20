@@ -36,7 +36,6 @@ milAdapter:
   tokenCacheName: token-cache
   tokenCacheMaxEntries: 100
   modelBasePath: http://pagopa-prod-atm-layer-model.pagopa.svc.cluster.local:8080
-  idPayBasePath: https://api-io.prod.cstar.pagopa.it
   restPoolCorePoolSize: 5
   restPoolMaxPoolSize: 25
   completionPoolCorePoolSize: 5
