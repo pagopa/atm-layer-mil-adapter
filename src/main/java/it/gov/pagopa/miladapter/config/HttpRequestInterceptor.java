@@ -59,7 +59,7 @@ public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
             logResponse(response);
             log.info("Request finished at : {}", timestampEnd);
             long duration = Duration.between(timestampStart, timestampEnd).toMillis();
-            log.info("Request {}  {}  with transactionId  {}  finished with duration : {} ms", request.getMethod(), request.getURI(), request.getHeaders().get("TransactionId"), duration);
+            log.info("Request {}  {}  with transactionId  {} and requestId {} finished with duration : {} ms", request.getMethod(), request.getURI(), request.getHeaders().get("TransactionId"), request.getHeaders().get("RequestId"), duration);
         }
         return response;
     }

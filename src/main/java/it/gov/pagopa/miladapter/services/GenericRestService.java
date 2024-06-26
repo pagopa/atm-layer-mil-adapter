@@ -54,20 +54,33 @@ public interface GenericRestService  {
             this.injectAuthToken(configuration);
             URI url = this.prepareUri(configuration);
             HttpEntity<String> entity = this.buildHttpEntity(configuration);
-            serviceSpan.setAttribute(SemanticAttributes.HTTP_METHOD, configuration.getHttpMethod().name());
-            serviceSpan.setAttribute(SemanticAttributes.HTTP_URL, url.toString());
+//            serviceSpan.setAttribute(SemanticAttributes.HTTP_METHOD, configuration.getHttpMethod().name());
+//            serviceSpan.setAttribute(SemanticAttributes.HTTP_URL, url.toString());
+//            if (entity.hasBody()) {
+//                serviceSpan.setAttribute("http.body", entity.getBody());
+//            }
+//            serviceSpan.setAttribute("http.headers", entity.getHeaders().toString());
+
+
+             Span externalCallSpan = getTracer().spanBuilder("MIL external call")
+                                 .setParent(Context.current().with(serviceSpan))
+                                 .startSpan();
+            externalCallSpan.setAttribute(SemanticAttributes.HTTP_METHOD, configuration.getHttpMethod().name());
+            externalCallSpan.setAttribute(SemanticAttributes.HTTP_URL, url.toString());
             if (entity.hasBody()) {
-                serviceSpan.setAttribute("http.body", entity.getBody());
+                externalCallSpan.setAttribute("http.body", entity.getBody());
             }
-            serviceSpan.setAttribute("http.headers", entity.getHeaders().toString());
+            externalCallSpan.setAttribute("http.headers", entity.getHeaders().toString());
 
             response = this.getRestTemplate(configuration)
                     .exchange(url, configuration.getHttpMethod(), entity, String.class);
+            externalCallSpan.end();
+
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             getLogger().error("Exception in HTTP request: ", e);
             response = new ResponseEntity<>(new JsonObject().toString(), e.getStatusCode());
-            serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, e.getStatusCode().value());
-            serviceSpan.setAttribute("http.response.body", e.getResponseBodyAsString());
+//            serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, e.getStatusCode().value());
+//            serviceSpan.setAttribute("http.response.body", e.getResponseBodyAsString());
         } catch (Exception e) {
             getLogger().error("Exception in HTTP request: ", e);
             response = new ResponseEntity<>(new JsonObject().toString(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -77,9 +90,9 @@ public interface GenericRestService  {
         if (response.getBody() == null) {
             response = new ResponseEntity<>(new JsonObject().toString(), response.getStatusCode());
         }
-        serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, response.getStatusCode().value());
-        serviceSpan.setAttribute("http.response.body", response.getBody());
-        serviceSpan.setAttribute("http.response.headers", response.getHeaders().toString());
+//        serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, response.getStatusCode().value());
+//        serviceSpan.setAttribute("http.response.body", response.getBody());
+//        serviceSpan.setAttribute("http.response.headers", response.getHeaders().toString());
         JsonValue jsonValue;
         if(StringUtils.isNotBlank(response.getBody())
                 && response.getStatusCode()!=null
