@@ -69,11 +69,11 @@ public interface GenericRestService  {
                 serviceSpan.setAttribute("http.body", entity.getBody());
             }
             serviceSpan.setAttribute("http.headers", entity.getHeaders().toString());
-            getLogger().info("Stop create call request transactionId: ", configuration.getHeaders().get("TransactionId"));
-            getLogger().info("Start rest call transactionId: ", configuration.getHeaders().get("TransactionId"));
+            getLogger().info("Stop create call request requestId: ", configuration.getHeaders().get("requestId"));
+            getLogger().info("Start rest call requestId: ", configuration.getHeaders().get("requestId"));
             response = this.getRestTemplate(configuration)
                     .exchange(url, configuration.getHttpMethod(), entity, String.class);
-            getLogger().info("End rest call transactionId: ", configuration.getHeaders().get("TransactionId"));
+            getLogger().info("End rest call requestId: ", configuration.getHeaders().get("requestId"));
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             getLogger().error("Exception in HTTP request: ", e);
             response = new ResponseEntity<>(new JsonObject().toString(), e.getStatusCode());
