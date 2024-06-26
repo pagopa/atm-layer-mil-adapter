@@ -38,22 +38,11 @@ public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
         Map<String, String> filteredHeaders = request.getHeaders().toSingleValueMap();
         filteredHeaders.remove("Ocp-Apim-Subscription-Key");
         filteredHeaders.remove("Authorization");
-        log.info("===========================request begin================================================   "
-        +"URI         : {}", request.getURI()
-        +"Method      : {}", request.getMethod()
-        +"Headers     : {}", filteredHeaders
-        +"TransactionId     : {}", filteredHeaders.get("TransactionId")
-        +"Request body: {}", new String(body, StandardCharsets.UTF_8)
-        +"==========================request end================================================");
+        log.info("===========================request begin================================================   URI: {}   ,   Method: {}   ,   Headers: {}   ,   TransactionId: {}   ,   Request body: {}   ==========================request end================================================", request.getURI(), request.getMethod(), filteredHeaders, filteredHeaders.get("TransactionId"), new String(body, StandardCharsets.UTF_8));
     }
 
     private void logResponse(ClientHttpResponse response) throws IOException {
-        log.info("============================response begin==========================================   "
-                +"Status code  : {}", response.getStatusCode()
-                +"Status text  : {}", response.getStatusText()
-                +"Headers      : {}", response.getHeaders()
-                +"Response body: {}", StreamUtils.copyToString(response.getBody(), StandardCharsets.UTF_8) +"\n"
-                +"=======================response end=================================================");
+        log.info("============================response begin==========================================   Status code: {}   ,   Status text: {}   ,   Headers: {}   ,   Response body: {}   =======================response end=================================================", response.getStatusCode(), response.getStatusText(), response.getHeaders(), StreamUtils.copyToString(response.getBody(), StandardCharsets.UTF_8));
     }
 
     @Override
