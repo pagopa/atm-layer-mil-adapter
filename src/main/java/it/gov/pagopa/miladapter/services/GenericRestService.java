@@ -59,8 +59,8 @@ public interface GenericRestService  {
             getLogger().info("End span requestId: ", configuration.getHeaders().get("requestId"));
             getLogger().info("Start get token requestId: ", configuration.getHeaders().get("requestId"));
             this.injectAuthToken(configuration);
-            getLogger().info("End get token requestId: ", configuration.getHeaders().get("requestId"));
-            getLogger().info("Start create call request requestId: ", configuration.getHeaders().get("requestId"));
+            getLogger().info("End get token requestId: {}", configuration.getHeaders().get("requestId"));
+            getLogger().info("Start create call request requestId: {}", configuration.getHeaders().get("requestId"));
             URI url = this.prepareUri(configuration);
             HttpEntity<String> entity = this.buildHttpEntity(configuration);
             serviceSpan.setAttribute(SemanticAttributes.HTTP_METHOD, configuration.getHttpMethod().name());
@@ -69,21 +69,21 @@ public interface GenericRestService  {
                 serviceSpan.setAttribute("http.body", entity.getBody());
             }
             serviceSpan.setAttribute("http.headers", entity.getHeaders().toString());
-            getLogger().info("Stop create call request requestId: ", configuration.getHeaders().get("requestId"));
-            getLogger().info("Start rest call requestId: ", configuration.getHeaders().get("requestId"));
+            getLogger().info("Stop create call request requestId: {}", configuration.getHeaders().get("requestId"));
+            getLogger().info("Start rest call requestId: {}", configuration.getHeaders().get("requestId"));
             response = this.getRestTemplate(configuration)
                     .exchange(url, configuration.getHttpMethod(), entity, String.class);
-            getLogger().info("End rest call requestId: ", configuration.getHeaders().get("requestId"));
+            getLogger().info("End rest call requestId: {}", configuration.getHeaders().get("requestId"));
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            getLogger().error("Exception in HTTP request: ", e);
+            getLogger().error("Exception in HTTP request: {}", e);
             response = new ResponseEntity<>(new JsonObject().toString(), e.getStatusCode());
             serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, e.getStatusCode().value());
             serviceSpan.setAttribute("http.response.body", e.getResponseBodyAsString());
         } catch (Exception e) {
-            getLogger().error("Exception in HTTP request: ", e);
+            getLogger().error("Exception in HTTP request: {}", e);
             response = new ResponseEntity<>(new JsonObject().toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        getLogger().info("Start mapping response requestId: ", configuration.getHeaders().get("requestId"));
+        getLogger().info("Start mapping response requestId: {}", configuration.getHeaders().get("requestId"));
         VariableMap output = Variables.createVariables();
         if (response.getBody() == null) {
             response = new ResponseEntity<>(new JsonObject().toString(), response.getStatusCode());
