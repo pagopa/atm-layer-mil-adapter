@@ -38,20 +38,20 @@ public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
         Map<String, String> filteredHeaders = request.getHeaders().toSingleValueMap();
         filteredHeaders.remove("Ocp-Apim-Subscription-Key");
         filteredHeaders.remove("Authorization");
-        log.info("===========================request begin================================================\n"
-        +"URI         : {}", request.getURI()+"\n"
-        +"Method      : {}", request.getMethod()+"\n"
-        +"Headers     : {}", filteredHeaders+"\n"
-        +"TransactionId     : {}", filteredHeaders.get("TransactionId")+"\n"
-        +"Request body: {}", new String(body, StandardCharsets.UTF_8)+"\n"
+        log.info("===========================request begin================================================   "
+        +"URI         : {}", request.getURI()
+        +"Method      : {}", request.getMethod()
+        +"Headers     : {}", filteredHeaders
+        +"TransactionId     : {}", filteredHeaders.get("TransactionId")
+        +"Request body: {}", new String(body, StandardCharsets.UTF_8)
         +"==========================request end================================================");
     }
 
     private void logResponse(ClientHttpResponse response) throws IOException {
-        log.info("============================response begin==========================================\n"
-                +"Status code  : {}", response.getStatusCode() +"\n"
-                +"Status text  : {}", response.getStatusText() +"\n"
-                +"Headers      : {}", response.getHeaders() +"\n"
+        log.info("============================response begin==========================================   "
+                +"Status code  : {}", response.getStatusCode()
+                +"Status text  : {}", response.getStatusText()
+                +"Headers      : {}", response.getHeaders()
                 +"Response body: {}", StreamUtils.copyToString(response.getBody(), StandardCharsets.UTF_8) +"\n"
                 +"=======================response end=================================================");
     }
