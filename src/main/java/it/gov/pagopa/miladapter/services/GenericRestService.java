@@ -63,18 +63,25 @@ public interface GenericRestService  {
 
 
              Span externalCallSpan = getTracer().spanBuilder("MIL external call")
-                                 .setParent(Context.current().with(serviceSpan))
                                  .startSpan();
-            externalCallSpan.setAttribute(SemanticAttributes.HTTP_METHOD, configuration.getHttpMethod().name());
-            externalCallSpan.setAttribute(SemanticAttributes.HTTP_URL, url.toString());
-            if (entity.hasBody()) {
-                externalCallSpan.setAttribute("http.body", entity.getBody());
-            }
-            externalCallSpan.setAttribute("http.headers", entity.getHeaders().toString());
 
-            response = this.getRestTemplate(configuration)
-                    .exchange(url, configuration.getHttpMethod(), entity, String.class);
-            externalCallSpan.end();
+            try(Scope childScope = externalCallSpan.makeCurrent()) {
+                externalCallSpan.setAttribute(SemanticAttributes.HTTP_METHOD, configuration.getHttpMethod().name());
+                externalCallSpan.setAttribute(SemanticAttributes.HTTP_URL, url.toString());
+                if (entity.hasBody()) {
+                    externalCallSpan.setAttribute("http.body", entity.getBody());
+                }
+                externalCallSpan.setAttribute("http.headers", entity.getHeaders().toString());
+
+                response = this.getRestTemplate(configuration)
+                        .exchange(url, configuration.getHttpMethod(), entity, String.class);
+            } finally {
+                externalCallSpan.end();
+            }
+
+
+
+
 
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             getLogger().error("Exception in HTTP request: ", e);
