@@ -25,8 +25,7 @@ public class TokenService {
     CacheService cacheService;
     @Autowired
     RestTemplate restTemplate;
-//    @Autowired
-//    private CacheConfigurationProperties cacheConfigurationProperties;
+
 
 
     public void injectAuthToken(HttpHeaders restHeaders, AuthParameters authParameters) {
@@ -35,20 +34,6 @@ public class TokenService {
         restHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer".concat(" ").concat(accessToken));
     }
 
-//    private String getToken(AuthParameters authParameters) {
-//        KeyToken keyToken = new KeyToken();
-//        keyToken.setChannel(authParameters.getChannel());
-//        keyToken.setAcquirerId(authParameters.getAcquirerId());
-//        keyToken.setTerminalId(authParameters.getTerminalId());
-//        keyToken.setTransactionId(authParameters.getTransactionId());
-//        Optional<Token> optionalToken = cacheService.getToken(keyToken);
-//        if (optionalToken.isPresent()) {
-//            log.info("Recovering still valid access Token");
-//            return optionalToken.get().getAccess_token();
-//        }
-//        log.info("Recovering access Token from mil Auth");
-//        return getTokenMilAuth(authParameters);
-//    }
 
     private String getTokenMilAuth(AuthParameters authParameters) {
         KeyToken keyToken = new KeyToken();
@@ -64,8 +49,6 @@ public class TokenService {
             throw new RuntimeException("There was an error during the API call" + response.getStatusCode());
         }
         Token token = response.getBody();
-//        token.setExpires_in(cacheConfigurationProperties.getTokenSecurityThreshold());
-//        cacheService.insertToken(keyToken, token);
         return token.getAccess_token();
     }
 
