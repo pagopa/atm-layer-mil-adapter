@@ -70,7 +70,7 @@ public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
             logResponse(response);
             log.info("Request finished at : {}", timestampEnd);
             long duration = Duration.between(timestampStart, timestampEnd).toMillis();
-            log.info("Request duration : {}", duration);
+            log.info("Request duration : {} ms", duration);
         }
         return response;
     }
