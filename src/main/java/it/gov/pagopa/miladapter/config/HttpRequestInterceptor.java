@@ -38,11 +38,11 @@ public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
         Map<String, String> filteredHeaders = request.getHeaders().toSingleValueMap();
         filteredHeaders.remove("Ocp-Apim-Subscription-Key");
         filteredHeaders.remove("Authorization");
-        log.info("===========================request begin================================================   URI: {}   ,   Method: {}   ,   Headers: {}   ,   TransactionId: {}   ,   Request body: {}   ==========================request end================================================", request.getURI(), request.getMethod(), filteredHeaders, filteredHeaders.get("TransactionId"), new String(body, StandardCharsets.UTF_8));
+        log.info("---REQUEST BEGIN---   URI: {}   ,   Method: {}   ,   Headers: {}   ,   Request body: {}   ---REQUEST END---", request.getURI(), request.getMethod(), filteredHeaders, new String(body, StandardCharsets.UTF_8));
     }
 
     private void logResponse(ClientHttpResponse response) throws IOException {
-        log.info("============================response begin==========================================   Status code: {}   ,   Status text: {}   ,   Headers: {}   ,   Response body: {}   =======================response end=================================================", response.getStatusCode(), response.getStatusText(), response.getHeaders(), StreamUtils.copyToString(response.getBody(), StandardCharsets.UTF_8));
+        log.info("---RESPONSE BEGIN---   Status code: {}   ,   Status text: {}   ,   Headers: {}   ,   Response body: {}   ---RESPONSE END---", response.getStatusCode(), response.getStatusText(), response.getHeaders(), StreamUtils.copyToString(response.getBody(), StandardCharsets.UTF_8));
     }
 
     @Override
@@ -59,7 +59,7 @@ public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
             logResponse(response);
             log.info("Request finished at : {}", timestampEnd);
             long duration = Duration.between(timestampStart, timestampEnd).toMillis();
-            log.info("Request duration : {} ms", duration);
+            log.info("Request {}  {}  with transactionId  {}  finished with duration : {} ms", request.getMethod(), request.getURI(), request.getHeaders().get("TransactionId"), duration);
         }
         return response;
     }
