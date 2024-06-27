@@ -6,10 +6,10 @@
       
 | Outcome                 | Value                                                               |
 |-------------------------|---------------------------------------------------------------------|
-| Code Coverage %         | 90.98%               |
-| :heavy_check_mark: Number of Lines Covered | 474    |
+| Code Coverage %         | 91%               |
+| :heavy_check_mark: Number of Lines Covered | 475    |
 | :x: Number of Lines Missed  | 47     |
-| Total Number of Lines   | 521     |
+| Total Number of Lines   | 522     |
 
 
 ## Details:
@@ -234,7 +234,7 @@
         
 #### Lines Missed:
         
-- Line #50
+- Line #51
 ```
                         catch (Exception e) {
 ```
@@ -313,19 +313,59 @@
         
 #### Lines Missed:
         
-- Line #55
+- Line #44
+```
+        getLogger().info("Start span requestId: ", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
+```
+- Line #56
 ```
                 } catch (InterruptedException e) {
 ```
+- Line #60
+```
+            getLogger().info("End span requestId: ", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
+```
+- Line #61
+```
+            getLogger().info("Start get token requestId: ", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
+```
+- Line #63
+```
+            getLogger().info("End get token transactionId: {}", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
+```
+- Line #64
+```
+            getLogger().info("Start create call request transactionId: {}", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
+```
+- Line #73
+```
+            getLogger().info("Stop create call request transactionId: {}", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
+```
+- Line #74
+```
+            getLogger().info("Start rest call transactionId: {}", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
+```
 - Line #77
+```
+            getLogger().info("End rest call transactionId: {}", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
+```
+- Line #78
 ```
         } catch (HttpClientErrorException | HttpServerErrorException e) {
 ```
-- Line #85
+- Line #86
 ```
         }
 ```
-- Line #140
+- Line #87
+```
+        getLogger().info("Start mapping response transactionId: {}", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
+```
+- Line #108
+```
+        getLogger().info("Stop mapping response requestId: ", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
+```
+- Line #141
 ```
             } catch (JsonProcessingException e) {
 ```
