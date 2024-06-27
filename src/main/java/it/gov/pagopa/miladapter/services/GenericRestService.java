@@ -58,7 +58,7 @@ public interface GenericRestService  {
             }
             getLogger().info("End span requestId: ", configuration.getHeaders().get("requestId"));
             getLogger().info("Start get token requestId: ", configuration.getHeaders().get("requestId"));
-            this.injectAuthToken(configuration);
+            //this.injectAuthToken(configuration);
             getLogger().info("End get token requestId: {}", configuration.getHeaders().get("requestId"));
             getLogger().info("Start create call request requestId: {}", configuration.getHeaders().get("requestId"));
             URI url = this.prepareUri(configuration);
