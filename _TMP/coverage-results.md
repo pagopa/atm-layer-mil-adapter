@@ -6,10 +6,10 @@
       
 | Outcome                 | Value                                                               |
 |-------------------------|---------------------------------------------------------------------|
-| Code Coverage %         | 92.07%               |
-| :heavy_check_mark: Number of Lines Covered | 476    |
-| :x: Number of Lines Missed  | 41     |
-| Total Number of Lines   | 517     |
+| Code Coverage %         | 91.33%               |
+| :heavy_check_mark: Number of Lines Covered | 474    |
+| :x: Number of Lines Missed  | 45     |
+| Total Number of Lines   | 519     |
 
 
 ## Details:
@@ -422,24 +422,32 @@
 
 <details>
     <summary>
-:heavy_check_mark: MILRestServiceImpl.java
+:x: MILRestServiceImpl.java
     </summary>
 
         
-#### All Lines Covered!
+#### Lines Missed:
         
+- Line #18
+```
+    }
+```
 </details>
 
     
 
 <details>
     <summary>
-:heavy_check_mark: GenericRestServiceNoAuthImpl.java
+:x: GenericRestServiceNoAuthImpl.java
     </summary>
 
         
-#### All Lines Covered!
+#### Lines Missed:
         
+- Line #35
+```
+    }
+```
 </details>
 
     
@@ -470,12 +478,16 @@
 
 <details>
     <summary>
-:heavy_check_mark: DefinitionIdRestServiceImpl.java
+:x: DefinitionIdRestServiceImpl.java
     </summary>
 
         
-#### All Lines Covered!
+#### Lines Missed:
         
+- Line #23
+```
+    }
+```
 </details>
 
     
