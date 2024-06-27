@@ -94,6 +94,7 @@ class MILRestTaskHandlerTest {
         variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "TRANSACTION_ID");
         variables.put(HttpVariablesEnum.URL.name(), "URL");
         variables.put(HttpVariablesEnum.METHOD.name(), "GET");
+        variables.put("millAccessToken", "VALID_TOKEN");
         return variables;
     }
 }

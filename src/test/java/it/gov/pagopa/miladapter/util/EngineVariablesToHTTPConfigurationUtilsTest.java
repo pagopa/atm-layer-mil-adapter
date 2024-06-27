@@ -63,13 +63,14 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         variables.put(RequiredProcessVariables.CHANNEL.getEngineValue(), "ATM");
         variables.put(HttpVariablesEnum.URL.getValue(), "http://prova");
         variables.put(HttpVariablesEnum.METHOD.getValue(), "GET");
+        variables.put("millAccessToken", "VALID_TOKEN");
 
         Configuration configuration = EngineVariablesToHTTPConfigurationUtils
                 .getHttpConfigurationExternalCall(variables, true, false);
         assertEquals("http://prova", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertNull(configuration.getBody());
-        assertEquals(1, configuration.getHeaders().size());
+        assertEquals(2, configuration.getHeaders().size());
         Assertions.assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue()));
         assertEquals(new MultivaluedHashMap<>(), configuration.getPathParams());
 
@@ -84,6 +85,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
         variables.put(HttpVariablesEnum.URL.getValue(), "http://prova/{id}");
         variables.put(HttpVariablesEnum.METHOD.getValue(), "GET");
+        variables.put("millAccessToken", "VALID_TOKEN");
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put("id", "1");
         variables.put(HttpVariablesEnum.PATH_PARAMS.getValue(), pathParams);
@@ -93,7 +95,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals("http://prova/{id}", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertNull(configuration.getBody());
-        assertEquals(1, configuration.getHeaders().size());
+        assertEquals(2, configuration.getHeaders().size());
         Assertions.assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue()));
         assertEquals(1, configuration.getPathParams().size());
         Assertions.assertTrue(configuration.getPathParams().containsKey("id"));
