@@ -41,11 +41,11 @@ public interface RestExternalTaskHandler extends ExternalTaskHandler {
             resultAsync
                     .thenAcceptAsync(variableMap -> {
                         try {
-                        getLogger().info("Start Complete task wit requestId: {}",configuration.getAuthParameters().getRequestId());
+                        getLogger().info("Start Complete task wit requestId: {}",configuration.getAuthParameters()!=null?configuration.getAuthParameters().getRequestId():"");
                         getLogger().info("Completing task {} for process instance {}",externalTask.getId(),externalTask.getProcessInstanceId());
                         getLogger().info("Variables: {}",variableMap);
                         externalTaskService.complete(externalTask, null, variableMap);
-                        getLogger().info("End Complete task wit requestId: {}",configuration.getAuthParameters().getRequestId());
+                        getLogger().info("End Complete task wit requestId: {}",configuration.getAuthParameters()!=null?configuration.getAuthParameters().getRequestId():"");
                         }
                         catch (Exception e) {
                             getLogger().error("Error on MIL-Adapter execution: {}", e.getMessage(), e);
