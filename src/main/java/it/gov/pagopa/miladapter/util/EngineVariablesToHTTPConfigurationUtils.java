@@ -71,7 +71,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         Number delayMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.DELAY_MILLISECONDS.getValue(), false);
         String endpointVariable = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.URL.getValue(), true);
         String httpMethodVariable = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.METHOD.getValue(), true);
-        String accessToken = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.ACCESS_TOKEN.getValue(), true);
+        String accessToken = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.ACCESS_TOKEN.getValue(), false);
         HttpMethod httpMethod = HttpRequestUtils.httpMethodFromValue(httpMethodVariable);
         String body = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.BODY.getValue(), false);
         Map<String, String> headersMap = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.HEADERS.getValue(), false);

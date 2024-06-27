@@ -150,7 +150,7 @@ resources:
 autoscaling:
   enabled: true
   minReplicas: 2
-  maxReplicas: 4
+  maxReplicas: 6
   targetCPUUtilizationPercentage: 45
   # targetMemoryUtilizationPercentage: 80
 

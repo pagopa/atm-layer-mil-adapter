@@ -40,7 +40,7 @@ public interface GenericRestService  {
 
     default VariableMap executeRestCall(Configuration configuration) {
         ResponseEntity<String> response;
-        getLogger().info("Start span requestId: ", configuration.getHeaders().get("requestId"));
+        getLogger().info("Start span requestId: ", configuration.getAuthParameters().getRequestId());
         SpanBuilder spanBuilder = this.spanBuilder(configuration);
         Span serviceSpan = spanBuilder.startSpan();
 
@@ -56,11 +56,11 @@ public interface GenericRestService  {
                     Thread.currentThread().interrupt();
                 }
             }
-            getLogger().info("End span requestId: ", configuration.getHeaders().get("requestId"));
-            getLogger().info("Start get token requestId: ", configuration.getHeaders().get("requestId"));
+            getLogger().info("End span requestId: ", configuration.getAuthParameters().getRequestId());
+            getLogger().info("Start get token requestId: ", configuration.getAuthParameters().getRequestId());
             //this.injectAuthToken(configuration);
-            getLogger().info("End get token requestId: {}", configuration.getHeaders().get("requestId"));
-            getLogger().info("Start create call request requestId: {}", configuration.getHeaders().get("requestId"));
+            getLogger().info("End get token requestId: {}", configuration.getAuthParameters().getRequestId());
+            getLogger().info("Start create call request requestId: {}", configuration.getAuthParameters().getRequestId());
             URI url = this.prepareUri(configuration);
             HttpEntity<String> entity = this.buildHttpEntity(configuration);
             serviceSpan.setAttribute(SemanticAttributes.HTTP_METHOD, configuration.getHttpMethod().name());
@@ -69,11 +69,11 @@ public interface GenericRestService  {
                 serviceSpan.setAttribute("http.body", entity.getBody());
             }
             serviceSpan.setAttribute("http.headers", entity.getHeaders().toString());
-            getLogger().info("Stop create call request requestId: {}", configuration.getHeaders().get("requestId"));
-            getLogger().info("Start rest call requestId: {}", configuration.getHeaders().get("requestId"));
+            getLogger().info("Stop create call request requestId: {}", configuration.getAuthParameters().getRequestId());
+            getLogger().info("Start rest call requestId: {}", configuration.getAuthParameters().getRequestId());
             response = this.getRestTemplate(configuration)
                     .exchange(url, configuration.getHttpMethod(), entity, String.class);
-            getLogger().info("End rest call requestId: {}", configuration.getHeaders().get("requestId"));
+            getLogger().info("End rest call requestId: {}", configuration.getAuthParameters().getRequestId());
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             getLogger().error("Exception in HTTP request: {}", e);
             response = new ResponseEntity<>(new JsonObject().toString(), e.getStatusCode());
@@ -83,7 +83,7 @@ public interface GenericRestService  {
             getLogger().error("Exception in HTTP request: {}", e);
             response = new ResponseEntity<>(new JsonObject().toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        getLogger().info("Start mapping response requestId: {}", configuration.getHeaders().get("requestId"));
+        getLogger().info("Start mapping response requestId: {}", configuration.getAuthParameters().getRequestId());
         VariableMap output = Variables.createVariables();
         if (response.getBody() == null) {
             response = new ResponseEntity<>(new JsonObject().toString(), response.getStatusCode());
@@ -104,7 +104,7 @@ public interface GenericRestService  {
         SpinJsonNode headersJsonNode = JSON(response.getHeaders());
         output.putValue(HttpVariablesEnum.RESPONSE_HEADERS.getValue(), headersJsonNode.toString());
         serviceSpan.end();
-        getLogger().info("Stop mapping response requestId: ", configuration.getHeaders().get("requestId"));
+        getLogger().info("Stop mapping response requestId: ", configuration.getAuthParameters().getRequestId());
         return output;
     }
 
