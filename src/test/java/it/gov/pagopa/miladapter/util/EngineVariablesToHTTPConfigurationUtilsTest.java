@@ -95,7 +95,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals("http://prova/{id}", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertNull(configuration.getBody());
-        assertEquals(2, configuration.getHeaders().size());
+        assertEquals(3, configuration.getHeaders().size());
         Assertions.assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue()));
         assertEquals(1, configuration.getPathParams().size());
         Assertions.assertTrue(configuration.getPathParams().containsKey("id"));

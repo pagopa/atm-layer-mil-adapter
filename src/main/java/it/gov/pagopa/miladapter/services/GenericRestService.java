@@ -13,6 +13,7 @@ import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
+import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.model.ParentSpanContext;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
@@ -40,7 +41,7 @@ public interface GenericRestService  {
 
     default VariableMap executeRestCall(Configuration configuration) {
         ResponseEntity<String> response;
-        getLogger().info("Start span requestId: ", configuration.getAuthParameters()!=null?configuration.getAuthParameters().getRequestId():"");
+        getLogger().info("Start span requestId: ", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
         SpanBuilder spanBuilder = this.spanBuilder(configuration);
         Span serviceSpan = spanBuilder.startSpan();
 
@@ -56,11 +57,11 @@ public interface GenericRestService  {
                     Thread.currentThread().interrupt();
                 }
             }
-            getLogger().info("End span requestId: ", configuration.getAuthParameters()!=null?configuration.getAuthParameters().getRequestId():"");
-            getLogger().info("Start get token requestId: ", configuration.getAuthParameters()!=null?configuration.getAuthParameters().getRequestId():"");
+            getLogger().info("End span requestId: ", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
+            getLogger().info("Start get token requestId: ", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
             //this.injectAuthToken(configuration);
-            getLogger().info("End get token requestId: {}", configuration.getAuthParameters()!=null?configuration.getAuthParameters().getRequestId():"");
-            getLogger().info("Start create call request requestId: {}", configuration.getAuthParameters()!=null?configuration.getAuthParameters().getRequestId():"");
+            getLogger().info("End get token transactionId: {}", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
+            getLogger().info("Start create call request transactionId: {}", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
             URI url = this.prepareUri(configuration);
             HttpEntity<String> entity = this.buildHttpEntity(configuration);
             serviceSpan.setAttribute(SemanticAttributes.HTTP_METHOD, configuration.getHttpMethod().name());
@@ -69,11 +70,11 @@ public interface GenericRestService  {
                 serviceSpan.setAttribute("http.body", entity.getBody());
             }
             serviceSpan.setAttribute("http.headers", entity.getHeaders().toString());
-            getLogger().info("Stop create call request requestId: {}", configuration.getAuthParameters()!=null?configuration.getAuthParameters().getRequestId():"");
-            getLogger().info("Start rest call requestId: {}", configuration.getAuthParameters()!=null?configuration.getAuthParameters().getRequestId():"");
+            getLogger().info("Stop create call request transactionId: {}", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
+            getLogger().info("Start rest call transactionId: {}", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
             response = this.getRestTemplate(configuration)
                     .exchange(url, configuration.getHttpMethod(), entity, String.class);
-            getLogger().info("End rest call requestId: {}", configuration.getAuthParameters()!=null?configuration.getAuthParameters().getRequestId():"");
+            getLogger().info("End rest call transactionId: {}", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             getLogger().error("Exception in HTTP request: {}", e);
             response = new ResponseEntity<>(new JsonObject().toString(), e.getStatusCode());
@@ -83,7 +84,7 @@ public interface GenericRestService  {
             getLogger().error("Exception in HTTP request: {}", e);
             response = new ResponseEntity<>(new JsonObject().toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        getLogger().info("Start mapping response requestId: {}", configuration.getAuthParameters()!=null?configuration.getAuthParameters().getRequestId():"");
+        getLogger().info("Start mapping response transactionId: {}", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
         VariableMap output = Variables.createVariables();
         if (response.getBody() == null) {
             response = new ResponseEntity<>(new JsonObject().toString(), response.getStatusCode());
@@ -104,7 +105,7 @@ public interface GenericRestService  {
         SpinJsonNode headersJsonNode = JSON(response.getHeaders());
         output.putValue(HttpVariablesEnum.RESPONSE_HEADERS.getValue(), headersJsonNode.toString());
         serviceSpan.end();
-        getLogger().info("Stop mapping response requestId: ", configuration.getAuthParameters()!=null?configuration.getAuthParameters().getRequestId():"");
+        getLogger().info("Stop mapping response requestId: ", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
         return output;
     }
 

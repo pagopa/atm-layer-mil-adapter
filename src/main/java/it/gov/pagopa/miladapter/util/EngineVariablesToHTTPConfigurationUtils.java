@@ -77,6 +77,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         Map<String, String> headersMap = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.HEADERS.getValue(), false);
         HttpHeaders headers = HttpRequestUtils.createHttpHeaders(headersMap);
         headers.add(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue(), UUID.randomUUID().toString());
+        headers.add(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), transactionId);
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer".concat(" ").concat(accessToken));
         if (idPayFlow) {
             headers.add(RequiredProcessVariables.IDPAY_KEY.getEngineValue(), idPayKey);
