@@ -38,38 +38,29 @@ public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
         Map<String, String> filteredHeaders = request.getHeaders().toSingleValueMap();
         filteredHeaders.remove("Ocp-Apim-Subscription-Key");
         filteredHeaders.remove("Authorization");
-        log.info("===========================request begin================================================");
-        log.info("URI         : {}", request.getURI());
-        log.info("Method      : {}", request.getMethod());
-        log.info("Headers     : {}", filteredHeaders);
-        log.info("Request body: {}", new String(body, StandardCharsets.UTF_8));
-        log.info("==========================request end================================================");
+        log.info("---REQUEST BEGIN---   URI: {}   ,   Method: {}   ,   Headers: {}   ,   Request body: {}   ---REQUEST END---", request.getURI(), request.getMethod(), filteredHeaders, new String(body, StandardCharsets.UTF_8));
     }
 
+
     private void logResponse(ClientHttpResponse response) throws IOException {
-        log.info("============================response begin==========================================");
-        log.info("Status code  : {}", response.getStatusCode());
-        log.info("Status text  : {}", response.getStatusText());
-        log.info("Headers      : {}", response.getHeaders());
-        log.info("Response body: {}", StreamUtils.copyToString(response.getBody(), StandardCharsets.UTF_8));
-        log.info("=======================response end=================================================");
+        log.info("---RESPONSE BEGIN---   Status code: {}   ,   Status text: {}   ,   Headers: {}   ,   Response body: {}   ---RESPONSE END---", response.getStatusCode(), response.getStatusText(), response.getHeaders(), StreamUtils.copyToString(response.getBody(), StandardCharsets.UTF_8));
     }
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         propagateTrace(request);
         LocalDateTime timestampStart = LocalDateTime.now();
-        LocalDateTime timestampEnd = LocalDateTime.now();
         if (restConfigurationProperties.isInterceptorLoggingEnabled()) {
             logRequest(request, body);
             log.info("Request started at : {}", timestampStart);
         }
         ClientHttpResponse response = execution.execute(request, body);
+        LocalDateTime timestampEnd = LocalDateTime.now();
         if (restConfigurationProperties.isInterceptorLoggingEnabled()) {
             logResponse(response);
             log.info("Request finished at : {}", timestampEnd);
             long duration = Duration.between(timestampStart, timestampEnd).toMillis();
-            log.info("Request duration : {}", duration);
+            log.info("Request {}  {}  with transactionId  {} and requestId {} finished with duration : {} ms", request.getMethod(), request.getURI(), request.getHeaders().get("TransactionId"), request.getHeaders().get("RequestId"), duration);
         }
         return response;
     }
