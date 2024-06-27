@@ -21,7 +21,8 @@ public enum HttpVariablesEnum {
     CONNECTION_REQUEST_TIMEOUT_MILLISECONDS("connectionRequestTimeoutMilliseconds"),
     MAX_RETRY("maxRetry"),
     RETRY_INTERVAL_MILLISECONDS("retryIntervalMilliseconds"),
-    DELAY_MILLISECONDS("delayMilliseconds");
+    DELAY_MILLISECONDS("delayMilliseconds"),
+    ACCESS_TOKEN("millAccessToken");
 
 
     private String value;

@@ -71,11 +71,14 @@ public class EngineVariablesToHTTPConfigurationUtils {
         Number delayMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.DELAY_MILLISECONDS.getValue(), false);
         String endpointVariable = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.URL.getValue(), true);
         String httpMethodVariable = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.METHOD.getValue(), true);
+        String accessToken = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.ACCESS_TOKEN.getValue(), false);
         HttpMethod httpMethod = HttpRequestUtils.httpMethodFromValue(httpMethodVariable);
         String body = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.BODY.getValue(), false);
         Map<String, String> headersMap = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.HEADERS.getValue(), false);
         HttpHeaders headers = HttpRequestUtils.createHttpHeaders(headersMap);
         headers.add(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue(), UUID.randomUUID().toString());
+        headers.add(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), transactionId);
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer".concat(" ").concat(accessToken));
         if (idPayFlow) {
             headers.add(RequiredProcessVariables.IDPAY_KEY.getEngineValue(), idPayKey);
         }

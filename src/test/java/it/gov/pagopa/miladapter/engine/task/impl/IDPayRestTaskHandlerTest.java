@@ -79,6 +79,7 @@ class IDPayRestTaskHandlerTest {
         variables.put("transactionId","expectedTransaction");
         variables.put("url","expectedEndpoint");
         variables.put("method","GET");
+        variables.put("millAccessToken", "VALID_TOKEN");
         Configuration result=iDpayRestTaskHandler.getHttpConfiguration(variables);
         assertEquals(HttpMethod.GET, result.getHttpMethod());
         assertEquals("expectedEndpoint", result.getEndpoint());
