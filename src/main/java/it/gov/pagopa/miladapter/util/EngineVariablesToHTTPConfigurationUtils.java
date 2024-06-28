@@ -109,6 +109,76 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .build();
     }
 
+    public static Configuration getHttpConfigurationExternalCallNew(Map<String, Object> variables, boolean milFlow, boolean idPayFlow) {
+        String requestId = UUID.randomUUID().toString();
+
+        // Estrai la sotto-mappa headers
+        Map<String, String> headersMap = (Map<String, String>) variables.get("headers");
+
+        // Recupera acquirer, branch e terminal dalla sotto-mappa headers
+        String acquirerId = headersMap != null ? headersMap.get("AcquirerId") : null;
+        String channel = headersMap != null ? headersMap.get("Channel") : null;
+        String terminalId = headersMap != null ? headersMap.get("TerminalId") : null;
+        String transactionId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.TRANSACTION_ID.getAuthenticatorValue(), milFlow);
+
+        Number delayMilliseconds = getIntegerValue("delayMilliseconds" ,variables.get("delayMilliseconds").toString());
+        String endpointVariable = (String) variables.get("url");
+        String httpMethodVariable = (String) variables.get("method");
+        String accessToken = headersMap != null ? headersMap.get("Authorization") : null;
+
+        HttpMethod httpMethod = HttpRequestUtils.httpMethodFromValue(httpMethodVariable);
+        String body = (String) variables.get("body");
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.add("AcquirerId", acquirerId);
+        headers.add("Channel", channel);
+        headers.add("TerminalId", terminalId);
+        headers.add("RequestId", requestId);
+        headers.add("TransactionId", transactionId);
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer ".concat(accessToken));
+
+        if (idPayFlow) {
+            String idPayKey = headersMap != null ? headersMap.get("IdPayKey") : null;
+            headers.add("IdPayKey", idPayKey);
+        }
+
+        // Estrai pathParams dalla mappa principale variables
+        Map<String, String> pathParams = (Map<String, String>) variables.get("PathParams");
+        if (pathParams == null) {
+            pathParams = new HashMap<>();
+        }
+        HttpRequestUtils.checkNotNullPathParams(pathParams);
+
+        Number connectionResponseTimeout = getIntegerValue("connectionResponseTimeoutMilliseconds", variables.get("connectionResponseTimeoutMilliseconds").toString());
+        Number connectionRequestTimeout = getIntegerValue("connectionRequestTimeoutMilliseconds", variables.get("connectionRequestTimeoutMilliseconds").toString());
+        Number maxRetry = getIntegerValue("maxRetry", variables.get("maxRetry").toString());
+//        Number retryIntervalMilliseconds = getIntegerValue("retryIntervalMilliseconds", variables.get("retryIntervalMilliseconds").toString());
+//        String parentSpanContextString = (String) variables.get("parentSpanContextString");
+
+        AuthParameters authParameters = AuthParameters.builder()
+                .requestId(requestId)
+                .acquirerId(acquirerId)
+                .terminalId(terminalId)
+                .channel(channel)
+                .transactionId(transactionId)
+                .build();
+
+        return Configuration.builder()
+                .body(body)
+                .endpoint(endpointVariable)
+                .httpMethod(httpMethod)
+                .pathParams(pathParams)
+                .headers(headers)
+                .authParameters(authParameters)
+                .connectionResponseTimeoutMilliseconds(parseInteger(connectionResponseTimeout))
+                .connectionRequestTimeoutMilliseconds(parseInteger(connectionRequestTimeout))
+                .maxRetry(parseInteger(maxRetry))
+//                .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds))
+                .delayMilliseconds(parseInteger(delayMilliseconds))
+//                .parentSpanContextString(parentSpanContextString)
+                .build();
+    }
+
     public static Configuration getHttpConfigurationInternalCall(Map<String, Object> variables, boolean milFlow) {
         String acquirerId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), milFlow);
         String terminalId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.TERMINAL_ID.getEngineValue(), milFlow);
