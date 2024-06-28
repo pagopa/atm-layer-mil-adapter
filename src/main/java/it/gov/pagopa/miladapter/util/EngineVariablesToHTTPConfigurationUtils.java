@@ -124,7 +124,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
 //        Number delayMilliseconds = getIntegerValue("delayMilliseconds" ,variables.get("delayMilliseconds").toString());
         String endpointVariable = (String) variables.get("url");
         String httpMethodVariable = (String) variables.get("method");
-        String accessToken = headersMap != null ? headersMap.get("Authorization") : null;
+        String accessToken = (String) variables.get("millAccessToken");
 
         HttpMethod httpMethod = HttpRequestUtils.httpMethodFromValue(httpMethodVariable);
         String body = (String) variables.get("body");
