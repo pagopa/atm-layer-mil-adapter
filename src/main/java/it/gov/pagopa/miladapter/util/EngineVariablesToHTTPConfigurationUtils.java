@@ -121,7 +121,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         String terminalId = headersMap != null ? headersMap.get("TerminalId") : null;
         String transactionId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), milFlow);
 
-        Number delayMilliseconds = getIntegerValue("delayMilliseconds" ,variables.get("delayMilliseconds").toString());
+//        Number delayMilliseconds = getIntegerValue("delayMilliseconds" ,variables.get("delayMilliseconds").toString());
         String endpointVariable = (String) variables.get("url");
         String httpMethodVariable = (String) variables.get("method");
         String accessToken = headersMap != null ? headersMap.get("Authorization") : null;
@@ -174,7 +174,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .connectionRequestTimeoutMilliseconds(parseInteger(connectionRequestTimeout))
                 .maxRetry(parseInteger(maxRetry))
 //                .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds))
-                .delayMilliseconds(parseInteger(delayMilliseconds))
+//                .delayMilliseconds(parseInteger(delayMilliseconds))
 //                .parentSpanContextString(parentSpanContextString)
                 .build();
     }
