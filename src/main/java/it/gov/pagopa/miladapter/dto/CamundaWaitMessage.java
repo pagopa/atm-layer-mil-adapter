@@ -13,5 +13,4 @@ public class CamundaWaitMessage {
 
     private Map<String, ProcessVariable> processVariables;
 
-
 }

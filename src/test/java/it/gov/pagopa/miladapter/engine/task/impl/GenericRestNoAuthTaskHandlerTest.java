@@ -95,6 +95,8 @@ class GenericRestNoAuthTaskHandlerTest {
         variables.put(RequiredProcessVariables.FUNCTION_ID.getEngineValue(), "FUNCTION_ID");
         variables.put(HttpVariablesEnum.URL.getValue(), "http://localhost:8080");
         variables.put(HttpVariablesEnum.METHOD.getValue(), "GET");
+        variables.put("millAccessToken", "VALID_TOKEN");
+
         return variables;
     }
 

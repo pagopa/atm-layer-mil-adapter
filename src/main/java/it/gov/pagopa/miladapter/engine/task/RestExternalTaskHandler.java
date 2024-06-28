@@ -1,5 +1,6 @@
 package it.gov.pagopa.miladapter.engine.task;
 
+import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.services.GenericRestService;
@@ -41,9 +42,12 @@ public interface RestExternalTaskHandler extends ExternalTaskHandler {
             resultAsync
                     .thenAcceptAsync(variableMap -> {
                         try {
+                        getLogger().info("Start Complete task wit transactionId: {}",configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
                         getLogger().info("Completing task {} for process instance {}",externalTask.getId(),externalTask.getProcessInstanceId());
                         getLogger().info("Variables: {}",variableMap);
-                        externalTaskService.complete(externalTask, null, variableMap);}
+                        externalTaskService.complete(externalTask, null, variableMap);
+                        getLogger().info("End Complete task wit transactionId: {}",configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
+                        }
                         catch (Exception e) {
                             getLogger().error("Error on MIL-Adapter execution: {}", e.getMessage(), e);
                             externalTaskService.handleFailure(externalTask, e.getMessage(),
