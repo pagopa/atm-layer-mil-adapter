@@ -119,7 +119,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         String acquirerId = headersMap != null ? headersMap.get("AcquirerId") : null;
         String channel = headersMap != null ? headersMap.get("Channel") : null;
         String terminalId = headersMap != null ? headersMap.get("TerminalId") : null;
-        String transactionId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.TRANSACTION_ID.getAuthenticatorValue(), milFlow);
+        String transactionId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), milFlow);
 
         Number delayMilliseconds = getIntegerValue("delayMilliseconds" ,variables.get("delayMilliseconds").toString());
         String endpointVariable = (String) variables.get("url");
