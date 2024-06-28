@@ -35,7 +35,7 @@ public class MILRestServiceHandler extends GenericServiceHandler implements Rest
 
     @Override
     public Configuration getHttpConfiguration(Map<String, Object> variables) {
-        return EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCallNew(variables, isMILFlow(),isIdPayFlow());
+        return EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCallNew(variables);
     }
 
 }

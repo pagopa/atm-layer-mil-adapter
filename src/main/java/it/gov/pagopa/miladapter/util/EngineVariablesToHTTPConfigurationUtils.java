@@ -109,7 +109,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .build();
     }
 
-    public static Configuration getHttpConfigurationExternalCallNew(Map<String, Object> variables, boolean milFlow, boolean idPayFlow) {
+    public static Configuration getHttpConfigurationExternalCallNew(Map<String, Object> variables) {
         String requestId = UUID.randomUUID().toString();
 
         // Estrai la sotto-mappa headers
@@ -119,7 +119,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         String acquirerId = headersMap != null ? headersMap.get("AcquirerId") : null;
         String channel = headersMap != null ? headersMap.get("Channel") : null;
         String terminalId = headersMap != null ? headersMap.get("TerminalId") : null;
-        String transactionId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), milFlow);
+        String transactionId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), true);
 
 //        Number delayMilliseconds = getIntegerValue("delayMilliseconds" ,variables.get("delayMilliseconds").toString());
         String endpointVariable = (String) variables.get("url");
@@ -137,10 +137,10 @@ public class EngineVariablesToHTTPConfigurationUtils {
         headers.add("TransactionId", transactionId);
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer ".concat(accessToken));
 
-        if (idPayFlow) {
-            String idPayKey = headersMap != null ? headersMap.get("IdPayKey") : null;
-            headers.add("IdPayKey", idPayKey);
-        }
+//        if (idPayFlow) {
+//            String idPayKey = headersMap != null ? headersMap.get("IdPayKey") : null;
+//            headers.add("IdPayKey", idPayKey);
+//        }
 
         // Estrai pathParams dalla mappa principale variables
         Map<String, String> pathParams = (Map<String, String>) variables.get("PathParams");
@@ -149,9 +149,9 @@ public class EngineVariablesToHTTPConfigurationUtils {
         }
         HttpRequestUtils.checkNotNullPathParams(pathParams);
 
-        Number connectionResponseTimeout = getIntegerValue("connectionResponseTimeoutMilliseconds", variables.get("connectionResponseTimeoutMilliseconds").toString());
-        Number connectionRequestTimeout = getIntegerValue("connectionRequestTimeoutMilliseconds", variables.get("connectionRequestTimeoutMilliseconds").toString());
-        Number maxRetry = getIntegerValue("maxRetry", variables.get("maxRetry").toString());
+//        Number connectionResponseTimeout = getIntegerValue("connectionResponseTimeoutMilliseconds", variables.get("connectionResponseTimeoutMilliseconds").toString());
+//        Number connectionRequestTimeout = getIntegerValue("connectionRequestTimeoutMilliseconds", variables.get("connectionRequestTimeoutMilliseconds").toString());
+//        Number maxRetry = getIntegerValue("maxRetry", variables.get("maxRetry").toString());
 //        Number retryIntervalMilliseconds = getIntegerValue("retryIntervalMilliseconds", variables.get("retryIntervalMilliseconds").toString());
 //        String parentSpanContextString = (String) variables.get("parentSpanContextString");
 
@@ -170,9 +170,9 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .pathParams(pathParams)
                 .headers(headers)
                 .authParameters(authParameters)
-                .connectionResponseTimeoutMilliseconds(parseInteger(connectionResponseTimeout))
-                .connectionRequestTimeoutMilliseconds(parseInteger(connectionRequestTimeout))
-                .maxRetry(parseInteger(maxRetry))
+//                .connectionResponseTimeoutMilliseconds(parseInteger(connectionResponseTimeout))
+//                .connectionRequestTimeoutMilliseconds(parseInteger(connectionRequestTimeout))
+//                .maxRetry(parseInteger(maxRetry))
 //                .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds))
 //                .delayMilliseconds(parseInteger(delayMilliseconds))
 //                .parentSpanContextString(parentSpanContextString)
