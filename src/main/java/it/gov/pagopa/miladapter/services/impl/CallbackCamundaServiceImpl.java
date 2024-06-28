@@ -11,6 +11,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,6 +21,11 @@ public class CallbackCamundaServiceImpl implements CallbackCamundaService {
 
     @Value("${camunda.bpm.client.base-url}")
     private String apiUrl;
+    @Value("${camunda.bpm.client.basic-auth.username}")
+    private String username;
+    @Value("${camunda.bpm.client.basic-auth.password}")
+    private String password;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -37,6 +43,7 @@ public class CallbackCamundaServiceImpl implements CallbackCamundaService {
         // Creare l'entity con il body e gli headers
         HttpEntity<String> entity = new HttpEntity<>(jsonBody, headers);
         RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(username, password));
 
         ResponseEntity<String> response = restTemplate.exchange(apiUrl+ENDPOINT, HttpMethod.POST, entity, String.class);
         return response.getBody();
