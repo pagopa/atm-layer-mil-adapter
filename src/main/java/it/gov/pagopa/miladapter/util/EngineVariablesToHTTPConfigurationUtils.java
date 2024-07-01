@@ -153,7 +153,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
 //        Number connectionRequestTimeout = getIntegerValue("connectionRequestTimeoutMilliseconds", variables.get("connectionRequestTimeoutMilliseconds").toString());
 //        Number maxRetry = getIntegerValue("maxRetry", variables.get("maxRetry").toString());
 //        Number retryIntervalMilliseconds = getIntegerValue("retryIntervalMilliseconds", variables.get("retryIntervalMilliseconds").toString());
-//        String parentSpanContextString = (String) variables.get("parentSpanContextString");
+        String parentSpanContextString = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACTIVITY_PARENT_SPAN.getEngineValue(), false);
 
         AuthParameters authParameters = AuthParameters.builder()
                 .requestId(requestId)
@@ -175,7 +175,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
 //                .maxRetry(parseInteger(maxRetry))
 //                .retryIntervalMilliseconds(parseInteger(retryIntervalMilliseconds))
 //                .delayMilliseconds(parseInteger(delayMilliseconds))
-//                .parentSpanContextString(parentSpanContextString)
+                .parentSpanContextString(parentSpanContextString)
                 .build();
     }
 
