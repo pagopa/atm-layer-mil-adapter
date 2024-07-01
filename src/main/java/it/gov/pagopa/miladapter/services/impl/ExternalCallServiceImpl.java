@@ -1,6 +1,8 @@
 package it.gov.pagopa.miladapter.services.impl;
 
 import camundajar.impl.com.google.gson.JsonObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanBuilder;
 import io.opentelemetry.context.Scope;
@@ -89,11 +91,16 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
     @Autowired
     CallbackCamundaService callbackCamundaService;
 
-    @Async
-    public void executeCallAndCallBack (Map<String, Object> body) {
+    @Autowired
+    ObjectMapper objectMapper;
+
+    public ResponseEntity<String> executeCallAndCallBack (Map<String, Object> body) throws JsonProcessingException {
         Configuration configuration = EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCallNew(body);
-        VariableMap response = callExternalService(configuration);
-        callBackEngine(body, response);
+        VariableMap variableMap = callExternalService(configuration);
+        objectMapper.writeValueAsString(variableMap);
+
+        return new ResponseEntity(objectMapper.writeValueAsString(variableMap), HttpStatus.OK);
+
     }
 
     private void callBackEngine(Map<String, Object> body, VariableMap response) {

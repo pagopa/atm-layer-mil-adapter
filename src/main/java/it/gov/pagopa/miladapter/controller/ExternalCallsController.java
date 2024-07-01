@@ -1,5 +1,6 @@
 package it.gov.pagopa.miladapter.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import it.gov.pagopa.miladapter.dto.CamundaWaitMessage;
 import it.gov.pagopa.miladapter.dto.ProcessVariable;
 import it.gov.pagopa.miladapter.engine.task.impl.MILRestServiceHandler;
@@ -36,14 +37,10 @@ public class ExternalCallsController {
     ExternalCallService externalCallService;
 
     @PostMapping
-    public ResponseEntity<String> externalcall(@RequestBody Map<String, Object> body) {
+    public ResponseEntity externalcall(@RequestBody Map<String, Object> body) throws JsonProcessingException {
         // Log before starting async method
-        log.info("Starting async execution");
-        externalCallService.executeAsyncTask(body);
-        // Log after starting async method
-        log.info("Async execution started");
-
-        return new ResponseEntity<>("Headers processed successfully", HttpStatus.OK);
+        log.info("Starting call external");
+        return externalCallService.executeCallAndCallBack(body);
     }
 
 }
