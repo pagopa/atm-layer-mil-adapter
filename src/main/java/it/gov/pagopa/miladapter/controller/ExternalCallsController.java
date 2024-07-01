@@ -70,8 +70,8 @@ public class ExternalCallsController {
 
     private CamundaWaitMessage createCallbackPayload(Map<String, Object> body, VariableMap response) {
         CamundaWaitMessage camundaWaitMessage = new CamundaWaitMessage();
-        camundaWaitMessage.setMessageName(UUID.randomUUID().toString());
-        camundaWaitMessage.setProcessInstanceId((String) body.get("responseEventMessage"));
+        camundaWaitMessage.setMessageName((String) body.get("responseEventMessage"));
+        camundaWaitMessage.setProcessInstanceId((String) body.get("processInstanceId"));
 
         String responseBody = response.getValueTyped("response").getValue().toString();
         String statusCode = response.getValueTyped("statusCode").getValue().toString();
