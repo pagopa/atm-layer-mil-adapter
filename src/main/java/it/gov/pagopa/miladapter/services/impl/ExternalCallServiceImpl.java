@@ -136,7 +136,6 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
         serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, response.getStatusCode().value());
         serviceSpan.setAttribute("http.response.body", response.getBody());
         serviceSpan.setAttribute("http.response.headers", response.getHeaders().toString());
-
         JsonValue jsonValue;
         if (StringUtils.isNotBlank(response.getBody())
                 && response.getStatusCode() != null
