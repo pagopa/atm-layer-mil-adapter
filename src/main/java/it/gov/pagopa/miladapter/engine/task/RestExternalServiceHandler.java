@@ -32,22 +32,10 @@ public interface RestExternalServiceHandler {
             Executor restPoolExecutor = this.getTaskRestExecutor();
             Configuration configuration = getHttpConfiguration(variables);
 
+            getLogger().info("Executing task with transactionId: {}", configuration.getHeaders() != null ? configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()) : "");
             // Async mode
-            CompletableFuture<VariableMap> resultAsync = CompletableFuture.supplyAsync(
+            return CompletableFuture.supplyAsync(
                     () -> getRestService().executeRestCall(configuration), restPoolExecutor);
-
-            Executor complPoolExecutor = this.getTaskComplExecutor();
-            return resultAsync.thenApplyAsync(variableMap -> {
-                try {
-                    getLogger().info("Start Complete task with transactionId: {}", configuration.getHeaders() != null ? configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()) : "");
-                    getLogger().info("Variables: {}", variableMap);
-                    externalService.executeRestCall(configuration);
-                    getLogger().info("End Complete task with transactionId: {}", configuration.getHeaders() != null ? configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()) : "");
-                } catch (Exception e) {
-                    getLogger().error("Error on MIL-Adapter execution: {}", e.getMessage(), e);
-                }
-                return variableMap;
-            }, complPoolExecutor);
 
         } catch (Exception e) {
             getLogger().error("Error on MIL-Adapter execution: {}", e.getMessage(), e);
