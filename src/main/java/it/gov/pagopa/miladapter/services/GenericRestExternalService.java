@@ -37,7 +37,7 @@ import java.net.URI;
 
 import static org.camunda.spin.Spin.JSON;
 
-public interface GenericRestService  {
+public interface GenericRestExternalService  {
 
     default VariableMap executeRestCall(Configuration configuration) {
         ResponseEntity<String> response;
@@ -152,3 +152,4 @@ public interface GenericRestService  {
         return spanBuilder;
     }
 }
+

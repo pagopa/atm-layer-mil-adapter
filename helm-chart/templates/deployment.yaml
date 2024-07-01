@@ -139,6 +139,8 @@ spec:
               value: "{{ .Values.milAdapter.tracingBackendUrl }}"
             - name: SPRING_PROFILES_ACTIVE
               value: "{{ .Values.springProfilesActive }}"
+            - name: SERVER_PORT
+              value: "{{ .Values.service.port }}"
           volumeMounts:
           {{- if .Values.secretProviderClass.enabled }}
           - name: secrets-store-inline
