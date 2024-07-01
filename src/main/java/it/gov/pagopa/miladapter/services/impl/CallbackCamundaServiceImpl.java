@@ -6,14 +6,15 @@ import it.gov.pagopa.miladapter.dto.CamundaWaitMessage;
 import it.gov.pagopa.miladapter.services.CallbackCamundaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 @Service
 public class CallbackCamundaServiceImpl implements CallbackCamundaService {
@@ -39,11 +40,13 @@ public class CallbackCamundaServiceImpl implements CallbackCamundaService {
         // Impostare gli headers
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
+        String token = Base64.getEncoder().encodeToString(
+                (username + ":" + password).getBytes(StandardCharsets.UTF_8));
+        headers.set("Authorization", "Basic " + token);
 
         // Creare l'entity con il body e gli headers
         HttpEntity<String> entity = new HttpEntity<>(jsonBody, headers);
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(username, password));
 
         ResponseEntity<String> response = restTemplate.exchange(apiUrl+ENDPOINT, HttpMethod.POST, entity, String.class);
         return response.getBody();
