@@ -96,10 +96,7 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
 
     public ResponseEntity<String> executeCallAndCallBack (Map<String, Object> body) throws JsonProcessingException {
         Configuration configuration = EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCallNew(body);
-        VariableMap variableMap = callExternalService(configuration);
-        objectMapper.writeValueAsString(variableMap);
-
-        return new ResponseEntity(objectMapper.writeValueAsString(variableMap), HttpStatus.OK);
+        return callExternalServiceAsync(configuration);
 
     }
 
@@ -110,6 +107,53 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
         } catch (Exception e) {
             log.error("Error while invoking callback", e);
         }
+    }
+    private  ResponseEntity callExternalServiceAsync(Configuration configuration) {
+        ResponseEntity<String> response;
+        VariableMap output = Variables.createVariables();
+        SpanBuilder spanBuilder = this.spanBuilder(configuration);
+        Span serviceSpan = spanBuilder.startSpan();
+        try (Scope scope = serviceSpan.makeCurrent()){
+            URI url = this.prepareUri(configuration);
+            HttpEntity<String> entity = HttpRequestUtils.buildHttpEntity(configuration.getBody(), configuration.getHeaders());
+            serviceSpan.setAttribute(SemanticAttributes.HTTP_METHOD, configuration.getHttpMethod().name());
+            serviceSpan.setAttribute(SemanticAttributes.HTTP_URL, url.toString());
+            if (entity.hasBody()) {
+                serviceSpan.setAttribute("http.body", entity.getBody());
+            }
+            serviceSpan.setAttribute("http.headers", entity.getHeaders().toString());
+            response = this.getRestTemplate(configuration).exchange(url, configuration.getHttpMethod(), entity, String.class);
+            if (response.getBody() == null) {
+                response = new ResponseEntity<>(new JsonObject().toString(), response.getStatusCode());
+            }
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            getLogger().error("Exception in HTTP request: {}", e);
+            response = new ResponseEntity<>(new JsonObject().toString(), e.getStatusCode());
+            serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, e.getStatusCode().value());
+            serviceSpan.setAttribute("http.response.body", e.getResponseBodyAsString());
+        } catch (Exception e) {
+            getLogger().error("Exception in HTTP request: {}", e);
+            response = new ResponseEntity<>(new JsonObject().toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, response.getStatusCode().value());
+        serviceSpan.setAttribute("http.response.body", response.getBody());
+        serviceSpan.setAttribute("http.response.headers", response.getHeaders().toString());
+
+        JsonValue jsonValue;
+        if (StringUtils.isNotBlank(response.getBody())
+                && response.getStatusCode() != null
+                && response.getStatusCode().is2xxSuccessful()) {
+            jsonValue = ClientValues.jsonValue(response.getBody());
+        } else {
+            jsonValue = ClientValues.jsonValue("{}");
+        }
+        output.putValue(HttpVariablesEnum.RESPONSE.getValue(), jsonValue);
+        output.putValue(HttpVariablesEnum.STATUS_CODE.getValue(), response.getStatusCode().value());
+        SpinJsonNode headersJsonNode = JSON(response.getHeaders());
+        output.putValue(HttpVariablesEnum.RESPONSE_HEADERS.getValue(), headersJsonNode.toString());
+        serviceSpan.end();
+        return response;
     }
 
     private  VariableMap callExternalService(Configuration configuration) {
