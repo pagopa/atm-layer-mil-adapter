@@ -39,7 +39,7 @@ public class ExternalCallsController {
     public ResponseEntity<String> externalcall(@RequestBody Map<String, Object> body) {
         // Log before starting async method
         log.info("Starting async execution");
-        externalCallService.executeCallAndCallBack(body);
+        externalCallService.executeAsyncTask(body);
         // Log after starting async method
         log.info("Async execution started");
 

@@ -21,6 +21,7 @@ import org.camunda.bpm.engine.variable.VariableMap;
 import org.camunda.bpm.engine.variable.Variables;
 import org.camunda.spin.json.SpinJsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -29,6 +30,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 import static org.camunda.spin.Spin.JSON;
 
@@ -36,6 +39,25 @@ import static org.camunda.spin.Spin.JSON;
 @Service
 public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract implements ExternalCallService {
 
+    @Qualifier("taskExecutor")
+    @Autowired
+    private Executor taskExecutor;
+
+    public CompletableFuture<Void> executeAsyncTask(Map<String, Object> body) {
+        return CompletableFuture.runAsync(() -> {
+            // Logica del task asincrono
+            System.out.println("Inizio task asincrono...");
+            try {
+                // Simulazione di un compito che richiede tempo
+                Configuration configuration = EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCallNew(body);
+                VariableMap response = callExternalService(configuration);
+                callBackEngine(body, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println("Task asincrono completato!");
+        }, taskExecutor);
+    }
 
     @Override
     public URI prepareUri(Configuration configuration) {
@@ -112,7 +134,7 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
 
         camundaWaitMessage.setProcessVariables(Map.of(
                 "statusCode", new ProcessVariable(statusCode, "String"),
-                "response", new ProcessVariable(responseBody, "String")
+                "response", new ProcessVariable(responseBody, "json")
         ));
         return camundaWaitMessage;
     }
@@ -127,6 +149,9 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
 
     }
 
+    public HttpEntity<String> buildHttpEntity(Configuration configuration) {
+        return HttpRequestUtils.buildHttpEntity(configuration.getBody(), configuration.getHeaders());
+    }
 
 
 
