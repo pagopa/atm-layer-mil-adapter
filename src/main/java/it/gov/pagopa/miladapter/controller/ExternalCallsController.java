@@ -78,8 +78,10 @@ public class ExternalCallsController {
 
         camundaWaitMessage.setProcessVariables(Map.of(
                 "statusCode", new ProcessVariable(statusCode, "String"),
-                "response", new ProcessVariable(responseBody, "String")
+                "response", new ProcessVariable(responseBody, "json")
         ));
+
+        log.info("Callback payload: " + camundaWaitMessage);
         return camundaWaitMessage;
     }
 }
