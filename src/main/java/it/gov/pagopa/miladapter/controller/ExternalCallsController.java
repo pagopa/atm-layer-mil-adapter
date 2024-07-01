@@ -4,6 +4,7 @@ import it.gov.pagopa.miladapter.dto.CamundaWaitMessage;
 import it.gov.pagopa.miladapter.dto.ProcessVariable;
 import it.gov.pagopa.miladapter.engine.task.impl.MILRestServiceHandler;
 import it.gov.pagopa.miladapter.services.CallbackCamundaService;
+import it.gov.pagopa.miladapter.services.ExternalCallService;
 import it.gov.pagopa.miladapter.services.MILRestExternalService;
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.variable.VariableMap;
@@ -32,56 +33,17 @@ public class ExternalCallsController {
     MILRestServiceHandler milRestServiceHandler;
 
     @Autowired
-    CallbackCamundaService camundaService;
+    ExternalCallService externalCallService;
 
     @PostMapping
     public ResponseEntity<String> externalcall(@RequestBody Map<String, Object> body) {
-        body.forEach((key, value) ->
-                System.out.println("key: " + key + " value: " + value.toString())
-        );
-
         // Log before starting async method
         log.info("Starting async execution");
-        executeAsync(body);
+        externalCallService.executeAsyncTask(body);
         // Log after starting async method
         log.info("Async execution started");
 
         return new ResponseEntity<>("Headers processed successfully", HttpStatus.OK);
     }
 
-    @Async
-    public CompletableFuture<Void> executeAsync(Map<String, Object> body) {
-        return milRestServiceHandler.execute(body, milRestExternalService)
-                .thenAcceptAsync(response -> invokeCallback(body, response))
-                .exceptionally(ex -> {
-                    log.error("Error in async execution", ex);
-                    return null;
-                });
-    }
-
-    private void invokeCallback(Map<String, Object> body, VariableMap response) {
-        try {
-            CamundaWaitMessage camundaWaitMessage = createCallbackPayload(body, response);
-            camundaService.callAdapter(camundaWaitMessage);
-        } catch (Exception e) {
-            log.error("Error while invoking callback", e);
-        }
-    }
-
-    private CamundaWaitMessage createCallbackPayload(Map<String, Object> body, VariableMap response) {
-        CamundaWaitMessage camundaWaitMessage = new CamundaWaitMessage();
-        camundaWaitMessage.setMessageName((String) body.get("responseEventMessage"));
-        camundaWaitMessage.setProcessInstanceId((String) body.get("processInstanceId"));
-
-        String responseBody = response.getValueTyped("response").getValue().toString();
-        String statusCode = response.getValueTyped("statusCode").getValue().toString();
-
-        camundaWaitMessage.setProcessVariables(Map.of(
-                "statusCode", new ProcessVariable(statusCode, "String"),
-                "response", new ProcessVariable(responseBody, "json")
-        ));
-
-        log.info("Callback payload: " + camundaWaitMessage);
-        return camundaWaitMessage;
-    }
 }
