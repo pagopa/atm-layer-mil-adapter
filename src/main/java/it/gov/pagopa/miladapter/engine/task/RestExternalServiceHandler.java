@@ -17,6 +17,10 @@ public interface RestExternalServiceHandler {
 
     TaskExecutor getTaskRestExecutor();
 
+    TaskExecutor getTaskComplExecutor();
+
+    int getMaxTasks();
+
     @Async
     default CompletableFuture<VariableMap> execute(Map<String, Object> variables, GenericRestExternalService externalService) {
         try {
