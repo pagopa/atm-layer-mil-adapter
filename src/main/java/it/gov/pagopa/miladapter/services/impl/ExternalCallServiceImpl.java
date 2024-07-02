@@ -49,25 +49,6 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
     @Autowired
     private Executor taskExecutor;
 
-    public CompletableFuture<Void> executeAsyncTask(Map<String, Object> body) {
-        return CompletableFuture.runAsync(() -> {
-            Configuration configuration = EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCallNew(body);
-            SpanBuilder parentSpanBuilder = this.spanBuilder(configuration);
-            Span parentSpan = parentSpanBuilder.startSpan();
-            try (Scope scope = parentSpan.makeCurrent()) {
-                // Logica del task asincrono
-                System.out.println("Inizio task asincrono...");
-                // Simulazione di un compito che richiede tempo
-                VariableMap response = callExternalService(configuration);
-                callBackEngine(body, response);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            System.out.println("Task asincrono completato!");
-            parentSpan.end();
-        }, taskExecutor);
-    }
-
     @Override
     public URI prepareUri(Configuration configuration) {
         return HttpRequestUtils.buildURI(restConfigurationProperties.getMilBasePath(), configuration.getEndpoint(), configuration.getPathParams());
@@ -90,14 +71,26 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
     @Autowired
     CallbackCamundaService callbackCamundaService;
 
-    @Async
-    public void executeCallAndCallBack(Map<String, Object> body) {
-        Configuration configuration = EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCallNew(body);
-        VariableMap response = callExternalService(configuration);
-        callBackEngine(body, response);
+    public CompletableFuture<Void> externalCallAndCallback(Map<String, Object> body) {
+        return CompletableFuture.runAsync(() -> {
+            Configuration configuration = EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCallNew(body);
+            SpanBuilder parentSpanBuilder = this.spanBuilder(configuration);
+            Span parentSpan = parentSpanBuilder.startSpan();
+            try (Scope scope = parentSpan.makeCurrent()) {
+                // Logica del task asincrono
+                System.out.println("Inizio task asincrono...");
+                // Simulazione di un compito che richiede tempo
+                VariableMap response = callExternalService(configuration);
+                callBackEngine(body, response, configuration);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println("Task asincrono completato!");
+            parentSpan.end();
+        }, taskExecutor);
     }
 
-    private void callBackEngine(Map<String, Object> body, VariableMap response) {
+    private void callBackEngine(Map<String, Object> body, VariableMap response, Configuration configuration) {
         log.info("starting callback");
         SpanBuilder callbackSpanBuilder = getTracer().spanBuilder("Camunda callback");
         callbackSpanBuilder.setParent(Context.current().with(Span.current()));
@@ -106,7 +99,7 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
             CamundaWaitMessage camundaWaitMessage = createCallbackPayload(body, response);
             callBackSpan.setAttribute("camunda.wait.message", camundaWaitMessage.toString());
             callBackSpan.setAttribute("start.time", (LocalDateTime.now()).toString());
-            callbackCamundaService.callAdapter(camundaWaitMessage);
+            callbackCamundaService.callAdapter(this.getRestTemplate(configuration), camundaWaitMessage);
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             getLogger().error("Exception in Camunda callback: {}", e);
             callBackSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, e.getStatusCode().value());
@@ -135,6 +128,7 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
             }
             extSpan.setAttribute("http.headers", entity.getHeaders().toString());
             extSpan.setAttribute("start.time", (LocalDateTime.now()).toString());
+            //Call External service
             response = this.getRestTemplate(configuration).exchange(url, configuration.getHttpMethod(), entity, String.class);
             extSpan.setAttribute("end.time", (LocalDateTime.now()).toString());
             if (response.getBody() == null) {
@@ -194,4 +188,5 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
     public HttpEntity<String> buildHttpEntity(Configuration configuration) {
         return HttpRequestUtils.buildHttpEntity(configuration.getBody(), configuration.getHeaders());
     }
+
 }
