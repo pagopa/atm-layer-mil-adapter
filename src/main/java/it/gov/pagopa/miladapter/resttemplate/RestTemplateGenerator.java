@@ -5,9 +5,15 @@ import io.opentelemetry.api.OpenTelemetry;
 import it.gov.pagopa.miladapter.config.HttpRequestInterceptor;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.hc.client5.http.config.RequestConfig;
-import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+
 import org.apache.hc.core5.util.Timeout;
+import org.apache.hc.core5.util.TimeValue;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.config.RequestConfig.Builder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -33,15 +39,25 @@ public class RestTemplateGenerator {
     public RestTemplate generate(int connectionRequestTimeout, int connectionResponseTimeout, int retry, int retryDelay) {
         log.info("Generating restTemplate with connectionTimeout: {} milliseconds, responseTimeout: {} milliseconds, maxRetry: {}, retryInterval: {} milliseconds",
                 connectionRequestTimeout, connectionResponseTimeout, retry, retryDelay);
+
         RequestConfig requestConfig = RequestConfig.custom()
                 .setResponseTimeout(Timeout.of(Duration.ofMillis(connectionResponseTimeout)))
                 .setConnectionRequestTimeout(Timeout.of(Duration.ofMillis(connectionRequestTimeout)))
                 .build();
 
-        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-        httpClientBuilder.setDefaultRequestConfig(requestConfig);
-        httpClientBuilder.setRetryStrategy(new CustomHttpRequestRetryStrategy(retry, retryDelay));
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClientBuilder.build());
+        PoolingHttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
+                .setMaxConnTotal(150) // Imposta il numero massimo di connessioni totali
+                .setMaxConnPerRoute(150) // Imposta il numero massimo di connessioni per rotta
+                .build();
+
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setConnectionManager(connectionManager)
+                .setDefaultRequestConfig(requestConfig)
+                .setRetryStrategy(new CustomHttpRequestRetryStrategy(retry, retryDelay))
+                .evictIdleConnections(TimeValue.ofSeconds(20)) // Rilascia connessioni inattive dopo 30 secondi
+                .build();
+
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
         BufferingClientHttpRequestFactory bufferingFactory = new BufferingClientHttpRequestFactory(requestFactory);
         RestTemplate restTemplate = new RestTemplate(bufferingFactory);
 
@@ -49,7 +65,7 @@ public class RestTemplateGenerator {
         if (CollectionUtils.isEmpty(interceptors)) {
             interceptors = new ArrayList<>();
         }
-        interceptors.add(new HttpRequestInterceptor(openTelemetry,restConfigurationProperties));
+        interceptors.add(new HttpRequestInterceptor(openTelemetry, restConfigurationProperties));
         restTemplate.setInterceptors(interceptors);
 
         return restTemplate;
