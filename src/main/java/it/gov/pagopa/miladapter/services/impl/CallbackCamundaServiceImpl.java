@@ -32,7 +32,7 @@ public class CallbackCamundaServiceImpl implements CallbackCamundaService {
 
     private static String ENDPOINT = "/message";
 
-    public String callAdapter(CamundaWaitMessage camundaWaitMessage) throws JsonProcessingException {
+    public String callAdapter(RestTemplate restTemplate,CamundaWaitMessage camundaWaitMessage) throws JsonProcessingException {
 
         // Convertire il body in JSON
         String jsonBody = objectMapper.writeValueAsString(camundaWaitMessage);
@@ -46,7 +46,6 @@ public class CallbackCamundaServiceImpl implements CallbackCamundaService {
 
         // Creare l'entity con il body e gli headers
         HttpEntity<String> entity = new HttpEntity<>(jsonBody, headers);
-        RestTemplate restTemplate = new RestTemplate();
 
         ResponseEntity<String> response = restTemplate.exchange(apiUrl+ENDPOINT, HttpMethod.POST, entity, String.class);
         return response.getBody();
