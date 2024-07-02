@@ -44,6 +44,12 @@ spring:
     username: ${MIL_ADAPTER_ENGINE_DB_USERNAME:postgres}
     password: ${MIL_ADAPTER_ENGINE_DB_PASSWORD:password}
     driverClassName: ${MIL_ADAPTER_ENGINE_DB_DRIVER:org.postgresql.Driver}
+  task:
+    execution:
+      pool:
+        core-size: 50
+        max-size: 100
+        queue-capacity: 500
 tracing:
   url: ${MIL_ADAPTER_TRACING_BACKEND_URL}
 
