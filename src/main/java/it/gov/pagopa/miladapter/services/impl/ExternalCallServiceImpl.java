@@ -122,7 +122,9 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
                 serviceSpan.setAttribute("http.body", entity.getBody());
             }
             serviceSpan.setAttribute("http.headers", entity.getHeaders().toString());
+            serviceSpan.setAttribute("MIL.call.start.time", (LocalDateTime.now()).toString());
             response = this.getRestTemplate(configuration).exchange(url, configuration.getHttpMethod(), entity, String.class);
+            serviceSpan.setAttribute("MIL.call.end.time", (LocalDateTime.now()).toString());
             if (response.getBody() == null) {
                 response = new ResponseEntity<>(new JsonObject().toString(), response.getStatusCode());
             }
