@@ -6,9 +6,11 @@ import it.gov.pagopa.miladapter.model.Configuration;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,20 +38,28 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
     }
 
     @Test
-    void testParseIntegerWithValue() {
-        Long value = 12345L;
-
-        Integer result = EngineVariablesToHTTPConfigurationUtils.parseInteger(value);
-
-        assertNotNull(result);
-        assertEquals(value.intValue(), result);
+    void testParseIntegerWithNull() {
+        assertNull(EngineVariablesToHTTPConfigurationUtils.parseInteger(null));
     }
 
     @Test
-    void testParseIntegerWithNullValue() {
-        Integer result = null;
+    void testParseIntegerWithLong() {
+        Long input = 12345L;
+        Integer expected = 12345;
+        assertEquals(expected, EngineVariablesToHTTPConfigurationUtils.parseInteger(input));
+    }
 
-        assertNull(result);
+    @Test
+    void testParseIntegerWithInteger() {
+        Integer input = 12345;
+        Integer expected = 12345;
+        assertEquals(expected, EngineVariablesToHTTPConfigurationUtils.parseInteger(input));
+    }
+
+    @Test
+    void testParseIntegerWithUnsupportedType() {
+        Double input = 12345.0;
+        assertThrows(IllegalArgumentException.class, () -> EngineVariablesToHTTPConfigurationUtils.parseInteger(input));
     }
 
     @Test
@@ -118,6 +128,76 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals("12345", configuration.getAuthParameters().getAcquirerId());
         assertEquals("12345678", configuration.getAuthParameters().getTerminalId());
         assertEquals("CODE", configuration.getAuthParameters().getCode());
+    }
+
+    @Test
+    void getHttpConfigurationExternalCallNewTest() {
+        Map<String, Object> variables = new CaseInsensitiveMap<>();
+        Map<String, String> headersMap = new HashMap<>();
+        headersMap.put("AcquirerId", "bank_id");
+        headersMap.put("Channel", "ATM");
+        headersMap.put("TerminalId", "term_id");
+        variables.put("headers", headersMap);
+        variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
+        variables.put("url", "http://prova");
+        variables.put("method", "GET");
+        variables.put("millAccessToken", "VALID_TOKEN");
+        variables.put("body", "testBody");
+        variables.put("PathParams", new HashMap<>());
+
+        Configuration configuration = EngineVariablesToHTTPConfigurationUtils
+                .getHttpConfigurationExternalCallNew(variables);
+
+        assertEquals("http://prova", configuration.getEndpoint());
+        assertEquals(HttpMethod.GET, configuration.getHttpMethod());
+        assertEquals("testBody", configuration.getBody());
+        assertEquals(6, configuration.getHeaders().size());
+        assertNotNull(configuration.getHeaders().get("RequestId"));
+
+        assertEquals("transaction-id", ((List<?>)configuration.getHeaders().get("TransactionId")).get(0));
+        assertEquals("Bearer VALID_TOKEN", ((List<?>)configuration.getHeaders().get(HttpHeaders.AUTHORIZATION)).get(0));
+
+        assertEquals(new HashMap<>(), configuration.getPathParams());
+        assertNotNull(configuration.getAuthParameters());
+        assertEquals("bank_id", configuration.getAuthParameters().getAcquirerId());
+        assertEquals("ATM", configuration.getAuthParameters().getChannel());
+        assertEquals("term_id", configuration.getAuthParameters().getTerminalId());
+        assertEquals("transaction-id", configuration.getAuthParameters().getTransactionId());
+    }
+
+    @Test
+    void getHttpConfigurationExternalCallNewWithNullPathParamsTest() {
+        Map<String, Object> variables = new CaseInsensitiveMap<>();
+        Map<String, String> headersMap = new HashMap<>();
+        headersMap.put("AcquirerId", "bank_id");
+        headersMap.put("Channel", "ATM");
+        headersMap.put("TerminalId", "term_id");
+        variables.put("headers", headersMap);
+        variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
+        variables.put("url", "http://prova");
+        variables.put("method", "GET");
+        variables.put("millAccessToken", "VALID_TOKEN");
+        variables.put("body", "testBody");
+
+        Configuration configuration = EngineVariablesToHTTPConfigurationUtils
+                .getHttpConfigurationExternalCallNew(variables);
+
+
+        assertEquals("http://prova", configuration.getEndpoint());
+        assertEquals(HttpMethod.GET, configuration.getHttpMethod());
+        assertEquals("testBody", configuration.getBody());
+        assertEquals(6, configuration.getHeaders().size());
+        assertNotNull(configuration.getHeaders().get("RequestId"));
+
+        assertEquals("transaction-id", ((List<?>)configuration.getHeaders().get("TransactionId")).get(0));
+        assertEquals("Bearer VALID_TOKEN", ((List<?>)configuration.getHeaders().get(HttpHeaders.AUTHORIZATION)).get(0));
+
+        assertEquals(new HashMap<>(), configuration.getPathParams());
+        assertNotNull(configuration.getAuthParameters());
+        assertEquals("bank_id", configuration.getAuthParameters().getAcquirerId());
+        assertEquals("ATM", configuration.getAuthParameters().getChannel());
+        assertEquals("term_id", configuration.getAuthParameters().getTerminalId());
+        assertEquals("transaction-id", configuration.getAuthParameters().getTransactionId());
     }
 
 }
