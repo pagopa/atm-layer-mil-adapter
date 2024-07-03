@@ -32,13 +32,13 @@ rest-configuration:
 spring:
   application:
     name: atm-layer-mil-adapter
-
   task:
     execution:
       pool:
-        core-size: 50
-        max-size: 100
-        queue-capacity: 500
+        core-size: ${MIL_ADAPTER_CORE_SIZE:100}
+        max-size: ${MIL_ADAPTER_MAX_SIZE:200}
+        queue-capacity: ${MIL_ADAPTER_QUEUE_CAPACITY:500}
+
 tracing:
   url: ${MIL_ADAPTER_TRACING_BACKEND_URL}
 
