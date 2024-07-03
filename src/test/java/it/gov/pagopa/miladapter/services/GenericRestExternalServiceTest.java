@@ -1,12 +1,13 @@
 package it.gov.pagopa.miladapter.services;
 
-import io.opentelemetry.api.trace.SpanBuilder;
-import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.api.trace.*;
+import io.opentelemetry.context.Context;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class GenericRestExternalServiceTest {
@@ -101,8 +103,44 @@ class GenericRestExternalServiceTest {
         assertNotNull(result);
         verify(tracer).spanBuilder("MIL-Adapter-RestCall-Execution");
     }
+
+    @Test
+    void testSpanBuilderWithValidParentSpanContextString() {
+        Configuration configuration = new Configuration();
+        String parentSpanContextString = "{\"traceId\":\"traceId\",\"spanId\":\"spanId\"}";
+        configuration.setParentSpanContextString(parentSpanContextString);
+
+        SpanBuilder spanBuilder = mock(SpanBuilder.class);
+        SpanContext spanContext = SpanContext.createFromRemoteParent("traceId", "spanId", TraceFlags.getSampled(), TraceState.getDefault());
+        Span parentSpan = Span.wrap(spanContext);
+        when(tracer.spanBuilder("MIL-Adapter-RestCall-Execution")).thenReturn(spanBuilder);
+        when(spanBuilder.setParent(any(Context.class))).thenReturn(spanBuilder);
+
+        SpanBuilder result = genericRestExternalService.spanBuilder(configuration);
+
+        assertNotNull(result);
+        verify(tracer).spanBuilder("MIL-Adapter-RestCall-Execution");
+
+        ArgumentCaptor<Context> contextCaptor = ArgumentCaptor.forClass(Context.class);
+        verify(spanBuilder).setParent(contextCaptor.capture());
+
+        Context capturedContext = contextCaptor.getValue();
+        Span capturedSpan = Span.fromContext(capturedContext);
+
+        assertEquals(spanContext.getTraceId(), capturedSpan.getSpanContext().getTraceId());
+        assertEquals(spanContext.getSpanId(), capturedSpan.getSpanContext().getSpanId());
+    }
+
+    @Test
+    void testSpanBuilderWithInvalidParentSpanContextString() {
+        Configuration configuration = new Configuration();
+        String invalidParentSpanContextString = "invalid_json";
+        configuration.setParentSpanContextString(invalidParentSpanContextString);
+
+        try {
+            genericRestExternalService.spanBuilder(configuration);
+        } catch (RuntimeException e) {
+            assertNotNull(e);
+        }
+    }
 }
-
-
-
-
