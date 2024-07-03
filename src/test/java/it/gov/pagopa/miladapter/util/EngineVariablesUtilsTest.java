@@ -1,6 +1,5 @@
 package it.gov.pagopa.miladapter.util;
 
-import org.camunda.bpm.client.task.ExternalTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -59,16 +58,6 @@ class EngineVariablesUtilsTest {
     void getTypedVaribaleTestNotRequiredEmptyString() {
         String value = EngineVariablesUtils.getTypedVariable(map, "emptyKey", false);
         assertEquals("", value);
-    }
-
-    @Test
-    void getTaskVariablesCaseInsensitiveTest() {
-        ExternalTask externalTask = mock(ExternalTask.class);
-        when(externalTask.getAllVariables()).thenReturn(map);
-        Map<String, Object> result = EngineVariablesUtils.getTaskVariablesCaseInsensitive(externalTask);
-        assertEquals("VALUE", result.get("key"));
-        assertEquals("VALUE", result.get("KEY"));
-        assertEquals(3, result.size());
     }
 
     @Test

@@ -135,7 +135,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         headers.add("TerminalId", terminalId);
         headers.add("RequestId", requestId);
         headers.add("TransactionId", transactionId);
-        headers.add(HttpHeaders.AUTHORIZATION, "Bearer ".concat(accessToken));
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer ".concat("eyJraWQiOiI4OGY3NWNlNDYxMzE0NTUwYmNiMDc3YThlYmY5MjBkMC8yOTRkN2Q5YmE4ZTU0Yjk5YmI5ZmFkOGUxYzI0ZDRhYyIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI4M2MwYjEwZi1iMzk4LTRjYzgtYjM1Ni1hM2UwZjAyOTE2NzkiLCJhdWQiOiJtaWwucGFnb3BhLml0IiwiY2xpZW50SWQiOiI4M2MwYjEwZi1iMzk4LTRjYzgtYjM1Ni1hM2UwZjAyOTE2NzkiLCJjaGFubmVsIjoiQVRNIiwiaXNzIjoiaHR0cHM6Ly9taWwtdS1hcGltLmF6dXJlLWFwaS5uZXQvbWlsLWF1dGgiLCJncm91cHMiOlsiTm90aWNlUGF5ZXIiLCJFbnJvbGxUb0lEUGF5Il0sInRlcm1pbmFsSWQiOiI2NDg3NDQxMiIsImV4cCI6MTcyMDAxNjE4MSwiYWNxdWlyZXJJZCI6IjA2Nzg5IiwiaWF0IjoxNzIwMDE1MjgxfQ.kNQYQBfKMRdo0HhTwpItvyP2ys5hxa2FlVxhBWGgI1THohnEwqXEre6tzIANrJx-XaaAx__O0MWTvk2AS1HN5I9QYY6gksC4Co68dfRhd21i8_wcB9yx-sE_I74SjCzctycFgK8wPlLrpr65JSzcbVGYYIVLjXmXSINsapprXkdAUG3QM535dvFL_xdawGLsneXnkmyxln9CHGHVbWAnP1tABMOcUryAJV4GGphiPyaH9DvvwMtXpiauaLuB-KZleNwVyd_R9yHZIdOpX7SHicBHB8uQZKMB5yglRco6XO8U1hwdB6JNEb6Kh-3Im0MLwbtRnXj3B77UZVkkONcsAZiFjVe8q5gSDFfh_CM9lyhZu9MUroj9gHg5zxMUX2Ix3c4hR13UWA8fxfARagMDx5oBCR6V6ndrpNvDeIVGGmNN4_z4SRdcxqaJfoh0SbZ4a9ajfOHPZDGVw52tjXOMXUPlSQ9S-nfLxRxT_T0mHVNYt2FOnuQU0Roo9uKUpvxmpFkbaPKbwblvRwmTKJUFOAAkEwTniJAJOM-CupocfIZRUaH6jgAHmP2aGtxEv7_tUqVBjqUWrUnO8izstDjhSvFYXKEl2KS4eTkStFx7I7nzdcaaXOTMkpF0YOCDorzJQFnIM0fqnR5qxwDVFY5saETBa0BAlwXaaMq1hvq2Jr8"));
 
 //        if (idPayFlow) {
 //            String idPayKey = headersMap != null ? headersMap.get("IdPayKey") : null;

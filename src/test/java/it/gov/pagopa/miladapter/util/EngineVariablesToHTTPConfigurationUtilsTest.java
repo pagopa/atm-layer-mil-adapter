@@ -3,7 +3,6 @@ package it.gov.pagopa.miladapter.util;
 import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
 import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.Configuration;
-import jakarta.ws.rs.core.MultivaluedHashMap;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -72,7 +71,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertNull(configuration.getBody());
         assertEquals(3, configuration.getHeaders().size());
         Assertions.assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue()));
-        assertEquals(new MultivaluedHashMap<>(), configuration.getPathParams());
+        assertEquals(new HashMap<>(), configuration.getPathParams());
 
     }
 
