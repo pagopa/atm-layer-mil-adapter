@@ -7,5 +7,5 @@ import org.springframework.web.client.RestTemplate;
 
 public interface CallbackCamundaService {
 
-     String callAdapter(RestTemplate restTemplate,CamundaWaitMessage camundaWaitMessage) throws JsonProcessingException;
+     String callAdapter(CamundaWaitMessage camundaWaitMessage) throws JsonProcessingException;
 }
