@@ -5,7 +5,6 @@ import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
 import it.gov.pagopa.miladapter.services.GenericRestService;
-import it.gov.pagopa.miladapter.services.TokenService;
 import it.gov.pagopa.miladapter.util.HttpRequestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -23,8 +22,6 @@ public abstract class GenericRestServiceAbstract implements GenericRestService {
     @Autowired
     RestTemplateGenerator restTemplateGenerator;
 
-    @Autowired
-    TokenService tokenService;
 
     @Autowired
     Tracer tracer;

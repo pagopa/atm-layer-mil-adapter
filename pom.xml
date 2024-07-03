@@ -7,20 +7,12 @@
     <groupId>it.gov.pagopa</groupId>
     <artifactId>mil-adapter</artifactId>
 
-
-
     <version>1.47.0-dev.1</version>
-
-
-
-
-
 
     <packaging>jar</packaging>
 
 
     <properties>
-        <camunda.platform.version>7.20.0</camunda.platform.version>
         <jaxb.api.version>2.3.1</jaxb.api.version>
         <java.version>21</java.version>
         <apache.common.collections.version>4.4</apache.common.collections.version>
@@ -28,7 +20,6 @@
         <junit.version>4.13.2</junit.version>
         <jacoco.version>0.8.11</jacoco.version>
         <httpclient5.version>5.2.1</httpclient5.version>
-        <camunda.spin.version>1.22.0</camunda.spin.version>
         <micrometer.tracing.version>1.2.2</micrometer.tracing.version>
         <lombok.version>1.18.30</lombok.version>
         <sonarsource.scanner.version>3.11.0.3922</sonarsource.scanner.version>
@@ -45,21 +36,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.camunda.bpm</groupId>
-                <artifactId>camunda-bom</artifactId>
-                <version>${camunda.platform.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-
-            <dependency>
-                <groupId>org.camunda.spin</groupId>
-                <artifactId>camunda-spin-bom</artifactId>
-                <scope>import</scope>
-                <type>pom</type>
-                <version>${camunda.spin.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>io.micrometer</groupId>
@@ -73,38 +49,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>org.camunda.bpm</groupId>
-            <artifactId>camunda-engine</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.camunda.bpm</groupId>
-            <artifactId>camunda-engine-spring</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.camunda.bpm</groupId>
-            <artifactId>camunda-engine-plugin-spin</artifactId>
-            <version>7.20.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.camunda.spin</groupId>
-            <artifactId>camunda-spin-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.camunda.spin</groupId>
-            <artifactId>camunda-spin-dataformat-all</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.camunda.bpm.springboot</groupId>
-            <artifactId>camunda-bpm-spring-boot-starter-external-task-client</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -126,16 +70,6 @@
 
 
         <dependency>
-            <groupId>org.camunda.bpm.springboot</groupId>
-            <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.camunda.bpm.springboot</groupId>
-            <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
             <version>${jaxb.api.version}</version>
@@ -149,15 +83,6 @@
             <version>${lombok.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -185,12 +110,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.camunda.bpm</groupId>
-            <artifactId>camunda-bpm-junit5</artifactId>
-            <version>${camunda.platform.version}</version>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.jeasy</groupId>

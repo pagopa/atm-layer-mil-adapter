@@ -17,10 +17,7 @@ import java.util.Map;
 public class DefinitionIdRestServiceImpl extends GenericRestServiceAbstract implements DefinitionIdRestService {
 
 
-    @Override
-    public void injectAuthToken(Configuration configuration) {
-        // default implementation ignored
-    }
+
 
     @Override
     public URI prepareUri(Configuration configuration) {
