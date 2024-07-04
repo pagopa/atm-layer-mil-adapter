@@ -53,7 +53,7 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
 
     public ResponseEntity executeExternalCall(Map<String, Object> body) {
         Configuration configuration = EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCallNew(body);
-        ResponseEntity<String> response = null;
+        ResponseEntity<String> response;
 
         SpanBuilder spanBuilder = this.spanBuilder(configuration);
         Span serviceSpan = spanBuilder.startSpan();
