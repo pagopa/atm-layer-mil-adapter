@@ -1,117 +1,27 @@
 package it.gov.pagopa.miladapter.services;
 
-import camundajar.impl.com.google.gson.JsonObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.SpanBuilder;
-import io.opentelemetry.api.trace.SpanContext;
-import io.opentelemetry.api.trace.TraceFlags;
-import io.opentelemetry.api.trace.TraceState;
-import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.api.trace.*;
 import io.opentelemetry.context.Context;
-import io.opentelemetry.context.Scope;
-import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
-import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
-import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.model.ParentSpanContext;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
 import it.gov.pagopa.miladapter.util.HttpRequestUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.camunda.bpm.client.variable.ClientValues;
-import org.camunda.bpm.client.variable.value.JsonValue;
-import org.camunda.bpm.engine.variable.VariableMap;
-import org.camunda.bpm.engine.variable.Variables;
-import org.camunda.spin.json.SpinJsonNode;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 
-import static org.camunda.spin.Spin.JSON;
 
 public interface GenericRestExternalService  {
 
-    default VariableMap executeRestCall(Configuration configuration) {
-        ResponseEntity<String> response;
-        getLogger().info("Start span requestId: ", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
-        SpanBuilder spanBuilder = this.spanBuilder(configuration);
-        Span serviceSpan = spanBuilder.startSpan();
 
-        long asyncTimeout = getRestConfigurationProperties().getAsyncThreshold();
-        try (Scope scope = serviceSpan.makeCurrent()) {
-            if (configuration.getDelayMilliseconds() != null) {
-                if (configuration.getDelayMilliseconds() > asyncTimeout / 2) {
-                    throw new RuntimeException(String.format("The delay between consecutive retries must be lower than: %s ms", asyncTimeout / 2));
-                }
-                try {
-                    Thread.sleep(configuration.getDelayMilliseconds());
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-            getLogger().info("End span requestId: ", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
-            getLogger().info("Start get token requestId: ", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
-            //this.injectAuthToken(configuration);
-            getLogger().info("End get token transactionId: {}", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
-            getLogger().info("Start create call request transactionId: {}", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
-            URI url = this.prepareUri(configuration);
-            HttpEntity<String> entity = this.buildHttpEntity(configuration);
-            serviceSpan.setAttribute(SemanticAttributes.HTTP_METHOD, configuration.getHttpMethod().name());
-            serviceSpan.setAttribute(SemanticAttributes.HTTP_URL, url.toString());
-            if (entity.hasBody()) {
-                serviceSpan.setAttribute("http.body", entity.getBody());
-            }
-            serviceSpan.setAttribute("http.headers", entity.getHeaders().toString());
-            getLogger().info("Stop create call request transactionId: {}", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
-            getLogger().info("Start rest call transactionId: {}", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
-            response = this.getRestTemplate(configuration)
-                    .exchange(url, configuration.getHttpMethod(), entity, String.class);
-            getLogger().info("End rest call transactionId: {}", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-            getLogger().error("Exception in HTTP request: {}", e);
-            response = new ResponseEntity<>(new JsonObject().toString(), e.getStatusCode());
-            serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, e.getStatusCode().value());
-            serviceSpan.setAttribute("http.response.body", e.getResponseBodyAsString());
-        } catch (Exception e) {
-            getLogger().error("Exception in HTTP request: {}", e);
-            response = new ResponseEntity<>(new JsonObject().toString(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        getLogger().info("Start mapping response transactionId: {}", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
-        VariableMap output = Variables.createVariables();
-        if (response.getBody() == null) {
-            response = new ResponseEntity<>(new JsonObject().toString(), response.getStatusCode());
-        }
-        serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, response.getStatusCode().value());
-        serviceSpan.setAttribute("http.response.body", response.getBody());
-        serviceSpan.setAttribute("http.response.headers", response.getHeaders().toString());
-        JsonValue jsonValue;
-        if (StringUtils.isNotBlank(response.getBody())
-                && response.getStatusCode() != null
-                && response.getStatusCode().is2xxSuccessful()) {
-            jsonValue = ClientValues.jsonValue(response.getBody());
-        } else {
-            jsonValue = ClientValues.jsonValue("{}");
-        }
-        output.putValue(HttpVariablesEnum.RESPONSE.getValue(), jsonValue);
-        output.putValue(HttpVariablesEnum.STATUS_CODE.getValue(), response.getStatusCode().value());
-        SpinJsonNode headersJsonNode = JSON(response.getHeaders());
-        output.putValue(HttpVariablesEnum.RESPONSE_HEADERS.getValue(), headersJsonNode.toString());
-        serviceSpan.end();
-        getLogger().info("Stop mapping response requestId: ", configuration.getHeaders()!=null?configuration.getHeaders().get(RequiredProcessVariables.TRANSACTION_ID.getEngineValue()):"");
-        return output;
-    }
 
-    void injectAuthToken(Configuration configuration);
-
-    URI prepareUri(Configuration configuration);
+    URI prepareUri(Configuration configuration, String flow);
 
     Logger getLogger();
 

@@ -1,5 +1,7 @@
 package it.gov.pagopa.miladapter.util;
 
+import it.gov.pagopa.miladapter.model.Configuration;
+import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -144,6 +146,57 @@ class HttpRequestUtilsTest {
     void defaultConstructorTest() {
         Object httpRequestUtilsConstructed = new HttpRequestUtils();
         assertTrue(httpRequestUtilsConstructed instanceof HttpRequestUtils);
+    }
+
+    @Test
+    void testGetRestFactoryConfigsOrDefault() {
+
+        Configuration configuration = new Configuration();
+        RestConfigurationProperties restConfigurationProperties = new RestConfigurationProperties();
+        restConfigurationProperties.setConnectionResponseTimeoutMilliseconds(3000);
+        restConfigurationProperties.setConnectionRequestTimeoutMilliseconds(5000);
+        restConfigurationProperties.setMaxRetry(3);
+        restConfigurationProperties.setRetryIntervalMilliseconds(1000);
+
+        HttpRequestUtils.getRestFactoryConfigsOrDefault(configuration, restConfigurationProperties);
+
+        assertEquals(3000, configuration.getConnectionResponseTimeoutMilliseconds());
+        assertEquals(5000, configuration.getConnectionRequestTimeoutMilliseconds());
+        assertEquals(3, configuration.getMaxRetry());
+        assertEquals(1000, configuration.getRetryIntervalMilliseconds());
+
+        configuration.setConnectionResponseTimeoutMilliseconds(6000);
+        configuration.setMaxRetry(5);
+
+        HttpRequestUtils.getRestFactoryConfigsOrDefault(configuration, restConfigurationProperties);
+
+        assertEquals(6000, configuration.getConnectionResponseTimeoutMilliseconds()); // Should remain 6000
+        assertEquals(5000, configuration.getConnectionRequestTimeoutMilliseconds()); // Should be 5000
+        assertEquals(5, configuration.getMaxRetry()); // Should remain 5
+        assertEquals(1000, configuration.getRetryIntervalMilliseconds()); // Should be 1000
+    }
+
+    @Test
+    void testGetRestFactoryConfigsOrDefaultWithNullValues() {
+
+        Configuration configuration = new Configuration();
+        RestConfigurationProperties restConfigurationProperties = new RestConfigurationProperties();
+        restConfigurationProperties.setConnectionResponseTimeoutMilliseconds(3000);
+        restConfigurationProperties.setConnectionRequestTimeoutMilliseconds(5000);
+        restConfigurationProperties.setMaxRetry(3);
+        restConfigurationProperties.setRetryIntervalMilliseconds(1000);
+
+        configuration.setConnectionResponseTimeoutMilliseconds(null);
+        configuration.setConnectionRequestTimeoutMilliseconds(null);
+        configuration.setMaxRetry(null);
+        configuration.setRetryIntervalMilliseconds(null);
+
+        HttpRequestUtils.getRestFactoryConfigsOrDefault(configuration, restConfigurationProperties);
+
+        assertEquals(3000, configuration.getConnectionResponseTimeoutMilliseconds());
+        assertEquals(5000, configuration.getConnectionRequestTimeoutMilliseconds());
+        assertEquals(3, configuration.getMaxRetry());
+        assertEquals(1000, configuration.getRetryIntervalMilliseconds());
     }
 }
 

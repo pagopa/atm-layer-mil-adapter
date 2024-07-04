@@ -1,107 +1,127 @@
 package it.gov.pagopa.miladapter.services;
 
-import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.SpanBuilder;
-import io.opentelemetry.api.trace.Tracer;
 import it.gov.pagopa.miladapter.model.AuthParameters;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.DefinitionIdProperties;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
-import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
 import it.gov.pagopa.miladapter.services.impl.DefinitionIdRestServiceImpl;
-import org.camunda.bpm.engine.variable.VariableMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.Logger;
-import org.springframework.http.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.HashMap;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 class DefinitionIdRestServiceImplTest {
 
     @Mock
     private RestConfigurationProperties restConfigurationProperties;
-    @Mock
-    private RestTemplate restTemplate;
 
-    @Mock
-    Tracer tracer;
-
-    @Mock
-    private TokenService tokenService;
-    @Mock
-    private RestTemplateGenerator restTemplateGenerator;
     @InjectMocks
-    DefinitionIdRestServiceImpl definitionIdRestService;
-    private Configuration configuration;
+    private DefinitionIdRestServiceImpl definitionIdRestService;
 
     @BeforeEach
-    public void init() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
-        SpanBuilder spanBuilder = mock(SpanBuilder.class);
-        when(tracer.spanBuilder(any())).thenReturn(spanBuilder);
-        Span span = mock(Span.class);
-        when(spanBuilder.startSpan()).thenReturn(span);
-        configuration = new Configuration();
-        configuration.setHttpMethod(HttpMethod.GET);
-        configuration.setHeaders(new HttpHeaders());
-        configuration.setPathParams(new HashMap<>());
-        configuration.setAuthParameters(new AuthParameters());
-        configuration.getAuthParameters().setAcquirerId("12345");
-        DefinitionIdProperties dip = Mockito.mock(DefinitionIdProperties.class);
-        when(restConfigurationProperties.getModelBasePath()).thenReturn("http://test-url:8080");
-        when(restConfigurationProperties.getDefinitionIdProperties()).thenReturn(dip);
-        when(restConfigurationProperties.getDefinitionIdProperties().getMethod()).thenReturn("GET");
-        when(restConfigurationProperties.getDefinitionIdProperties().getUrl())
-                .thenReturn("/bpmn/function/{functionType}/bank/{acquirerId}/branch/{branchId}/terminal/{terminalId}");
     }
 
     @Test
-    void executeDefinitionIdCallTestOK() {
-        configuration.getAuthParameters().setBranchId("1234");
-        configuration.getAuthParameters().setTerminalId("12345678");
-        when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class)))
-                .thenReturn(new ResponseEntity("{\"output\":\"test\"}", HttpStatus.OK));
-        when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
-        VariableMap output = definitionIdRestService.executeRestCall(configuration);
-        assertEquals("{\"output\":\"test\"}", output.get("response").toString());
-        assertEquals(200, output.get("statusCode"));
+    void testPrepareUri_AllParameters() {
+
+        Configuration configuration = new Configuration();
+        AuthParameters authParameters = new AuthParameters();
+        authParameters.setAcquirerId("ACQ123");
+        authParameters.setBranchId("BR123");
+        authParameters.setTerminalId("TERM123");
+        authParameters.setCode("CODE123");
+        configuration.setAuthParameters(authParameters);
+        configuration.setFunction("FUNC123");
+
+        DefinitionIdProperties definitionIdProperties = new DefinitionIdProperties();
+        definitionIdProperties.setMethod("GET");
+        definitionIdProperties.setUrl("/definition/{acquirerId}/{branchId}/{terminalId}/{functionType}");
+
+        when(restConfigurationProperties.getModelBasePath()).thenReturn("http://basepath.com");
+        when(restConfigurationProperties.getDefinitionIdProperties()).thenReturn(definitionIdProperties);
+
+        URI result = definitionIdRestService.prepareUri(configuration,"flow");
+
+        assertEquals("http://basepath.com/definition/ACQ123/BR123/TERM123/FUNC123", result.toString());
     }
 
     @Test
-    void executeDefinitionIdCallTestOKNoBranchNoTerminalId() {
-        when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class)))
-                .thenReturn(new ResponseEntity("{\"output\":\"test\"}", HttpStatus.OK));
-        when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
-        VariableMap output = definitionIdRestService.executeRestCall(configuration);
-        assertEquals("{\"output\":\"test\"}", output.get("response").toString());
-        assertEquals(200, output.get("statusCode"));
+    void testPrepareUri_NoBranchId() {
+
+        Configuration configuration = new Configuration();
+        AuthParameters authParameters = new AuthParameters();
+        authParameters.setAcquirerId("ACQ123");
+        authParameters.setBranchId(null);
+        authParameters.setTerminalId("TERM123");
+        authParameters.setCode("CODE123");
+        configuration.setAuthParameters(authParameters);
+        configuration.setFunction("FUNC123");
+
+        DefinitionIdProperties definitionIdProperties = new DefinitionIdProperties();
+        definitionIdProperties.setMethod("GET");
+        definitionIdProperties.setUrl("/definition/{acquirerId}/{branchId}/{terminalId}/{functionType}");
+
+        when(restConfigurationProperties.getModelBasePath()).thenReturn("http://basepath.com");
+        when(restConfigurationProperties.getDefinitionIdProperties()).thenReturn(definitionIdProperties);
+
+        URI result = definitionIdRestService.prepareUri(configuration, "flow");
+
+        assertEquals("http://basepath.com/definition/ACQ123/_/TERM123/FUNC123", result.toString());
     }
 
     @Test
-    void executeMILRestCallTestKO() {
-        when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), any(Class.class))).thenReturn(new ResponseEntity("{\"output\":\"BAD REQUEST\"}", HttpStatus.BAD_REQUEST));
-        when(restTemplateGenerator.generate(anyInt(), anyInt(), anyInt(), anyInt())).thenReturn(restTemplate);
-        VariableMap output = definitionIdRestService.executeRestCall(configuration);
-        assertEquals("{}", output.get("response").toString());
-        assertEquals(400, output.get("statusCode"));
+    void testPrepareUri_NoTerminalId() {
+
+        Configuration configuration = new Configuration();
+        AuthParameters authParameters = new AuthParameters();
+        authParameters.setAcquirerId("ACQ123");
+        authParameters.setBranchId("BR123");
+        authParameters.setTerminalId(null);
+        authParameters.setCode("CODE123");
+        configuration.setAuthParameters(authParameters);
+        configuration.setFunction("FUNC123");
+
+        DefinitionIdProperties definitionIdProperties = new DefinitionIdProperties();
+        definitionIdProperties.setMethod("GET");
+        definitionIdProperties.setUrl("/definition/{acquirerId}/{branchId}/{terminalId}/{functionType}");
+
+        when(restConfigurationProperties.getModelBasePath()).thenReturn("http://basepath.com");
+        when(restConfigurationProperties.getDefinitionIdProperties()).thenReturn(definitionIdProperties);
+
+        URI result = definitionIdRestService.prepareUri(configuration, "flow");
+
+        assertEquals("http://basepath.com/definition/ACQ123/BR123/ACQ123CODE123/FUNC123", result.toString());
     }
 
     @Test
-    void getLoggerTest(){
-        assertInstanceOf(Logger.class,definitionIdRestService.getLogger());
+    void testPrepareUri_NoBranchIdAndTerminalId() {
+
+        Configuration configuration = new Configuration();
+        AuthParameters authParameters = new AuthParameters();
+        authParameters.setAcquirerId("ACQ123");
+        authParameters.setBranchId(null);
+        authParameters.setTerminalId(null);
+        authParameters.setCode("CODE123");
+        configuration.setAuthParameters(authParameters);
+        configuration.setFunction("FUNC123");
+
+        DefinitionIdProperties definitionIdProperties = new DefinitionIdProperties();
+        definitionIdProperties.setMethod("GET");
+        definitionIdProperties.setUrl("/definition/{acquirerId}/{branchId}/{terminalId}/{functionType}");
+
+        when(restConfigurationProperties.getModelBasePath()).thenReturn("http://basepath.com");
+        when(restConfigurationProperties.getDefinitionIdProperties()).thenReturn(definitionIdProperties);
+
+        URI result = definitionIdRestService.prepareUri(configuration, "flow");
+
+        assertEquals("http://basepath.com/definition/ACQ123/_/ACQ123CODE123/FUNC123", result.toString());
     }
 }

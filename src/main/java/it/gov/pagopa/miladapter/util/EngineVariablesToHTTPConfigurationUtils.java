@@ -5,7 +5,7 @@ import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.AuthParameters;
 import it.gov.pagopa.miladapter.model.Configuration;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -109,7 +109,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .build();
     }
 
-    public static Configuration getHttpConfigurationExternalCallNew(Map<String, Object> variables) {
+    public static Configuration getHttpConfigurationExternalCallNew(Map<String, Object> variables, boolean idPayFlow) {
         String requestId = UUID.randomUUID().toString();
 
         // Estrai la sotto-mappa headers
@@ -120,6 +120,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         String channel = headersMap != null ? headersMap.get("Channel") : null;
         String terminalId = headersMap != null ? headersMap.get("TerminalId") : null;
         String transactionId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), true);
+        String contentType = headersMap != null ? headersMap.get("Content-Type") : null;
 
 //        Number delayMilliseconds = getIntegerValue("delayMilliseconds" ,variables.get("delayMilliseconds").toString());
         String endpointVariable = (String) variables.get("url");
@@ -135,12 +136,12 @@ public class EngineVariablesToHTTPConfigurationUtils {
         headers.add("TerminalId", terminalId);
         headers.add("RequestId", requestId);
         headers.add("TransactionId", transactionId);
+        headers.add("Content-Type", contentType);
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer ".concat(accessToken));
 
-//        if (idPayFlow) {
-//            String idPayKey = headersMap != null ? headersMap.get("IdPayKey") : null;
-//            headers.add("IdPayKey", idPayKey);
-//        }
+        if (idPayFlow) {
+            headers.add(RequiredProcessVariables.IDPAY_KEY.getEngineValue(), idPayKey);
+        }
 
         // Estrai pathParams dalla mappa principale variables
         Map<String, String> pathParams = (Map<String, String>) variables.get("PathParams");
