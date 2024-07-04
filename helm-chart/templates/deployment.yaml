@@ -137,6 +137,12 @@ spec:
               value: "{{ .Values.milAdapter.completionPoolThreadName }}"
             - name: MIL_ADAPTER_TRACING_BACKEND_URL
               value: "{{ .Values.milAdapter.tracingBackendUrl }}"
+            - name: MIL_ADAPTER_CORE_SIZE
+              value: "{{ .Values.milAdapter.coreSize }}"
+            - name: MIL_ADAPTER_MAX_SIZE
+              value: "{{ .Values.milAdapter.maxSize }}"
+            - name: MIL_ADAPTER_QUEUE_CAPACITY
+              value: "{{ .Values.milAdapter.queueCapacity }}"
             - name: SPRING_PROFILES_ACTIVE
               value: "{{ .Values.springProfilesActive }}"
             - name: SERVER_PORT
