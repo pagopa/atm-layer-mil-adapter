@@ -48,7 +48,7 @@ class DefinitionIdRestServiceImplTest {
         when(restConfigurationProperties.getModelBasePath()).thenReturn("http://basepath.com");
         when(restConfigurationProperties.getDefinitionIdProperties()).thenReturn(definitionIdProperties);
 
-        URI result = definitionIdRestService.prepareUri(configuration);
+        URI result = definitionIdRestService.prepareUri(configuration,"flow");
 
         assertEquals("http://basepath.com/definition/ACQ123/BR123/TERM123/FUNC123", result.toString());
     }
@@ -72,7 +72,7 @@ class DefinitionIdRestServiceImplTest {
         when(restConfigurationProperties.getModelBasePath()).thenReturn("http://basepath.com");
         when(restConfigurationProperties.getDefinitionIdProperties()).thenReturn(definitionIdProperties);
 
-        URI result = definitionIdRestService.prepareUri(configuration);
+        URI result = definitionIdRestService.prepareUri(configuration, "flow");
 
         assertEquals("http://basepath.com/definition/ACQ123/_/TERM123/FUNC123", result.toString());
     }
@@ -96,7 +96,7 @@ class DefinitionIdRestServiceImplTest {
         when(restConfigurationProperties.getModelBasePath()).thenReturn("http://basepath.com");
         when(restConfigurationProperties.getDefinitionIdProperties()).thenReturn(definitionIdProperties);
 
-        URI result = definitionIdRestService.prepareUri(configuration);
+        URI result = definitionIdRestService.prepareUri(configuration, "flow");
 
         assertEquals("http://basepath.com/definition/ACQ123/BR123/ACQ123CODE123/FUNC123", result.toString());
     }
@@ -120,7 +120,7 @@ class DefinitionIdRestServiceImplTest {
         when(restConfigurationProperties.getModelBasePath()).thenReturn("http://basepath.com");
         when(restConfigurationProperties.getDefinitionIdProperties()).thenReturn(definitionIdProperties);
 
-        URI result = definitionIdRestService.prepareUri(configuration);
+        URI result = definitionIdRestService.prepareUri(configuration, "flow");
 
         assertEquals("http://basepath.com/definition/ACQ123/_/ACQ123CODE123/FUNC123", result.toString());
     }

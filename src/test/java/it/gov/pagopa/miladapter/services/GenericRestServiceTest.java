@@ -42,7 +42,7 @@ class GenericRestServiceTest {
         MockitoAnnotations.openMocks(this);
         genericRestService = new GenericRestService() {
             @Override
-            public URI prepareUri(Configuration configuration) {
+            public URI prepareUri(Configuration configuration, String flow) {
                 return URI.create("http://example.com");
             }
 

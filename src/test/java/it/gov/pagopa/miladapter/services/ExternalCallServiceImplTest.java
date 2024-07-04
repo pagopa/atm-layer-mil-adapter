@@ -41,7 +41,7 @@ public class ExternalCallServiceImplTest {
         testVariables.put("PathParams", new HashMap<>());
         testVariables.put("activityParentSpan", "activityParentSpan");
         testVariables.put("transactionId", "transactionId");
-        doReturn(new URI("http://mil-base-path/endpoint/params")).when(spyExternalCallService).prepareUri(any());
+        doReturn(new URI("http://mil-base-path/endpoint/params")).when(spyExternalCallService).prepareUri(any(), any());
         SpanBuilder spanBuilder = mock(SpanBuilder.class);
         Span span = mock(Span.class);
         when(spanBuilder.startSpan()).thenReturn(span);
