@@ -53,38 +53,38 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
 
     public ResponseEntity executeExternalCall(Map<String, Object> body) {
         Configuration configuration = EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCallNew(body);
-        ResponseEntity<String> response;
+        ResponseEntity<String> response = null;
 
         SpanBuilder spanBuilder = this.spanBuilder(configuration);
         Span serviceSpan = spanBuilder.startSpan();
-        try (Scope scope = serviceSpan.makeCurrent()){
-            URI url = this.prepareUri(configuration);
-            HttpEntity<String> entity = HttpRequestUtils.buildHttpEntity(configuration.getBody(), configuration.getHeaders());
-            serviceSpan.setAttribute(SemanticAttributes.HTTP_METHOD, configuration.getHttpMethod().name());
-            serviceSpan.setAttribute(SemanticAttributes.HTTP_URL, url.toString());
-            if (entity.hasBody()) {
-                serviceSpan.setAttribute("http.body", entity.getBody());
+            try (Scope scope = serviceSpan.makeCurrent()) {
+                URI url = this.prepareUri(configuration);
+                HttpEntity<String> entity = HttpRequestUtils.buildHttpEntity(configuration.getBody(), configuration.getHeaders());
+                serviceSpan.setAttribute(SemanticAttributes.HTTP_METHOD, configuration.getHttpMethod().name());
+                serviceSpan.setAttribute(SemanticAttributes.HTTP_URL, url.toString());
+                if (entity.hasBody()) {
+                    serviceSpan.setAttribute("http.body", entity.getBody());
+                }
+                serviceSpan.setAttribute("http.headers", entity.getHeaders().toString());
+                serviceSpan.setAttribute("MIL.call.start.time", (LocalDateTime.now()).toString());
+                response = this.getRestTemplate(configuration).exchange(url, configuration.getHttpMethod(), entity, String.class);
+                serviceSpan.setAttribute("MIL.call.end.time", (LocalDateTime.now()).toString());
+                if (response.getBody() == null) {
+                    response = new ResponseEntity<>(new JsonObject().toString(), response.getStatusCode());
+                }
+            } catch (HttpClientErrorException | HttpServerErrorException e) {
+                getLogger().error("Exception in HTTP request: {}", e);
+                response = new ResponseEntity<>(new JsonObject().toString(), e.getStatusCode());
+                serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, e.getStatusCode().value());
+                serviceSpan.setAttribute("http.response.body", e.getResponseBodyAsString());
+            } catch (Exception e) {
+                getLogger().error("Exception in HTTP request: {}", e);
+                response = new ResponseEntity<>(new JsonObject().toString(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            serviceSpan.setAttribute("http.headers", entity.getHeaders().toString());
-            serviceSpan.setAttribute("MIL.call.start.time", (LocalDateTime.now()).toString());
-            response = this.getRestTemplate(configuration).exchange(url, configuration.getHttpMethod(), entity, String.class);
-            serviceSpan.setAttribute("MIL.call.end.time", (LocalDateTime.now()).toString());
-            if (response.getBody() == null) {
-                response = new ResponseEntity<>(new JsonObject().toString(), response.getStatusCode());
-            }
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-            getLogger().error("Exception in HTTP request: {}", e);
-            response = new ResponseEntity<>(new JsonObject().toString(), e.getStatusCode());
-            serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, e.getStatusCode().value());
-            serviceSpan.setAttribute("http.response.body", e.getResponseBodyAsString());
-        } catch (Exception e) {
-            getLogger().error("Exception in HTTP request: {}", e);
-            response = new ResponseEntity<>(new JsonObject().toString(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, response.getStatusCode().value());
-        serviceSpan.setAttribute("http.response.body", response.getBody());
-        serviceSpan.setAttribute("http.response.headers", response.getHeaders().toString());
+            serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, response.getStatusCode().value());
+            serviceSpan.setAttribute("http.response.body", response.getBody());
+            serviceSpan.setAttribute("http.response.headers", response.getHeaders().toString());
+            serviceSpan.end();
         return response;
     }
 
