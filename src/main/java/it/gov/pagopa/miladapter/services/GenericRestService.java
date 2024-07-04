@@ -19,7 +19,7 @@ import java.net.URI;
 public interface GenericRestService  {
 
 
-    URI prepareUri(Configuration configuration);
+    URI prepareUri(Configuration configuration, String flow);
 
     Logger getLogger();
 

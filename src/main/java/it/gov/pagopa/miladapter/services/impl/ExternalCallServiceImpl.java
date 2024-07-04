@@ -4,6 +4,8 @@ import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanBuilder;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
+import it.gov.pagopa.miladapter.enums.FlowValues;
+import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.services.ExternalCallService;
@@ -34,8 +36,14 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
 
 
     @Override
-    public URI prepareUri(Configuration configuration) {
-        return HttpRequestUtils.buildURI(restConfigurationProperties.getMilBasePath(), configuration.getEndpoint(), configuration.getPathParams());
+    public URI prepareUri(Configuration configuration, String flow) {
+        if (flow.equals(FlowValues.MIL.getValue())) {
+            return HttpRequestUtils.buildURI(restConfigurationProperties.getMilBasePath(), configuration.getEndpoint(), configuration.getPathParams());
+        } else if (flow.equals(FlowValues.IDPAY.getValue())) {
+            return HttpRequestUtils.buildURI(restConfigurationProperties.getIdPayBasePath(), configuration.getEndpoint(), configuration.getPathParams());
+        } else {
+            throw new RuntimeException("Unrecognised flow: " + flow);
+        }
     }
 
     @Override
@@ -52,13 +60,14 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
 
 
     public ResponseEntity executeExternalCall(Map<String, Object> body) {
-        Configuration configuration = EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCallNew(body);
+        String flow = body.get(RequiredProcessVariables.FLOW.getEngineValue()).toString();
+        Configuration configuration = EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCallNew(body, flow.equals(FlowValues.IDPAY.getValue()));
         ResponseEntity<String> response;
 
         SpanBuilder spanBuilder = this.spanBuilder(configuration);
         Span serviceSpan = spanBuilder.startSpan();
             try (Scope scope = serviceSpan.makeCurrent()) {
-                URI url = this.prepareUri(configuration);
+                URI url = this.prepareUri(configuration, flow);
                 HttpEntity<String> entity = HttpRequestUtils.buildHttpEntity(configuration.getBody(), configuration.getHeaders());
                 serviceSpan.setAttribute(SemanticAttributes.HTTP_METHOD, configuration.getHttpMethod().name());
                 serviceSpan.setAttribute(SemanticAttributes.HTTP_URL, url.toString());

@@ -21,7 +21,7 @@ public interface GenericRestExternalService  {
 
 
 
-    URI prepareUri(Configuration configuration);
+    URI prepareUri(Configuration configuration, String flow);
 
     Logger getLogger();
 

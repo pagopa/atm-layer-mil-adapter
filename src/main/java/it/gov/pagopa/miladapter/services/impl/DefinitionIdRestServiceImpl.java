@@ -20,7 +20,7 @@ public class DefinitionIdRestServiceImpl extends GenericRestServiceAbstract impl
 
 
     @Override
-    public URI prepareUri(Configuration configuration) {
+    public URI prepareUri(Configuration configuration, String flow) {
         Map<String, String> pathParams = new HashMap<>();
         pathParams.put(RequiredProcessVariables.ACQUIRER_ID.getModelValue(),
                 configuration.getAuthParameters().getAcquirerId());
