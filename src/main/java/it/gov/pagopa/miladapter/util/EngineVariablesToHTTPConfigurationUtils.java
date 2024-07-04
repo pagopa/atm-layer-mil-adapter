@@ -120,6 +120,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         String channel = headersMap != null ? headersMap.get("Channel") : null;
         String terminalId = headersMap != null ? headersMap.get("TerminalId") : null;
         String transactionId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), true);
+        String contentType = headersMap != null ? headersMap.get("Content-Type") : null;
 
 //        Number delayMilliseconds = getIntegerValue("delayMilliseconds" ,variables.get("delayMilliseconds").toString());
         String endpointVariable = (String) variables.get("url");
@@ -135,6 +136,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         headers.add("TerminalId", terminalId);
         headers.add("RequestId", requestId);
         headers.add("TransactionId", transactionId);
+        headers.add("Content-Type", contentType);
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer ".concat(accessToken));
 
         if (idPayFlow) {
