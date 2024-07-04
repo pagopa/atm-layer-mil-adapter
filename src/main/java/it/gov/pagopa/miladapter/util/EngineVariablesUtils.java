@@ -23,11 +23,4 @@ public class EngineVariablesUtils {
         }
         return value;
     }
-
-/*    public static Map<String, Object> getTaskVariablesCaseInsensitive(ExternalTask externalTask) {
-        Map<String, Object> variables = externalTask.getAllVariables();
-        CaseInsensitiveMap<String, Object> caseInsensitiveMap = new CaseInsensitiveMap<>();
-        caseInsensitiveMap.putAll(variables);
-        return caseInsensitiveMap;
-    }*/
 }
