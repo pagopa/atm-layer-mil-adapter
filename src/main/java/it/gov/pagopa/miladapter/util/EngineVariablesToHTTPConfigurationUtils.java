@@ -5,7 +5,7 @@ import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.AuthParameters;
 import it.gov.pagopa.miladapter.model.Configuration;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -109,7 +109,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .build();
     }
 
-    public static Configuration getHttpConfigurationExternalCallNew(Map<String, Object> variables) {
+    public static Configuration getHttpConfigurationExternalCallNew(Map<String, Object> variables, boolean idPayFlow) {
         String requestId = UUID.randomUUID().toString();
 
         // Estrai la sotto-mappa headers
@@ -137,10 +137,9 @@ public class EngineVariablesToHTTPConfigurationUtils {
         headers.add("TransactionId", transactionId);
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer ".concat(accessToken));
 
-//        if (idPayFlow) {
-//            String idPayKey = headersMap != null ? headersMap.get("IdPayKey") : null;
-//            headers.add("IdPayKey", idPayKey);
-//        }
+        if (idPayFlow) {
+            headers.add(RequiredProcessVariables.IDPAY_KEY.getEngineValue(), idPayKey);
+        }
 
         // Estrai pathParams dalla mappa principale variables
         Map<String, String> pathParams = (Map<String, String>) variables.get("PathParams");

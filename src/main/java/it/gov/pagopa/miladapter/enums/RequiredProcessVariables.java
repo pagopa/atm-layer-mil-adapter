@@ -18,7 +18,8 @@ public enum RequiredProcessVariables {
     CODE("code", null, "code"),
     ACTIVITY_PARENT_SPAN("activityParentSpan", null, null),
     TRANSACTION_ID("transactionId", "TransactionId", null),
-    IDPAY_KEY("Ocp-Apim-Subscription-Key",null,null);
+    IDPAY_KEY("Ocp-Apim-Subscription-Key",null,null),
+    FLOW("flow", null, null);
 
     private String engineValue;
     private String authenticatorValue;
