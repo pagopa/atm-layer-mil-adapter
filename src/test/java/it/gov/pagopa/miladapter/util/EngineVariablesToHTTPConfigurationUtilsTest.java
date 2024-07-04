@@ -151,7 +151,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals("http://prova", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertEquals("testBody", configuration.getBody());
-        assertEquals(6, configuration.getHeaders().size());
+        assertEquals(7, configuration.getHeaders().size());
         assertNotNull(configuration.getHeaders().get("RequestId"));
 
         assertEquals("transaction-id", ((List<?>)configuration.getHeaders().get("TransactionId")).get(0));
@@ -186,7 +186,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals("http://prova", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertEquals("testBody", configuration.getBody());
-        assertEquals(7, configuration.getHeaders().size());
+        assertEquals(8, configuration.getHeaders().size());
         assertNotNull(configuration.getHeaders().get("RequestId"));
 
         assertEquals("transaction-id", ((List<?>)configuration.getHeaders().get("TransactionId")).get(0));
@@ -221,7 +221,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals("http://prova", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertEquals("testBody", configuration.getBody());
-        assertEquals(6, configuration.getHeaders().size());
+        assertEquals(7, configuration.getHeaders().size());
         assertNotNull(configuration.getHeaders().get("RequestId"));
 
         assertEquals("transaction-id", ((List<?>)configuration.getHeaders().get("TransactionId")).get(0));
@@ -252,7 +252,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals("http://prova", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertEquals("testBody", configuration.getBody());
-        assertEquals(6, configuration.getHeaders().size());
+        assertEquals(7, configuration.getHeaders().size());
         assertNotNull(configuration.getHeaders().get("RequestId"));
 
         assertEquals("transaction-id", ((List<?>)configuration.getHeaders().get("TransactionId")).get(0));
@@ -287,7 +287,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals("http://prova", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertEquals("testBody", configuration.getBody());
-        assertEquals(6, configuration.getHeaders().size());
+        assertEquals(7, configuration.getHeaders().size());
         assertNotNull(configuration.getHeaders().get("RequestId"));
 
         assertEquals("transaction-id", ((List<?>)configuration.getHeaders().get("TransactionId")).get(0));
