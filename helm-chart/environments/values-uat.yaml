@@ -42,6 +42,9 @@ milAdapter:
   completionPoolMaxPoolSize: 25
   completionPoolThreadName: MILA-CompPool-
   tracingBackendUrl: http://jeager-manual-trace-ecs-priv-b19cfd091be2d616.elb.eu-south-1.amazonaws.com:4317
+  coreSize: 100
+  maxSize: 200
+  queueCapacity: 500
 
 milAuth:
   credentialsSecretEnabled: true
@@ -150,7 +153,7 @@ resources:
 autoscaling:
   enabled: true
   minReplicas: 4
-  maxReplicas: 8
+  maxReplicas: 10
   targetCPUUtilizationPercentage: 45
   # targetMemoryUtilizationPercentage: 80
 

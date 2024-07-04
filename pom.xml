@@ -7,12 +7,21 @@
     <groupId>it.gov.pagopa</groupId>
     <artifactId>mil-adapter</artifactId>
 
-    <version>1.47.0-dev.1</version>
+
+
+    <version>1.49.0-dev.4</version>
+
+
+
+
+
+
 
     <packaging>jar</packaging>
 
 
     <properties>
+        <camunda.platform.version>7.20.0</camunda.platform.version>
         <jaxb.api.version>2.3.1</jaxb.api.version>
         <java.version>21</java.version>
         <apache.common.collections.version>4.4</apache.common.collections.version>
@@ -20,6 +29,7 @@
         <junit.version>4.13.2</junit.version>
         <jacoco.version>0.8.11</jacoco.version>
         <httpclient5.version>5.2.1</httpclient5.version>
+        <camunda.spin.version>1.22.0</camunda.spin.version>
         <micrometer.tracing.version>1.2.2</micrometer.tracing.version>
         <lombok.version>1.18.30</lombok.version>
         <sonarsource.scanner.version>3.11.0.3922</sonarsource.scanner.version>
