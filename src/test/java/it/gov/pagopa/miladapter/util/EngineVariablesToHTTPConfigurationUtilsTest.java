@@ -131,7 +131,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
     }
 
     @Test
-    void getHttpConfigurationExternalCallNewTest() {
+    void getHttpConfigurationExternalCallNewTestMIL() {
         Map<String, Object> variables = new CaseInsensitiveMap<>();
         Map<String, String> headersMap = new HashMap<>();
         headersMap.put("AcquirerId", "bank_id");
@@ -146,12 +146,47 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         variables.put("PathParams", new HashMap<>());
 
         Configuration configuration = EngineVariablesToHTTPConfigurationUtils
-                .getHttpConfigurationExternalCallNew(variables);
+                .getHttpConfigurationExternalCallNew(variables, false);
 
         assertEquals("http://prova", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertEquals("testBody", configuration.getBody());
         assertEquals(6, configuration.getHeaders().size());
+        assertNotNull(configuration.getHeaders().get("RequestId"));
+
+        assertEquals("transaction-id", ((List<?>)configuration.getHeaders().get("TransactionId")).get(0));
+        assertEquals("Bearer VALID_TOKEN", ((List<?>)configuration.getHeaders().get(HttpHeaders.AUTHORIZATION)).get(0));
+
+        assertEquals(new HashMap<>(), configuration.getPathParams());
+        assertNotNull(configuration.getAuthParameters());
+        assertEquals("bank_id", configuration.getAuthParameters().getAcquirerId());
+        assertEquals("ATM", configuration.getAuthParameters().getChannel());
+        assertEquals("term_id", configuration.getAuthParameters().getTerminalId());
+        assertEquals("transaction-id", configuration.getAuthParameters().getTransactionId());
+    }
+
+    @Test
+    void getHttpConfigurationExternalCallNewTestIDPAY() {
+        Map<String, Object> variables = new CaseInsensitiveMap<>();
+        Map<String, String> headersMap = new HashMap<>();
+        headersMap.put("AcquirerId", "bank_id");
+        headersMap.put("Channel", "ATM");
+        headersMap.put("TerminalId", "term_id");
+        variables.put("headers", headersMap);
+        variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
+        variables.put("url", "http://prova");
+        variables.put("method", "GET");
+        variables.put("millAccessToken", "VALID_TOKEN");
+        variables.put("body", "testBody");
+        variables.put("PathParams", new HashMap<>());
+
+        Configuration configuration = EngineVariablesToHTTPConfigurationUtils
+                .getHttpConfigurationExternalCallNew(variables, true);
+
+        assertEquals("http://prova", configuration.getEndpoint());
+        assertEquals(HttpMethod.GET, configuration.getHttpMethod());
+        assertEquals("testBody", configuration.getBody());
+        assertEquals(7, configuration.getHeaders().size());
         assertNotNull(configuration.getHeaders().get("RequestId"));
 
         assertEquals("transaction-id", ((List<?>)configuration.getHeaders().get("TransactionId")).get(0));
@@ -180,7 +215,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         variables.put("body", "testBody");
 
         Configuration configuration = EngineVariablesToHTTPConfigurationUtils
-                .getHttpConfigurationExternalCallNew(variables);
+                .getHttpConfigurationExternalCallNew(variables,false);
 
 
         assertEquals("http://prova", configuration.getEndpoint());
@@ -212,7 +247,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         variables.put("PathParams", new HashMap<>());
 
         Configuration configuration = EngineVariablesToHTTPConfigurationUtils
-                .getHttpConfigurationExternalCallNew(variables);
+                .getHttpConfigurationExternalCallNew(variables, false);
 
         assertEquals("http://prova", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
@@ -247,7 +282,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         variables.put("PathParams", new HashMap<>());
 
         Configuration configuration = EngineVariablesToHTTPConfigurationUtils
-                .getHttpConfigurationExternalCallNew(variables);
+                .getHttpConfigurationExternalCallNew(variables, false);
 
         assertEquals("http://prova", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());

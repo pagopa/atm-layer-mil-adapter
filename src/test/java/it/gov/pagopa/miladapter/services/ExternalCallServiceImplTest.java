@@ -3,15 +3,14 @@ package it.gov.pagopa.miladapter.services;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanBuilder;
 import io.opentelemetry.context.Scope;
+import it.gov.pagopa.miladapter.enums.FlowValues;
+import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
+import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.services.impl.ExternalCallServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,17 +22,20 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-public class ExternalCallServiceImplTest {
-    ExternalCallServiceImpl spyExternalCallService = Mockito.spy(new ExternalCallServiceImpl());
-    Map<String, Object> testVariables = new HashMap<>();
+class ExternalCallServiceImplTest {
+
+    private ExternalCallServiceImpl spyExternalCallService;
+
+    private Map<String, Object> testVariables;
 
     @BeforeEach
     void setUp() throws URISyntaxException {
+        spyExternalCallService = Mockito.spy(new ExternalCallServiceImpl());
+        testVariables = new HashMap<>();
         testVariables.put("headers", new HashMap<>());
+        testVariables.put(RequiredProcessVariables.FLOW.getEngineValue(), FlowValues.MIL.getValue());
         testVariables.put("url", "url");
         testVariables.put("method", "GET");
         testVariables.put("millAccessToken", "millAccessToken");
@@ -41,6 +43,7 @@ public class ExternalCallServiceImplTest {
         testVariables.put("PathParams", new HashMap<>());
         testVariables.put("activityParentSpan", "activityParentSpan");
         testVariables.put("transactionId", "transactionId");
+
         doReturn(new URI("http://mil-base-path/endpoint/params")).when(spyExternalCallService).prepareUri(any(), any());
         SpanBuilder spanBuilder = mock(SpanBuilder.class);
         Span span = mock(Span.class);
@@ -54,14 +57,15 @@ public class ExternalCallServiceImplTest {
     @Test
     void executeExternalCallTestOK() {
         RestTemplate restTemplate = mock(RestTemplate.class);
-        ResponseEntity responseEntity = mock(ResponseEntity.class);
+        ResponseEntity<String> responseEntity = mock(ResponseEntity.class);
         when(responseEntity.getBody()).thenReturn("body");
         when(responseEntity.getStatusCode()).thenReturn(HttpStatusCode.valueOf(200));
         when(responseEntity.getHeaders()).thenReturn(new HttpHeaders());
-        when(responseEntity.getBody()).thenReturn("body");
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), eq(String.class))).thenReturn(responseEntity);
-        doReturn(restTemplate).when(spyExternalCallService).getRestTemplate(any());
-        ResponseEntity result = spyExternalCallService.executeExternalCall(testVariables);
+        doReturn(restTemplate).when(spyExternalCallService).getRestTemplate(any(Configuration.class));
+
+        ResponseEntity<String> result = spyExternalCallService.executeExternalCall(testVariables);
+
         assertEquals(HttpStatusCode.valueOf(200), result.getStatusCode());
         assertEquals("body", result.getBody());
     }
@@ -69,10 +73,12 @@ public class ExternalCallServiceImplTest {
     @Test
     void executeExternalCallTestClientException() {
         RestTemplate restTemplate = mock(RestTemplate.class);
-        HttpClientErrorException e = new HttpClientErrorException("test exception", HttpStatusCode.valueOf(400), "status", null, null, null);
+        HttpClientErrorException e = new HttpClientErrorException(HttpStatusCode.valueOf(400), "status");
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), eq(String.class))).thenThrow(e);
-        doReturn(restTemplate).when(spyExternalCallService).getRestTemplate(any());
-        ResponseEntity result = spyExternalCallService.executeExternalCall(testVariables);
+        doReturn(restTemplate).when(spyExternalCallService).getRestTemplate(any(Configuration.class));
+
+        ResponseEntity<String> result = spyExternalCallService.executeExternalCall(testVariables);
+
         assertEquals(HttpStatusCode.valueOf(400), result.getStatusCode());
     }
 
@@ -81,8 +87,10 @@ public class ExternalCallServiceImplTest {
         RestTemplate restTemplate = mock(RestTemplate.class);
         RuntimeException e = new RuntimeException("test exception");
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), eq(String.class))).thenThrow(e);
-        doReturn(restTemplate).when(spyExternalCallService).getRestTemplate(any());
-        ResponseEntity result = spyExternalCallService.executeExternalCall(testVariables);
+        doReturn(restTemplate).when(spyExternalCallService).getRestTemplate(any(Configuration.class));
+
+        ResponseEntity<String> result = spyExternalCallService.executeExternalCall(testVariables);
+
         assertEquals(HttpStatusCode.valueOf(500), result.getStatusCode());
     }
 }
