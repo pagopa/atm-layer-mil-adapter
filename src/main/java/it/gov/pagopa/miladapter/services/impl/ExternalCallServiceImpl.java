@@ -61,7 +61,7 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
 
     public ResponseEntity executeExternalCall(Map<String, Object> body) {
         String flow = body.get(RequiredProcessVariables.FLOW.getEngineValue()).toString();
-        Configuration configuration = EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCallNew(body, flow.equals(FlowValues.IDPAY.getValue()));
+        Configuration configuration = EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCall(body, flow.equals(FlowValues.MIL.getValue()), flow.equals(FlowValues.IDPAY.getValue()));
         ResponseEntity<String> response;
 
         SpanBuilder spanBuilder = this.spanBuilder(configuration);

@@ -34,7 +34,11 @@ class ExternalCallServiceImplTest {
     void setUp() throws URISyntaxException {
         spyExternalCallService = Mockito.spy(new ExternalCallServiceImpl());
         testVariables = new HashMap<>();
-        testVariables.put("headers", new HashMap<>());
+        HashMap<String, Object> headersMap = new HashMap<>();
+        headersMap.put("AcquirerId", "bank_id");
+        headersMap.put("Channel", "ATM");
+        headersMap.put("TerminalId", "term_id");
+        testVariables.put("headers", headersMap);
         testVariables.put(RequiredProcessVariables.FLOW.getEngineValue(), FlowValues.MIL.getValue());
         testVariables.put("url", "url");
         testVariables.put("method", "GET");

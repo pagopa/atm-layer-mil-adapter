@@ -10,7 +10,7 @@ public enum HttpVariablesEnum {
     URL("url"),
     HEADERS("headers"),
     METHOD("method"),
-    PATH_PARAMS("pathParams"),
+    PATH_PARAMS("PathParams"),
     QUERY_PARAMS("queryParams"),
     RESPONSE("response"),
     STATUS_CODE("statusCode"),

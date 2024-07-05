@@ -49,7 +49,7 @@ public class HttpRequestUtils {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         for (String key : map.keySet()) {
             if (StringUtils.isBlank(map.get(key))) {
-                throw new RuntimeException("declared path param cannot be empty or null");
+                throw new RuntimeException("declared header param cannot be empty or null");
             }
             multiValueMap.put(key, Collections.singletonList(map.get(key)));
         }
