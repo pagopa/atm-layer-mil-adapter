@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -86,6 +87,9 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
                 response = new ResponseEntity<>(new JsonObject().toString(), e.getStatusCode());
                 serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, e.getStatusCode().value());
                 serviceSpan.setAttribute("http.response.body", e.getResponseBodyAsString());
+            } catch (ResourceAccessException e) {
+                getLogger().error("Exception in HTTP request: {}", e);
+                response = new ResponseEntity<>(new JsonObject().toString(), HttpStatus.GATEWAY_TIMEOUT);
             } catch (Exception e) {
                 getLogger().error("Exception in HTTP request: {}", e);
                 response = new ResponseEntity<>(new JsonObject().toString(), HttpStatus.INTERNAL_SERVER_ERROR);
