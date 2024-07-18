@@ -62,32 +62,10 @@ class GenericRestExternalServiceTest {
             }
 
             @Override
-            public RestTemplateGenerator getRestTemplateGenerator() {
-                return restTemplateGenerator;
-            }
-
-            @Override
             public <T> HttpEntity<T> buildHttpEntity(Configuration configuration) {
                 return new HttpEntity<>(null);
             }
         };
-    }
-
-    @Test
-    void testGetRestTemplate() {
-        Configuration configuration = new Configuration();
-        configuration.setConnectionRequestTimeoutMilliseconds(5000);
-        configuration.setConnectionResponseTimeoutMilliseconds(3000);
-        configuration.setMaxRetry(3);
-        configuration.setRetryIntervalMilliseconds(1000);
-
-        RestTemplate restTemplate = new RestTemplate();
-        when(restTemplateGenerator.generate(5000, 3000, 3, 1000)).thenReturn(restTemplate);
-
-        RestTemplate result = genericRestExternalService.getRestTemplate(configuration);
-
-        assertEquals(restTemplate, result);
-        verify(restTemplateGenerator).generate(5000, 3000, 3, 1000);
     }
 
     @Test

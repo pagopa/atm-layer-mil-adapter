@@ -5,15 +5,19 @@ import io.opentelemetry.api.trace.SpanBuilder;
 import io.opentelemetry.context.Scope;
 import it.gov.pagopa.miladapter.enums.FlowValues;
 import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
-import it.gov.pagopa.miladapter.model.Configuration;
+import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.services.impl.ExternalCallServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -27,12 +31,22 @@ import static org.mockito.Mockito.*;
 class ExternalCallServiceImplTest {
 
     private ExternalCallServiceImpl spyExternalCallService;
-
+    private RestTemplate restTemplate;
+    private RestConfigurationProperties restConfigurationProperties;
     private Map<String, Object> testVariables;
 
     @BeforeEach
-    void setUp() throws URISyntaxException {
+    void setUp() throws URISyntaxException, NoSuchFieldException, IllegalAccessException {
         spyExternalCallService = Mockito.spy(new ExternalCallServiceImpl());
+        restTemplate = mock(RestTemplate.class);
+        restConfigurationProperties = mock(RestConfigurationProperties.class);
+
+        setPrivateField(spyExternalCallService, "restTemplate", restTemplate);
+        setPrivateField(spyExternalCallService, "restConfigurationProperties", restConfigurationProperties);
+
+        when(restConfigurationProperties.getMilBasePath()).thenReturn("http://mil-base-path");
+        when(restConfigurationProperties.getIdPayBasePath()).thenReturn("http://idpay-base-path");
+
         testVariables = new HashMap<>();
         HashMap<String, Object> headersMap = new HashMap<>();
         headersMap.put("AcquirerId", "bank_id");
@@ -49,6 +63,7 @@ class ExternalCallServiceImplTest {
         testVariables.put("transactionId", "transactionId");
 
         doReturn(new URI("http://mil-base-path/endpoint/params")).when(spyExternalCallService).prepareUri(any(), any());
+
         SpanBuilder spanBuilder = mock(SpanBuilder.class);
         Span span = mock(Span.class);
         when(spanBuilder.startSpan()).thenReturn(span);
@@ -60,41 +75,38 @@ class ExternalCallServiceImplTest {
 
     @Test
     void executeExternalCallTestOK() {
-        RestTemplate restTemplate = mock(RestTemplate.class);
-        ResponseEntity<String> responseEntity = mock(ResponseEntity.class);
-        when(responseEntity.getBody()).thenReturn("body");
-        when(responseEntity.getStatusCode()).thenReturn(HttpStatusCode.valueOf(200));
-        when(responseEntity.getHeaders()).thenReturn(new HttpHeaders());
+        ResponseEntity<String> responseEntity = new ResponseEntity<>("body", HttpStatus.OK);
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), eq(String.class))).thenReturn(responseEntity);
-        doReturn(restTemplate).when(spyExternalCallService).getRestTemplate(any(Configuration.class));
 
         ResponseEntity<String> result = spyExternalCallService.executeExternalCall(testVariables);
 
-        assertEquals(HttpStatusCode.valueOf(200), result.getStatusCode());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals("body", result.getBody());
     }
 
     @Test
     void executeExternalCallTestClientException() {
-        RestTemplate restTemplate = mock(RestTemplate.class);
-        HttpClientErrorException e = new HttpClientErrorException(HttpStatusCode.valueOf(400), "status");
+        HttpClientErrorException e = new HttpClientErrorException(HttpStatus.BAD_REQUEST, "status");
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), eq(String.class))).thenThrow(e);
-        doReturn(restTemplate).when(spyExternalCallService).getRestTemplate(any(Configuration.class));
 
         ResponseEntity<String> result = spyExternalCallService.executeExternalCall(testVariables);
 
-        assertEquals(HttpStatusCode.valueOf(400), result.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
     @Test
     void executeExternalCallTestGenericException() {
-        RestTemplate restTemplate = mock(RestTemplate.class);
         RuntimeException e = new RuntimeException("test exception");
         when(restTemplate.exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), eq(String.class))).thenThrow(e);
-        doReturn(restTemplate).when(spyExternalCallService).getRestTemplate(any(Configuration.class));
 
         ResponseEntity<String> result = spyExternalCallService.executeExternalCall(testVariables);
 
-        assertEquals(HttpStatusCode.valueOf(500), result.getStatusCode());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+    }
+
+    private void setPrivateField(Object targetObject, String fieldName, Object fieldValue) throws NoSuchFieldException, IllegalAccessException {
+        Field field = targetObject.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(targetObject, fieldValue);
     }
 }

@@ -19,8 +19,6 @@ public abstract class GenericRestServiceAbstract implements GenericRestService {
     @Autowired
     RestConfigurationProperties restConfigurationProperties;
 
-    @Autowired
-    RestTemplateGenerator restTemplateGenerator;
 
 
     @Autowired
@@ -36,10 +34,6 @@ public abstract class GenericRestServiceAbstract implements GenericRestService {
         return this.tracer;
     }
 
-    @Override
-    public RestTemplateGenerator getRestTemplateGenerator() {
-        return restTemplateGenerator;
-    }
 
     @Override
     public HttpEntity<String> buildHttpEntity(Configuration configuration) {
