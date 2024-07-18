@@ -29,15 +29,9 @@ public interface GenericRestExternalService  {
 
     RestConfigurationProperties getRestConfigurationProperties();
 
-    RestTemplateGenerator getRestTemplateGenerator();
 
     <T> HttpEntity<T> buildHttpEntity(Configuration configuration);
 
-    default RestTemplate getRestTemplate(Configuration configuration) {
-        HttpRequestUtils.getRestFactoryConfigsOrDefault(configuration, getRestConfigurationProperties());
-        return getRestTemplateGenerator().generate(configuration.getConnectionRequestTimeoutMilliseconds(), configuration.getConnectionResponseTimeoutMilliseconds(),
-                configuration.getMaxRetry(), configuration.getRetryIntervalMilliseconds());
-    }
 
     default SpanBuilder spanBuilder(Configuration configuration) {
 

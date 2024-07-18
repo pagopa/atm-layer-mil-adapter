@@ -35,6 +35,9 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
     @Autowired
     RestConfigurationProperties restConfigurationProperties;
 
+    @Autowired
+    RestTemplate restTemplate;
+
 
     @Override
     public URI prepareUri(Configuration configuration, String flow) {
@@ -47,10 +50,7 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
         }
     }
 
-    @Override
-    public RestTemplate getRestTemplate(Configuration configuration) {
-        return super.getRestTemplate(configuration);
-    }
+
 
     @Override
     public SpanBuilder spanBuilder(Configuration configuration) {
@@ -77,7 +77,7 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
                 }
                 serviceSpan.setAttribute("http.headers", entity.getHeaders().toString());
                 serviceSpan.setAttribute("MIL.call.start.time", (LocalDateTime.now()).toString());
-                response = this.getRestTemplate(configuration).exchange(url, configuration.getHttpMethod(), entity, String.class);
+                response = restTemplate.exchange(url, configuration.getHttpMethod(), entity, String.class);
                 serviceSpan.setAttribute("MIL.call.end.time", (LocalDateTime.now()).toString());
                 if (response.getBody() == null) {
                     response = new ResponseEntity<>(new JsonObject().toString(), response.getStatusCode());
