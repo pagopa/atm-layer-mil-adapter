@@ -185,40 +185,6 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals("transaction-id", configuration.getAuthParameters().getTransactionId());
     }
 
-//    @Test
-//    void getHttpConfigurationExternalCallNewTest_NullHeaders() {
-//        Map<String, Object> variables = new CaseInsensitiveMap<>();
-//        variables.put("millAccessToken", "VALID_TOKEN");
-//        variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
-//        variables.put(HttpVariablesEnum.URL.getValue(), "http://prova");
-//        variables.put(HttpVariablesEnum.METHOD.getValue(), "GET");
-//
-//        Map<String, Object> headers = new CaseInsensitiveMap<>();
-//        headers.put(RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), "bank_id");
-//        headers.put(RequiredProcessVariables.TERMINAL_ID.getEngineValue(), "term_id");
-//        headers.put(RequiredProcessVariables.CHANNEL.getEngineValue(), "ATM");
-//
-//        variables.put(HttpVariablesEnum.HEADERS.getValue(), headers);
-//
-//        Configuration configuration = EngineVariablesToHTTPConfigurationUtils
-//                .getHttpConfigurationExternalCall(variables, false, true);
-//
-//        assertEquals("http://prova", configuration.getEndpoint());
-//        assertEquals(HttpMethod.GET, configuration.getHttpMethod());
-//        assertEquals(null, configuration.getBody());
-//        assertEquals(7, configuration.getHeaders().size());
-//        assertNotNull(configuration.getHeaders().get("RequestId"));
-//
-//        assertEquals("transaction-id", ((List<?>)configuration.getHeaders().get("TransactionId")).get(0));
-//        assertEquals("Bearer VALID_TOKEN", ((List<?>)configuration.getHeaders().get(HttpHeaders.AUTHORIZATION)).get(0));
-//
-//        assertEquals(new HashMap<>(), configuration.getPathParams());
-//        assertNotNull(configuration.getAuthParameters());
-//        assertEquals(null, configuration.getAuthParameters().getAcquirerId());
-//        assertEquals(null, configuration.getAuthParameters().getChannel());
-//        assertEquals(null, configuration.getAuthParameters().getTerminalId());
-//        assertEquals("transaction-id", configuration.getAuthParameters().getTransactionId());
-//    }
 
     @Test
     void getHttpConfigurationExternalCallNewTest_PartialDeclaredHeaderParam() {
@@ -252,5 +218,29 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals("channel", configuration.getAuthParameters().getChannel());
         assertEquals("term_id", configuration.getAuthParameters().getTerminalId());
         assertEquals("transaction-id", configuration.getAuthParameters().getTransactionId());
+    }
+
+    @Test
+    void getHttpConfigurationGenerateTokenCallTest() {
+        Map<String, Object> variables = new CaseInsensitiveMap<>();
+        Map<String, String> headersMap = new HashMap<>();
+        headersMap.put("AcquirerId", "bank_id");
+        headersMap.put("Channel", "ATM");
+        headersMap.put("TerminalId", "term_id");
+        variables.put("headers", headersMap);
+        variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
+        variables.put("url", "http://prova");
+        variables.put("method", "GET");
+        variables.put("millAccessToken", "VALID_TOKEN");
+        variables.put("body", "testBody");
+        variables.put("PathParams", new HashMap<>());
+
+        Configuration configuration = EngineVariablesToHTTPConfigurationUtils
+                .getHttpConfigurationGenerateTokenCall(variables);
+
+        assertEquals(HttpMethod.GET, configuration.getHttpMethod());
+        assertEquals("testBody", configuration.getBody());
+        assertEquals(4, configuration.getHeaders().size());
+        assertNotNull(configuration.getHeaders().get("RequestId"));
     }
 }
