@@ -27,6 +27,7 @@ milAdapter:
   lockDuration: 20000
   asyncResponseTimeout: 20000
   milBasePath: https://mil-u-apim.azure-api.net
+  milGetTokenEndpoint: /mil-auth/token
   enableInterceptorLogging: true
   logEngineInputVariables: true
   restReadTimeout: 20000

@@ -7,7 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum FlowValues {
     MIL("MIL"),
-    IDPAY("IDPAY");
+    IDPAY("IDPAY"),
+    AUTH("AUTH");
 
     private String value;
 }

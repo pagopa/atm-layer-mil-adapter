@@ -109,4 +109,22 @@ public class EngineVariablesToHTTPConfigurationUtils {
                 .parentSpanContextString(parentSpanContextString)
                 .build();
     }
+
+    public static Configuration getHttpConfigurationGenerateTokenCall(Map<String, Object> variables) {
+        log.info("--TEMPORARY-- Preparing Configuration for auth flow");
+        String httpMethodVariable = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.METHOD.getValue(), true);
+        HttpMethod httpMethod = HttpRequestUtils.httpMethodFromValue(httpMethodVariable);
+        String body = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.BODY.getValue(), true);
+        Map<String, String> headersMap = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.HEADERS.getValue(), true);
+        HttpHeaders headers = HttpRequestUtils.createHttpHeaders(headersMap);
+        headers.add(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue(), UUID.randomUUID().toString());
+        String parentSpanContextString = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACTIVITY_PARENT_SPAN.getEngineValue(), false);
+        log.info("--TEMPORARY-- Prepared Configuration for auth flow");
+        return Configuration.builder()
+                .body(body)
+                .httpMethod(httpMethod)
+                .headers(headers)
+                .parentSpanContextString(parentSpanContextString)
+                .build();
+    }
 }

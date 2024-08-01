@@ -45,6 +45,12 @@ public class HttpRequestUtils {
         return builder.buildAndExpand(pathParams).toUri();
     }
 
+    public static URI buildURI(String basePath, String endpoint) {
+        String url = basePath.concat(endpoint);
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+        return builder.build().toUri();
+    }
+
     public static HttpHeaders fromMapToHeaders(Map<String, String> map) {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         for (String key : map.keySet()) {
