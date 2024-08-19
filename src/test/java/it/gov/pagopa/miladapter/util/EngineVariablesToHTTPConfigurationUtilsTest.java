@@ -3,6 +3,7 @@ package it.gov.pagopa.miladapter.util;
 import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
 import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.Configuration;
+import it.gov.pagopa.miladapter.properties.AuthProperties;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -230,16 +231,20 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         variables.put("headers", headersMap);
         variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
         variables.put("url", "http://prova");
-        variables.put("method", "GET");
         variables.put("millAccessToken", "VALID_TOKEN");
-        variables.put("body", "testBody");
         variables.put("PathParams", new HashMap<>());
 
-        Configuration configuration = EngineVariablesToHTTPConfigurationUtils
-                .getHttpConfigurationGenerateTokenCall(variables);
+        AuthProperties authProperties = new AuthProperties();
+        authProperties.setClientId("s");
+        authProperties.setGrantType("s");
+        authProperties.setMilAuthPath("s");
+        authProperties.setClientSecret("s");
 
-        assertEquals(HttpMethod.GET, configuration.getHttpMethod());
-        assertEquals("testBody", configuration.getBody());
+        Configuration configuration = EngineVariablesToHTTPConfigurationUtils
+                .getHttpConfigurationGenerateTokenCall(variables,authProperties);
+
+        assertEquals(HttpMethod.POST, configuration.getHttpMethod());
+        assertEquals("grant_type=s&client_secret=s&client_id=s", configuration.getBody());
         assertEquals(4, configuration.getHeaders().size());
         assertNotNull(configuration.getHeaders().get("RequestId"));
     }

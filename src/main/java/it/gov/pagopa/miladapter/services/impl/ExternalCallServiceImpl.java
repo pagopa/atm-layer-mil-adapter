@@ -6,6 +6,7 @@ import io.opentelemetry.context.Scope;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 import it.gov.pagopa.miladapter.enums.FlowValues;
 import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
+import it.gov.pagopa.miladapter.model.AuthParameters;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.services.ExternalCallService;
@@ -68,7 +69,7 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
         String flow = body.get(RequiredProcessVariables.FLOW.getEngineValue()).toString();
         Configuration configuration;
         if (flow.equals(FlowValues.AUTH.getValue())){
-            configuration = EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationGenerateTokenCall(body);
+            configuration = EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationGenerateTokenCall(body,restConfigurationProperties.getAuth());
         } else {
             configuration = EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCall(body, flow.equals(FlowValues.MIL.getValue()), flow.equals(FlowValues.IDPAY.getValue()));
         }
