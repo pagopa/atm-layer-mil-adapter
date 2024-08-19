@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -120,6 +121,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         Map<String, String> headersMap = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.HEADERS.getValue(), true);
         HttpHeaders headers = HttpRequestUtils.createHttpHeaders(headersMap);
         headers.add(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue(), UUID.randomUUID().toString());
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         String parentSpanContextString = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.ACTIVITY_PARENT_SPAN.getEngineValue(), false);
         log.info("--TEMPORARY-- Prepared Configuration for auth flow");
         return Configuration.builder()
