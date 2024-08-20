@@ -245,7 +245,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
 
         assertEquals(HttpMethod.POST, configuration.getHttpMethod());
         assertEquals("grant_type=s&client_secret=s&client_id=s", configuration.getBody());
-        assertEquals(4, configuration.getHeaders().size());
+        assertEquals(5, configuration.getHeaders().size());
         assertNotNull(configuration.getHeaders().get("RequestId"));
     }
 }
