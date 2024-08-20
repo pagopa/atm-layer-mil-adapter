@@ -43,9 +43,9 @@ milAdapter:
   completionPoolMaxPoolSize: 25
   completionPoolThreadName: MILA-CompPool-
   tracingBackendUrl: http://jaeger-collector.default.svc.cluster.local:4317
-  coreSize: 200
-  maxSize: 400
-  queueCapacity: 500
+  coreSize: 50
+  maxSize: 100
+  queueCapacity: 200
 
 milAuth:
   credentialsSecretEnabled: true
