@@ -10,6 +10,7 @@ camunda:
 rest-configuration:
   mil-authenticator-base-path: ${MIL_AUTHENTICATOR_BASE_PATH}
   mil-base-path: ${MIL_ADAPTER_MIL_BASE_PATH}
+  get-token-endpoint: ${MIL_GET_TOKEN_ENDPOINT:/mil-auth/token}
   id-pay-base-path: ${MIL_ADAPTER_ID_PAY_BASE_PATH}
   interceptor-logging-enabled: ${MIL_ADAPTER_ENABLE_INTERCEPTOR_LOGGING:true}
   log-engine-input-variables-enabled: ${MIL_ADAPTER_LOG_ENGINE_INPUT_VARIABLES:true}

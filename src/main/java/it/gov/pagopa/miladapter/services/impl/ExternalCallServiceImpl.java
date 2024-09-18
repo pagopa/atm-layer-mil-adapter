@@ -6,6 +6,7 @@ import io.opentelemetry.context.Scope;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 import it.gov.pagopa.miladapter.enums.FlowValues;
 import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
+import it.gov.pagopa.miladapter.model.AuthParameters;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.services.ExternalCallService;
@@ -45,6 +46,10 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
             return HttpRequestUtils.buildURI(restConfigurationProperties.getMilBasePath(), configuration.getEndpoint(), configuration.getPathParams());
         } else if (flow.equals(FlowValues.IDPAY.getValue())) {
             return HttpRequestUtils.buildURI(restConfigurationProperties.getIdPayBasePath(), configuration.getEndpoint(), configuration.getPathParams());
+        } else if (flow.equals(FlowValues.AUTH.getValue())) {
+            log.info("--TEMPORARY-- Preparing URI for flow {}", flow);
+            log.info("--TEMPORARY-- Mil Base path: {} , auth endpoint: {}", restConfigurationProperties.getMilBasePath(), restConfigurationProperties.getGetTokenEndpoint());
+            return HttpRequestUtils.buildURI(restConfigurationProperties.getMilBasePath(), restConfigurationProperties.getGetTokenEndpoint());
         } else {
             throw new RuntimeException("Unrecognised flow: " + flow);
         }
@@ -62,7 +67,12 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract 
 
     public ResponseEntity executeExternalCall(Map<String, Object> body) {
         String flow = body.get(RequiredProcessVariables.FLOW.getEngineValue()).toString();
-        Configuration configuration = EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCall(body, flow.equals(FlowValues.MIL.getValue()), flow.equals(FlowValues.IDPAY.getValue()));
+        Configuration configuration;
+        if (flow.equals(FlowValues.AUTH.getValue())){
+            configuration = EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationGenerateTokenCall(body,restConfigurationProperties.getAuth());
+        } else {
+            configuration = EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCall(body, flow.equals(FlowValues.MIL.getValue()), flow.equals(FlowValues.IDPAY.getValue()));
+        }
         ResponseEntity<String> response;
 
         SpanBuilder spanBuilder = this.spanBuilder(configuration);

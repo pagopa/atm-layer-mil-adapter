@@ -36,6 +36,8 @@ public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
     private void logRequest(HttpRequest request, byte[] body) {
         Map<String, String> filteredHeaders = request.getHeaders().toSingleValueMap();
+        filteredHeaders.remove("Ocp-Apim-Subscription-Key");
+        filteredHeaders.remove("Authorization");
         log.info("---REQUEST BEGIN---   URI: {}   ,   Method: {}   ,   Headers: {}   ,   Request body: {}   ---REQUEST END---", request.getURI(), request.getMethod(), filteredHeaders, new String(body, StandardCharsets.UTF_8));
     }
 
