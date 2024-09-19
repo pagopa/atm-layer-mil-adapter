@@ -4,7 +4,6 @@ import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.util.TimeValue;
-import org.apache.http.StatusLine;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,10 +44,8 @@ class CustomHttpRequestRetryStrategyTest {
     @Test
     void testRetryRequestOk() {
         HttpResponse httpResponse = Mockito.mock(HttpResponse.class);
-        StatusLine statusLine = Mockito.mock(StatusLine.class);
 
         when(httpResponse.getCode()).thenReturn(200);
-        when(statusLine.getStatusCode()).thenReturn(200);
 
         boolean result = customHttpRequestRetryStrategy.retryRequest(httpResponse, 2, Mockito.mock(HttpContext.class));
         Assertions.assertFalse(result);
@@ -64,10 +61,8 @@ class CustomHttpRequestRetryStrategyTest {
     @Test
     void testRetryRequestKo() {
         HttpResponse httpResponse = Mockito.mock(HttpResponse.class);
-        StatusLine statusLine = Mockito.mock(StatusLine.class);
 
         when(httpResponse.getCode()).thenReturn(400);
-        when(statusLine.getStatusCode()).thenReturn(400);
 
         boolean result = customHttpRequestRetryStrategy.retryRequest(httpResponse, 2, Mockito.mock(HttpContext.class));
         Assertions.assertTrue(result);

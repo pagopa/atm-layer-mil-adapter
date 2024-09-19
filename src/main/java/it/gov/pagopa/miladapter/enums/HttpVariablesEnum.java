@@ -10,7 +10,7 @@ public enum HttpVariablesEnum {
     URL("url"),
     HEADERS("headers"),
     METHOD("method"),
-    PATH_PARAMS("pathParams"),
+    PATH_PARAMS("PathParams"),
     QUERY_PARAMS("queryParams"),
     RESPONSE("response"),
     STATUS_CODE("statusCode"),
@@ -21,7 +21,8 @@ public enum HttpVariablesEnum {
     CONNECTION_REQUEST_TIMEOUT_MILLISECONDS("connectionRequestTimeoutMilliseconds"),
     MAX_RETRY("maxRetry"),
     RETRY_INTERVAL_MILLISECONDS("retryIntervalMilliseconds"),
-    DELAY_MILLISECONDS("delayMilliseconds");
+    DELAY_MILLISECONDS("delayMilliseconds"),
+    ACCESS_TOKEN("millAccessToken");
 
 
     private String value;

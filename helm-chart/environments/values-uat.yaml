@@ -26,7 +26,8 @@ milAdapter:
   disableBackoffStrategy: true
   lockDuration: 20000
   asyncResponseTimeout: 20000
-  milBasePath: https://mil-d-perf-ca.agreeablestone-406ca858.westeurope.azurecontainerapps.io/perf
+  milBasePath: https://mil-u-apim.azure-api.net
+  milGetTokenEndpoint: /mil-auth/token
   enableInterceptorLogging: true
   logEngineInputVariables: true
   restReadTimeout: 20000
@@ -41,7 +42,10 @@ milAdapter:
   completionPoolCorePoolSize: 5
   completionPoolMaxPoolSize: 25
   completionPoolThreadName: MILA-CompPool-
-  tracingBackendUrl: http://jaeger-collector.default.svc.cluster.local:4317
+  tracingBackendUrl: http://jeager-manual-trace-ecs-priv-b19cfd091be2d616.elb.eu-south-1.amazonaws.com:4317
+  coreSize: 100
+  maxSize: 200
+  queueCapacity: 500
 
 milAuth:
   credentialsSecretEnabled: true
@@ -141,17 +145,17 @@ resources:
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   limits:
-    cpu: 200m
-    memory: 1000Mi
+    cpu: 2000m
+    memory: 2000Mi
   requests:
-    cpu: 100m
-    memory: 700Mi
+    cpu: 500m
+    memory: 500Mi
 
 autoscaling:
-  enabled: true
-  minReplicas: 2
-  maxReplicas: 4
-  targetCPUUtilizationPercentage: 45
+  enabled: false
+  minReplicas: 4
+  maxReplicas: 8
+  targetCPUUtilizationPercentage: 55
   # targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}

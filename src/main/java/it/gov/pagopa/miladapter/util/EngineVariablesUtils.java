@@ -1,9 +1,7 @@
 package it.gov.pagopa.miladapter.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
-import org.apache.commons.lang3.StringUtils;
-import org.camunda.bpm.client.task.ExternalTask;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Map;
 
@@ -24,12 +22,5 @@ public class EngineVariablesUtils {
             throw new RuntimeException(String.format("%s String variable cannot be empty", variableName));
         }
         return value;
-    }
-
-    public static Map<String, Object> getTaskVariablesCaseInsensitive(ExternalTask externalTask) {
-        Map<String, Object> variables = externalTask.getAllVariables();
-        CaseInsensitiveMap<String, Object> caseInsensitiveMap = new CaseInsensitiveMap<>();
-        caseInsensitiveMap.putAll(variables);
-        return caseInsensitiveMap;
     }
 }

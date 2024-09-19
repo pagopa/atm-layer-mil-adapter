@@ -26,7 +26,8 @@ milAdapter:
   disableBackoffStrategy: true
   lockDuration: 20000
   asyncResponseTimeout: 20000
-  milBasePath: https://mil-d-perf-ca.agreeablestone-406ca858.westeurope.azurecontainerapps.io/perf/v2
+  milBasePath: https://mil-u-apim.azure-api.net
+  milGetTokenEndpoint: /mil-auth/token
   enableInterceptorLogging: true
   logEngineInputVariables: true
   restReadTimeout: 20000
@@ -42,6 +43,9 @@ milAdapter:
   completionPoolMaxPoolSize: 25
   completionPoolThreadName: MILA-CompPool-
   tracingBackendUrl: http://jaeger-collector.default.svc.cluster.local:4317
+  coreSize: 50
+  maxSize: 70
+  queueCapacity: 100
 
 milAuth:
   credentialsSecretEnabled: true
@@ -140,18 +144,20 @@ resources:
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 500m
-  #   memory: 1000Mi
-  # requests:
-  #   cpu: 300m
-  #   memory: 600Mi
+   limits:
+     cpu: 600m
+     memory: 600Mi
+   requests:
+     cpu: 300m
+     memory: 400Mi
+
 
 autoscaling:
-  enabled: true
+  enabled: false
   minReplicas: 1
   maxReplicas: 2
   targetCPUUtilizationPercentage: 80
+
   # targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}

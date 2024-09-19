@@ -3,7 +3,7 @@ package it.gov.pagopa.miladapter.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 @AllArgsConstructor
 @NoArgsConstructor

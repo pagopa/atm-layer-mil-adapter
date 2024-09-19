@@ -1,19 +1,16 @@
 server:
-  port: ${SERVER_PORT:8085}
+  port: ${SERVER_PORT:8080}
 camunda:
   bpm:
     client:
       base-url: ${MIL_ADAPTER_ENGINE_URL:http://localhost:8080}/engine-rest
-      lock-duration: ${MIL_ADAPTER_LOCK_DURATION:20000}
-      disable-backoff-strategy: ${MIL_ADAPTER_DISABLE_BACKOFF_STRATEGY:true}
-      async-response-timeout: ${MIL_ADAPTER_ASYNC_RESPONSE_TIMEOUT:500}
-      max-tasks: 6
       basic-auth:
         username: ${MIL_ADAPTER_ENGINE_ACCOUNT_USER:admin}
         password: ${MIL_ADAPTER_ENGINE_ACCOUNT_PASSWORD:AurigaNtt.2023}
 rest-configuration:
   mil-authenticator-base-path: ${MIL_AUTHENTICATOR_BASE_PATH:http://pagopa-dev-atm-layer-mil-authenticator.pagopa.svc.cluster.local:8080}
   mil-base-path: ${MIL_ADAPTER_MIL_BASE_PATH:https://mil-u-apim.azure-api.net}
+  get-token-endpoint: ${MIL_GET_TOKEN_ENDPOINT:/mil-auth/token}
   id-pay-base-path: ${MIL_ADAPTER_ID_PAY_BASE_PATH:https://api-io.dev.cstar.pagopa.it}
   interceptor-logging-enabled: ${MIL_ADAPTER_ENABLE_INTERCEPTOR_LOGGING:true}
   log-engine-input-variables-enabled: ${MIL_ADAPTER_LOG_ENGINE_INPUT_VARIABLES:true}
@@ -31,19 +28,18 @@ rest-configuration:
   definition-id-properties:
     method: GET
     url: /api/v1/model/bpmn/function/{functionType}/bank/{acquirerId}/branch/{branchId}/terminal/{terminalId}
-cache-configuration:
-  cache-name: ${MIL_ADAPTER_TOKEN_CACHE_NAME:token-cache}
-  max-entries: ${MIL_ADAPTER_TOKEN_CACHE_MAX_ENTRIES:100}
-  token-security-threshold: ${MIL_ADAPTER_TOKEN_SECURITY_THRESHOLD_IN_SECONDS:30}
+
 
 spring:
   application:
     name: atm-layer-mil-adapter
-  datasource:
-    url: ${MIL_ADAPTER_ENGINE_DB_BASE_URL:jdbc:postgresql://localhost:5433}/${MIL_ADAPTER_ENGINE_DB_NAME:postgres}?currentSchema=${MIL_ADAPTER_ENGINE_DB_SCHEMA:atm_layer_camunda}
-    username: ${MIL_ADAPTER_ENGINE_DB_USERNAME:postgres}
-    password: ${MIL_ADAPTER_ENGINE_DB_PASSWORD:password}
-    driverClassName: ${MIL_ADAPTER_ENGINE_DB_DRIVER:org.postgresql.Driver}
+  task:
+    execution:
+      pool:
+        core-size: ${MIL_ADAPTER_CORE_SIZE:100}
+        max-size: ${MIL_ADAPTER_MAX_SIZE:200}
+        queue-capacity: ${MIL_ADAPTER_QUEUE_CAPACITY:500}
+
 tracing:
   url: ${MIL_ADAPTER_TRACING_BACKEND_URL}
 
@@ -52,21 +48,11 @@ management:
     sampling:
       probability: 1.0
 
-adapter-pool-configuration:
-  rest:
-    core-pool-size: ${MIL_ADAPTER_REST_POOL_CORE_POOL_SIZE:5}
-    max-pool-size: ${MIL_ADAPTER_REST_POOL_MAX_POOL_SIZE:25}
-    thread-name: ${MIL_ADAPTER_REST_POOL_THREAD_NAME:MILA-RestPool-}
-    name: ${MIL_ADAPTER_REST_POOL_THREAD_NAME:restThreadPool}
-  completion:
-    core-pool-size: ${MIL_ADAPTER_COMPLETION_POOL_CORE_POOL_SIZE:5}
-    max-pool-size: ${MIL_ADAPTER_COMPLETION_POOL_MAX_POOL_SIZE:25}
-    thread-name: ${MIL_ADAPTER_COMPLETION_POOL_THREAD_NAME:MILA-CompPool-}
-    name: ${MIL_ADAPTER_REST_POOL_THREAD_NAME:completionThreadPool}
+
 
 logging:
   pattern:
     level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
 
 id-pay:
-  api-key: ${ID_PAY_API_KEY}
+  api-key: ${ID_PAY_API_KEY:test}

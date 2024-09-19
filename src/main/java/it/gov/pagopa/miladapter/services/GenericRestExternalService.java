@@ -16,7 +16,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 
-public interface GenericRestService  {
+
+public interface GenericRestExternalService  {
+
 
 
     URI prepareUri(Configuration configuration, String flow);
@@ -54,3 +56,4 @@ public interface GenericRestService  {
         return spanBuilder;
     }
 }
+

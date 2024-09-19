@@ -3,7 +3,7 @@ package it.gov.pagopa.miladapter.util;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -45,11 +45,17 @@ public class HttpRequestUtils {
         return builder.buildAndExpand(pathParams).toUri();
     }
 
+    public static URI buildURI(String basePath, String endpoint) {
+        String url = basePath.concat(endpoint);
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
+        return builder.build().toUri();
+    }
+
     public static HttpHeaders fromMapToHeaders(Map<String, String> map) {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         for (String key : map.keySet()) {
             if (StringUtils.isBlank(map.get(key))) {
-                throw new RuntimeException("declared path param cannot be empty or null");
+                throw new RuntimeException("declared header param cannot be empty or null");
             }
             multiValueMap.put(key, Collections.singletonList(map.get(key)));
         }
