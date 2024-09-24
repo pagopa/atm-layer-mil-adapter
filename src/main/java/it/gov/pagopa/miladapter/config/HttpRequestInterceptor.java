@@ -1,6 +1,5 @@
 package it.gov.pagopa.miladapter.config;
 
-import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.propagation.TextMapSetter;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
@@ -24,7 +23,7 @@ public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
     private final RestConfigurationProperties restConfigurationProperties;
     // private final OpenTelemetry openTelemetry;
 
-    public HttpRequestInterceptor(OpenTelemetry openTelemetry,RestConfigurationProperties restConfigurationProperties) {
+    public HttpRequestInterceptor(RestConfigurationProperties restConfigurationProperties) {
         // this.openTelemetry=openTelemetry;
         this.restConfigurationProperties = restConfigurationProperties;
 

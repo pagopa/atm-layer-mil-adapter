@@ -32,8 +32,6 @@ public class RestTemplateGenerator {
     @Autowired
     RestConfigurationProperties restConfigurationProperties;
 
-    @Autowired
-    OpenTelemetry openTelemetry;
 
     public RestTemplate generate(int connectionRequestTimeout, int connectionResponseTimeout, int retry, int retryDelay) {
         log.info("Generating restTemplate with connectionTimeout: {} milliseconds, responseTimeout: {} milliseconds, maxRetry: {}, retryInterval: {} milliseconds",
@@ -64,7 +62,7 @@ public class RestTemplateGenerator {
         if (CollectionUtils.isEmpty(interceptors)) {
             interceptors = new ArrayList<>();
         }
-        interceptors.add(new HttpRequestInterceptor(openTelemetry, restConfigurationProperties));
+        interceptors.add(new HttpRequestInterceptor(restConfigurationProperties));
         restTemplate.setInterceptors(interceptors);
 
         return restTemplate;
