@@ -1,7 +1,5 @@
 package it.gov.pagopa.miladapter.config;
 
-import io.opentelemetry.context.Context;
-import io.opentelemetry.context.propagation.TextMapSetter;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -29,8 +27,8 @@ public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
     }
 
-    TextMapSetter<HttpRequest> setter =
-            (request, key, value) -> request.getHeaders().add(key, value);
+//    TextMapSetter<HttpRequest> setter =
+//            (request, key, value) -> request.getHeaders().add(key, value);
 
 
     private void logRequest(HttpRequest request, byte[] body) {
