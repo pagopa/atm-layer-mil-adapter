@@ -39,14 +39,15 @@ spring:
           max-size: ${MIL_ADAPTER_MAX_SIZE:200}
           queue-capacity: ${MIL_ADAPTER_QUEUE_CAPACITY:500}
       task-timeout: 10000
-tracing:
-  url: ${MIL_ADAPTER_TRACING_BACKEND_URL}
 
-management:
-  tracing:
-    sampling:
-      probability: 1.0
-
+#tracing:
+#  url: ${MIL_ADAPTER_TRACING_BACKEND_URL}
+#
+#management:
+#  tracing:
+#    enabled: false
+#    sampling:
+#      probability: 1.0
 
 
 logging:
