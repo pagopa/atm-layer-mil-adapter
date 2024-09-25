@@ -22,10 +22,10 @@ import java.util.Map;
 @Configuration
 public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
     private final RestConfigurationProperties restConfigurationProperties;
-    private final OpenTelemetry openTelemetry;
+     private final OpenTelemetry openTelemetry;
 
     public HttpRequestInterceptor(OpenTelemetry openTelemetry,RestConfigurationProperties restConfigurationProperties) {
-        this.openTelemetry=openTelemetry;
+         this.openTelemetry=openTelemetry;
         this.restConfigurationProperties = restConfigurationProperties;
 
     }
@@ -48,7 +48,7 @@ public class HttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-        propagateTrace(request);
+         propagateTrace(request);
         LocalDateTime timestampStart = LocalDateTime.now();
         if (restConfigurationProperties.isInterceptorLoggingEnabled()) {
             logRequest(request, body);

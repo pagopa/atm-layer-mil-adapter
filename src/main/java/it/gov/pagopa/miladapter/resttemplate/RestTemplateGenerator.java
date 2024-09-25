@@ -30,10 +30,11 @@ import java.util.List;
 public class RestTemplateGenerator {
 
     @Autowired
-    RestConfigurationProperties restConfigurationProperties;
+    OpenTelemetry openTelemetry;
 
     @Autowired
-    OpenTelemetry openTelemetry;
+    RestConfigurationProperties restConfigurationProperties;
+
 
     public RestTemplate generate(int connectionRequestTimeout, int connectionResponseTimeout, int retry, int retryDelay) {
         log.info("Generating restTemplate with connectionTimeout: {} milliseconds, responseTimeout: {} milliseconds, maxRetry: {}, retryInterval: {} milliseconds",
