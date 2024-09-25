@@ -27,6 +27,9 @@ import static org.mockito.Mockito.*;
 class HttpRequestInterceptorTest {
 
     @MockBean
+    OpenTelemetry openTelemetry;
+
+    @MockBean
     RestConfigurationProperties restConfigurationProperties;
 
     @InjectMocks
@@ -48,7 +51,7 @@ class HttpRequestInterceptorTest {
 
     @Test
     void testIntercept() throws IOException {
-        httpRequestInterceptor = new HttpRequestInterceptor(restConfigurationProperties);
+        httpRequestInterceptor = new HttpRequestInterceptor(openTelemetry, restConfigurationProperties);
         MockClientHttpRequest request = new MockClientHttpRequest();
         byte[] body = "body".getBytes(StandardCharsets.UTF_8);
         ClientHttpRequestExecution clientHttpRequestExecution = mock(ClientHttpRequestExecution.class);

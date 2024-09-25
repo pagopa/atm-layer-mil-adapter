@@ -30,6 +30,9 @@ import java.util.List;
 public class RestTemplateGenerator {
 
     @Autowired
+    OpenTelemetry openTelemetry;
+
+    @Autowired
     RestConfigurationProperties restConfigurationProperties;
 
 
@@ -62,7 +65,7 @@ public class RestTemplateGenerator {
         if (CollectionUtils.isEmpty(interceptors)) {
             interceptors = new ArrayList<>();
         }
-        interceptors.add(new HttpRequestInterceptor(restConfigurationProperties));
+        interceptors.add(new HttpRequestInterceptor(openTelemetry, restConfigurationProperties));
         restTemplate.setInterceptors(interceptors);
 
         return restTemplate;
