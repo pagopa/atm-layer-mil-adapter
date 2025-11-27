@@ -2,15 +2,15 @@ package it.gov.pagopa.miladapter.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import it.gov.pagopa.miladapter.services.ExternalCallService;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/externalcall")
@@ -18,10 +18,11 @@ import java.util.Map;
 public class ExternalCallsController {
 
 
+    @Qualifier("externalCallServiceNewImpl")
     @Autowired
     ExternalCallService externalCallService;
 
-    @PostMapping
+    @PostMapping(produces = "application/json")
     public ResponseEntity<String> externalcall(@RequestBody Map<String, Object> body) throws JsonProcessingException {
         // Log before starting async method
         log.info("Starting call external");
