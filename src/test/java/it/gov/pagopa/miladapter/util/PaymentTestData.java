@@ -19,9 +19,10 @@ public final class PaymentTestData {
     public static final String PSP_ID = "AGID_01";
     public static final String CHANNEL = "ATM";
     public static final long AMOUNT = 9999;
-    public  static final long FEE = 200;
+    public static final long FEE = 200;
     public static final String IDEMPOTENCY_KEY = "key-123456";
-
+    public static final String TRANSACTION_ID = "550e8400e29b41d4a716446655440000";
+    public static final String PAYMENT_TOKEN = "a3b4c5d6e7f8g9h0";
 
     public static Map<String, String> getMilHeaders(boolean isPos, boolean isKnownAcquirer) {
         Map<String, String> headerMap = new HashMap<>();

@@ -77,6 +77,12 @@ public class PaymentService {
 
         try {
             SendPaymentOutcomeV2Response outcomeResponse = this.basePaymentService.sendPaymentOutcomeV2(req).block();
+            if (outcomeResponse == null) {
+                log.error("[{}] Null response from the node sendPaymentOutcomeV2 service", ErrorCode.ERROR_CALLING_NODE_SOAP_SERVICES);
+                throw new ResponseStatusException(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        new Errors(List.of(ErrorCode.ERROR_CALLING_NODE_SOAP_SERVICES)).toString());
+            }
             log.debug("verifyPaymentNotice: Response {}", outcomeResponse);
             return ResponseEntity.status(HttpStatus.ACCEPTED).build();
         } catch (Exception e) {
