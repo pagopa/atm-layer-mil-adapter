@@ -8,7 +8,6 @@ import static org.mockito.Mockito.*;
 
 import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.model.QrCode;
-import it.gov.pagopa.miladapter.redis.PaymentNoticeService;
 import it.gov.pagopa.miladapter.services.impl.ActivatePaymentNoticeService;
 import it.gov.pagopa.miladapter.services.impl.BasePaymentService;
 import it.gov.pagopa.miladapter.services.model.ActivatePaymentNoticeRequest;
@@ -49,9 +48,6 @@ class ActivatePaymentNoticeServiceTest {
 
 	@Mock
 	private BasePaymentService basePaymentService;
-
-	@Mock
-	private PaymentNoticeService paymentNoticeService;
 
 	@InjectMocks
 	private ActivatePaymentNoticeService activatePaymentNoticeService;
@@ -127,8 +123,6 @@ class ActivatePaymentNoticeServiceTest {
 				.thenReturn(Mono.just(pspConfiguration));
 		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
 				.thenReturn(Mono.just(activatePaymentNoticeV2ResponseOk));
-		when(paymentNoticeService.set(eq(PAYMENT_TOKEN), any(Notice.class)))
-				.thenReturn(Mono.empty());
 
 		// Act
 		ResponseEntity<ActivatePaymentNoticeResponse> response =
@@ -153,56 +147,6 @@ class ActivatePaymentNoticeServiceTest {
 		// Verify interactions
 		verify(qrCodeParser).b64UrlParse(encodedQrCode);
 		verify(basePaymentService).retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE);
-	}
-
-	@Test
-	void testActivateByQrCode_Success_NoRedisStorage() {
-		// Arrange - response KO, should not store in Redis
-		ActivatePaymentNoticeV2Response koResponse = generateKoNodeResponse("PPT_PAGAMENTO_IN_CORSO", null);
-
-		when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
-		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
-				.thenReturn(Mono.just(pspConfiguration));
-		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
-				.thenReturn(Mono.just(koResponse));
-		when(basePaymentService.remapNodeFaultToOutcome("PPT_PAGAMENTO_IN_CORSO", null))
-				.thenReturn("PAYMENT_ALREADY_IN_PROGRESS");
-
-		// Act
-		ResponseEntity<ActivatePaymentNoticeResponse> response =
-				activatePaymentNoticeService.activateByQrCode(commonHeader, encodedQrCode, activatePaymentNoticeRequest);
-
-		// Assert
-		assertNotNull(response);
-		assertEquals(HttpStatus.OK, response.getStatusCode());
-		assertNotNull(response.getBody());
-		assertEquals("PAYMENT_ALREADY_IN_PROGRESS", response.getBody().getOutcome());
-		assertNull(response.getBody().getAmount());
-		assertNull(response.getBody().getPaymentToken());
-
-		// Verify Redis was NOT called
-		verify(paymentNoticeService, never()).set(any(), any());
-	}
-
-	@Test
-	void testActivateByQrCode_RedisError() {
-		// Arrange
-		when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
-		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
-				.thenReturn(Mono.just(pspConfiguration));
-		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
-				.thenReturn(Mono.just(activatePaymentNoticeV2ResponseOk));
-		when(paymentNoticeService.set(eq(PAYMENT_TOKEN), any(Notice.class)))
-				.thenReturn(Mono.error(new RuntimeException("Redis error")));
-
-		// Act & Assert
-		ResponseStatusException exception = assertThrows(ResponseStatusException.class, () ->
-				activatePaymentNoticeService.activateByQrCode(commonHeader, encodedQrCode, activatePaymentNoticeRequest)
-		);
-
-		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getStatusCode());
-		assertNotNull(exception.getReason());
-		assertTrue(exception.getReason().contains(ErrorCode.ERROR_STORING_DATA_INTO_REDIS));
 	}
 
 	@ParameterizedTest
@@ -230,7 +174,6 @@ class ActivatePaymentNoticeServiceTest {
 		assertNull(response.getBody().getPaymentToken());
 
 		verify(basePaymentService).remapNodeFaultToOutcome(faultCode, originalFaultCode);
-		verify(paymentNoticeService, never()).set(any(), any());
 	}
 
 	@Test
@@ -278,8 +221,6 @@ class ActivatePaymentNoticeServiceTest {
 				.thenReturn(Mono.just(pspConfiguration));
 		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
 				.thenReturn(Mono.just(activatePaymentNoticeV2ResponseOk));
-		when(paymentNoticeService.set(eq(PAYMENT_TOKEN), any(Notice.class)))
-				.thenReturn(Mono.empty());
 
 		// Act
 		ResponseEntity<ActivatePaymentNoticeResponse> response =

@@ -2,7 +2,6 @@ package it.gov.pagopa.miladapter.services.impl;
 
 import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.model.QrCode;
-import it.gov.pagopa.miladapter.redis.PaymentNoticeService;
 import it.gov.pagopa.miladapter.services.model.*;
 import it.gov.pagopa.miladapter.util.ErrorCode;
 import it.gov.pagopa.miladapter.util.NodeApi;
@@ -37,12 +36,10 @@ public class ActivatePaymentNoticeService {
 
     private final QrCodeParser qrCodeParser;
     private final BasePaymentService basePaymentService;
-    private final PaymentNoticeService paymentNoticeService;
 
-	public ActivatePaymentNoticeService(QrCodeParser qrCodeParser, BasePaymentService basePaymentService, PaymentNoticeService paymentNoticeService) {
+	public ActivatePaymentNoticeService(QrCodeParser qrCodeParser, BasePaymentService basePaymentService) {
 		this.qrCodeParser = qrCodeParser;
         this.basePaymentService = basePaymentService;
-        this.paymentNoticeService = paymentNoticeService;
     }
 
 	/**
@@ -151,10 +148,10 @@ public class ActivatePaymentNoticeService {
                         new Errors(List.of(ErrorCode.ERROR_CALLING_NODE_SOAP_SERVICES)).toString());
             }
 
-            ActivatePaymentNoticeResponse response = this.storeNoticeData(noticeNumber, activateResponse).block();
+            ActivatePaymentNoticeResponse response = this.buildResponse(activateResponse).block();
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (ResponseStatusException e) {
-            // Re-throw ResponseStatusException (including Redis errors)
+            // Re-throw ResponseStatusException
             throw e;
         } catch (Exception e) {
             log.error("[{}] Error calling the node activatePaymentNoticeV2 service", ErrorCode.ERROR_CALLING_NODE_SOAP_SERVICES, e);
@@ -163,35 +160,15 @@ public class ActivatePaymentNoticeService {
                     new Errors(List.of(ErrorCode.ERROR_CALLING_NODE_SOAP_SERVICES)).toString());
         }
 	}
-
-	/**
-	 * Store the payment notice data in the redis cache
-	 *
-	 * @param noticeNumber the identifier of the payment notice
-	 * @param activateResponse the response of the activatePaymentNoticeV2Async
-	 * @return a {@link Mono} emitting the ActivatePaymentNoticeResponse
-	 */
-	private Mono<ActivatePaymentNoticeResponse> storeNoticeData(String noticeNumber, ActivatePaymentNoticeV2Response activateResponse) {
-
+    /**
+     * Builds the response of the activatePayment API based on the response from the node
+     *
+     * @param activateResponse the {@link ActivatePaymentNoticeV2Response} from the node
+     * @return a {@link Mono} emitting the {@link ActivatePaymentNoticeResponse} to be returned by the API
+     */
+	private Mono<ActivatePaymentNoticeResponse> buildResponse(ActivatePaymentNoticeV2Response activateResponse) {
 		if (Outcome.OK.name().equals(activateResponse.getOutcome().value())) {
-			Notice notice = new Notice();
-			notice.setPaymentToken(activateResponse.getPaymentToken());
-			notice.setPaTaxCode(activateResponse.getFiscalCodePA());
-			notice.setNoticeNumber(noticeNumber);
-			notice.setAmount(activateResponse.getTotalAmount().scaleByPowerOfTen(2).longValue());
-			notice.setDescription(activateResponse.getPaymentDescription());
-			notice.setCompany(activateResponse.getCompanyName());
-			notice.setOffice(activateResponse.getOfficeName());
-
-			return this.paymentNoticeService.set(activateResponse.getPaymentToken(), notice)
-					.onErrorMap(t -> {
-						log.error("[{}] Error while storing payment data in cache", ErrorCode.ERROR_STORING_DATA_INTO_REDIS, t);
-						return new ResponseStatusException(
-								HttpStatus.INTERNAL_SERVER_ERROR,
-								new Errors(List.of(ErrorCode.ERROR_STORING_DATA_INTO_REDIS)).toString());
-					})
-					.then(Mono.fromCallable(() -> buildResponseOk(activateResponse)));
-
+			return Mono.just(buildResponseOk(activateResponse));
 		} else {
 			return Mono.just(buildResponseKo(activateResponse));
 		}
