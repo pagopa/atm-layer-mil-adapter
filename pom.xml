@@ -267,12 +267,11 @@
                                         <bindingFile>${basedir}/src/main/resources/pagopa-api/stAmountXmlBinding.xml</bindingFile>
                                     </bindingFiles>
                                     <extraargs>
-                                        <extraarg>-p</extraarg>
-                                        <extraarg>it.gov.pagopa.pagopa_api.nodeforpsp</extraarg>
                                         <extraarg>-verbose</extraarg>
                                         <extraarg>-exsh</extraarg>
                                         <extraarg>true</extraarg>
                                         <extraarg>-validate</extraarg>
+                                        <extraarg>-autoNameResolution</extraarg>
                                     </extraargs>
                                 </wsdlOption>
                             </wsdlOptions>
