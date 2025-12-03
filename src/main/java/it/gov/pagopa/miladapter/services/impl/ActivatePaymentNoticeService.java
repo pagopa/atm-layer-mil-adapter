@@ -27,7 +27,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Mono;
 
 @Service
 @Validated
@@ -148,7 +147,7 @@ public class ActivatePaymentNoticeService {
                         new Errors(List.of(ErrorCode.ERROR_CALLING_NODE_SOAP_SERVICES)).toString());
             }
 
-            ActivatePaymentNoticeResponse response = this.buildResponse(activateResponse).block();
+            ActivatePaymentNoticeResponse response = this.buildResponse(activateResponse);
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (ResponseStatusException e) {
             // Re-throw ResponseStatusException
@@ -160,17 +159,18 @@ public class ActivatePaymentNoticeService {
                     new Errors(List.of(ErrorCode.ERROR_CALLING_NODE_SOAP_SERVICES)).toString());
         }
 	}
+
     /**
      * Builds the response of the activatePayment API based on the response from the node
      *
      * @param activateResponse the {@link ActivatePaymentNoticeV2Response} from the node
-     * @return a {@link Mono} emitting the {@link ActivatePaymentNoticeResponse} to be returned by the API
+     * @return the {@link ActivatePaymentNoticeResponse} to be returned by the API
      */
-	private Mono<ActivatePaymentNoticeResponse> buildResponse(ActivatePaymentNoticeV2Response activateResponse) {
+	private ActivatePaymentNoticeResponse buildResponse(ActivatePaymentNoticeV2Response activateResponse) {
 		if (Outcome.OK.name().equals(activateResponse.getOutcome().value())) {
-			return Mono.just(buildResponseOk(activateResponse));
+			return this.buildResponseOk(activateResponse);
 		} else {
-			return Mono.just(buildResponseKo(activateResponse));
+			return this.buildResponseKo(activateResponse);
 		}
 	}
 
@@ -206,7 +206,6 @@ public class ActivatePaymentNoticeService {
 	 * @return the {@link ActivatePaymentNoticeResponse} to be returned by the API
 	 */
 	private ActivatePaymentNoticeResponse buildResponseKo(ActivatePaymentNoticeV2Response response) {
-
 		ActivatePaymentNoticeResponse activatePaymentNoticeResponse = new ActivatePaymentNoticeResponse();
 		activatePaymentNoticeResponse.setOutcome(
 				this.basePaymentService.remapNodeFaultToOutcome(
