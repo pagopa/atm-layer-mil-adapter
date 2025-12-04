@@ -1,10 +1,11 @@
-package it.gov.pagopa.miladapter.services;
+package it.gov.pagopa.miladapter.services.impl;
 
 import io.opentelemetry.api.trace.*;
 import io.opentelemetry.context.Context;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.resttemplate.RestTemplateGenerator;
+import it.gov.pagopa.miladapter.services.GenericRestExternalService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -12,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.springframework.http.HttpEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class GenericRestServiceTest {
+class GenericRestExternalServiceTest {
 
     @Mock
     private Logger logger;
@@ -32,15 +32,12 @@ class GenericRestServiceTest {
     @Mock
     private RestConfigurationProperties restConfigurationProperties;
 
-    @Mock
-    private RestTemplateGenerator restTemplateGenerator;
-
-    private GenericRestService genericRestService;
+    private GenericRestExternalService genericRestExternalService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        genericRestService = new GenericRestService() {
+        genericRestExternalService = new GenericRestExternalService() {
             @Override
             public URI prepareUri(Configuration configuration, String flow) {
                 return URI.create("http://example.com");
@@ -76,7 +73,7 @@ class GenericRestServiceTest {
         SpanBuilder spanBuilder = mock(SpanBuilder.class);
         when(tracer.spanBuilder("MIL-Adapter-RestCall-Execution")).thenReturn(spanBuilder);
 
-        SpanBuilder result = genericRestService.spanBuilder(configuration);
+        SpanBuilder result = genericRestExternalService.spanBuilder(configuration);
 
         assertNotNull(result);
         verify(tracer).spanBuilder("MIL-Adapter-RestCall-Execution");
@@ -94,7 +91,7 @@ class GenericRestServiceTest {
         when(tracer.spanBuilder("MIL-Adapter-RestCall-Execution")).thenReturn(spanBuilder);
         when(spanBuilder.setParent(any(Context.class))).thenReturn(spanBuilder);
 
-        SpanBuilder result = genericRestService.spanBuilder(configuration);
+        SpanBuilder result = genericRestExternalService.spanBuilder(configuration);
 
         assertNotNull(result);
         verify(tracer).spanBuilder("MIL-Adapter-RestCall-Execution");
@@ -116,7 +113,7 @@ class GenericRestServiceTest {
         configuration.setParentSpanContextString(invalidParentSpanContextString);
 
         try {
-            genericRestService.spanBuilder(configuration);
+            genericRestExternalService.spanBuilder(configuration);
         } catch (RuntimeException e) {
             assertNotNull(e);
         }

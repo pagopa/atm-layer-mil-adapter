@@ -1,18 +1,14 @@
-package it.gov.pagopa.miladapter.services;
+package it.gov.pagopa.miladapter.services.impl;
 
 import static it.gov.pagopa.miladapter.util.PaymentTestData.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.model.QrCode;
-import it.gov.pagopa.miladapter.services.impl.ActivatePaymentNoticeService;
-import it.gov.pagopa.miladapter.services.impl.BasePaymentService;
 import it.gov.pagopa.miladapter.services.model.ActivatePaymentNoticeRequest;
 import it.gov.pagopa.miladapter.services.model.ActivatePaymentNoticeResponse;
-import it.gov.pagopa.miladapter.services.model.Notice;
 import it.gov.pagopa.miladapter.util.ErrorCode;
 import it.gov.pagopa.miladapter.util.NodeApi;
 import it.gov.pagopa.miladapter.util.PaymentTestData;
@@ -38,7 +34,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Mono;
 
 @ExtendWith(MockitoExtension.class)
 class ActivatePaymentNoticeServiceTest {
@@ -120,9 +115,9 @@ class ActivatePaymentNoticeServiceTest {
 		// Arrange
 		when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
 		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
-				.thenReturn(Mono.just(pspConfiguration));
+				.thenReturn(pspConfiguration);
 		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
-				.thenReturn(Mono.just(activatePaymentNoticeV2ResponseOk));
+				.thenReturn(activatePaymentNoticeV2ResponseOk);
 
 		// Act
 		ResponseEntity<ActivatePaymentNoticeResponse> response =
@@ -155,9 +150,9 @@ class ActivatePaymentNoticeServiceTest {
 		// Arrange
 		when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
 		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
-				.thenReturn(Mono.just(pspConfiguration));
+				.thenReturn(pspConfiguration);
 		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
-				.thenReturn(Mono.just(generateKoNodeResponse(faultCode, originalFaultCode)));
+				.thenReturn(generateKoNodeResponse(faultCode, originalFaultCode));
 		when(basePaymentService.remapNodeFaultToOutcome(faultCode, originalFaultCode))
 				.thenReturn(milOutcome);
 
@@ -181,9 +176,9 @@ class ActivatePaymentNoticeServiceTest {
 		// Arrange
 		when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
 		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
-				.thenReturn(Mono.just(pspConfiguration));
+				.thenReturn(pspConfiguration);
 		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
-				.thenReturn(Mono.error(new RuntimeException("Node error")));
+				.thenThrow(new RuntimeException("Node error"));
 
 		// Act & Assert
 		ResponseStatusException exception = assertThrows(ResponseStatusException.class, () ->
@@ -200,9 +195,9 @@ class ActivatePaymentNoticeServiceTest {
 		// Arrange
 		when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
 		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
-				.thenReturn(Mono.just(pspConfiguration));
+				.thenReturn(pspConfiguration);
 		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
-				.thenReturn(Mono.empty());
+				.thenReturn(null);
 
 		// Act & Assert
 		ResponseStatusException exception = assertThrows(ResponseStatusException.class, () ->
@@ -218,9 +213,9 @@ class ActivatePaymentNoticeServiceTest {
 	void testActivateByTaxCodeAndNoticeNumber_Success() {
 		// Arrange
 		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
-				.thenReturn(Mono.just(pspConfiguration));
+				.thenReturn(pspConfiguration);
 		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
-				.thenReturn(Mono.just(activatePaymentNoticeV2ResponseOk));
+				.thenReturn(activatePaymentNoticeV2ResponseOk);
 
 		// Act
 		ResponseEntity<ActivatePaymentNoticeResponse> response =
@@ -249,9 +244,9 @@ class ActivatePaymentNoticeServiceTest {
 		String expectedOutcome = "NOTICE_ALREADY_PAID";
 
 		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
-				.thenReturn(Mono.just(pspConfiguration));
+				.thenReturn(pspConfiguration);
 		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
-				.thenReturn(Mono.just(generateKoNodeResponse(faultCode, originalFaultCode)));
+				.thenReturn(generateKoNodeResponse(faultCode, originalFaultCode));
 		when(basePaymentService.remapNodeFaultToOutcome(faultCode, originalFaultCode))
 				.thenReturn(expectedOutcome);
 
@@ -273,9 +268,9 @@ class ActivatePaymentNoticeServiceTest {
 	void testActivateByTaxCodeAndNoticeNumber_NodeError() {
 		// Arrange
 		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
-				.thenReturn(Mono.just(pspConfiguration));
+				.thenReturn(pspConfiguration);
 		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
-				.thenReturn(Mono.error(new RuntimeException("Node connection error")));
+				.thenThrow(new RuntimeException("Node connection error"));
 
 		// Act & Assert
 		ResponseStatusException exception = assertThrows(ResponseStatusException.class, () ->
@@ -292,9 +287,9 @@ class ActivatePaymentNoticeServiceTest {
 	void testActivateByTaxCodeAndNoticeNumber_ConfigurationError() {
 		// Arrange
 		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
-				.thenReturn(Mono.error(new ResponseStatusException(
+				.thenThrow(new ResponseStatusException(
 						HttpStatus.INTERNAL_SERVER_ERROR,
-						"Configuration error")));
+						"Configuration error"));
 
 		// Act & Assert
 		ResponseStatusException exception = assertThrows(ResponseStatusException.class, () ->

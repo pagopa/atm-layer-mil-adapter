@@ -73,30 +73,30 @@ public class BasePaymentService {
 	 * Delegates the call to verifyPaymentNotice to the NodeForPspWrapper
 	 *
 	 * @param verifyPaymentNoticeReq the request to be sent to the node
-	 * @return a {@link Mono} emitting the response from the node
+	 * @return a {@link VerifyPaymentNoticeRes} with the response from the node
 	 */
-	public Mono<VerifyPaymentNoticeRes> verifyPaymentNotice(VerifyPaymentNoticeReq verifyPaymentNoticeReq) {
-		return nodeWrapper.verifyPaymentNotice(verifyPaymentNoticeReq);
+	public VerifyPaymentNoticeRes verifyPaymentNotice(VerifyPaymentNoticeReq verifyPaymentNoticeReq) {
+		return nodeWrapper.verifyPaymentNotice(verifyPaymentNoticeReq).block();
 	}
 
 	/**
 	 * Delegates the call to activatePaymentNoticeV2 to the NodeForPspWrapper
 	 *
 	 * @param activatePaymentNoticeV2Request the request to be sent to the node
-	 * @return a {@link Mono} emitting the response from the node
+	 * @return an {@link ActivatePaymentNoticeV2Response} with the response from the node
 	 */
-	public Mono<ActivatePaymentNoticeV2Response> activatePaymentNoticeV2(ActivatePaymentNoticeV2Request activatePaymentNoticeV2Request) {
-		return nodeWrapper.activatePaymentNoticeV2Async(activatePaymentNoticeV2Request);
+	public ActivatePaymentNoticeV2Response activatePaymentNoticeV2(ActivatePaymentNoticeV2Request activatePaymentNoticeV2Request) {
+		return nodeWrapper.activatePaymentNoticeV2Async(activatePaymentNoticeV2Request).block();
 	}
 
 	/**
 	 * Delegates the call to sendPaymentOutcomeV2 to the NodeForPspWrapper
 	 *
 	 * @param sendPaymentOutcomeV2Request the request to be sent to the node
-	 * @return a {@link Mono} emitting the response from the node
+	 * @return a {@link SendPaymentOutcomeV2Response} with the response from the node
 	 */
-	public Mono<SendPaymentOutcomeV2Response> sendPaymentOutcomeV2(SendPaymentOutcomeV2Request sendPaymentOutcomeV2Request) {
-		return nodeWrapper.sendPaymentOutcomeV2Async(sendPaymentOutcomeV2Request);
+	public SendPaymentOutcomeV2Response sendPaymentOutcomeV2(SendPaymentOutcomeV2Request sendPaymentOutcomeV2Request) {
+		return nodeWrapper.sendPaymentOutcomeV2Async(sendPaymentOutcomeV2Request).block();
 	}
 
 	/**
@@ -104,10 +104,10 @@ public class BasePaymentService {
 	 *
 	 * @param requestId the requestId from headers
 	 * @param gecGetFeesRequest the request to be sent to GEC
-	 * @return a {@link Mono} emitting the GetFeeResponse with the calculated fee
+	 * @return a {@link GetFeeResponse} with the calculated fee
 	 */
-	public Mono<GetFeeResponse> getFees(String requestId, GecGetFeesRequest gecGetFeesRequest) {
-		return feeRestClient.getFees(requestId, gecGetFeesRequest)
+	public GetFeeResponse getFees(String requestId, GecGetFeesRequest gecGetFeesRequest) {
+		return (GetFeeResponse) feeRestClient.getFees(requestId, gecGetFeesRequest)
 				.onErrorMap(t -> {
 					log.error("[{}] Error while calling Fee REST service", FeeCalculatorErrorCode.ERROR_RETRIEVING_FEES, t);
 					return new ResponseStatusException(
@@ -131,10 +131,18 @@ public class BasePaymentService {
 					response.setFee(fee);
 					log.debug("Fee calculation completed: {}", response);
 					sink.next(response);
-				});
+				})
+				.block();
 	}
 
-	public Mono<PspConfiguration> retrievePSPConfiguration(String acquirerId, NodeApi api) {
+	/**
+	 * Retrieves the PSP configuration for the given acquirer and API type
+	 *
+	 * @param acquirerId the acquirer ID
+	 * @param api the type of API (VERIFY, ACTIVATE, CLOSE, FEE)
+	 * @return the {@link PspConfiguration} for the given acquirer
+	 */
+	public PspConfiguration retrievePSPConfiguration(String acquirerId, NodeApi api) {
 		log.debug("retrievePSPConfiguration - acquirerId: {} ", acquirerId);
 
 		return azureADRestClient.getAccessToken(identity, STORAGE)
@@ -171,7 +179,8 @@ public class BasePaymentService {
 								case ACTIVATE, VERIFY -> acquirerConfiguration.getPspConfigForVerifyAndActivate();
 								case CLOSE, FEE -> acquirerConfiguration.getPspConfigForGetFeeAndClosePayment();
 							});
-				});
+				})
+				.block();
 	}
 
 	public String remapNodeFaultToOutcome(String faultCode, String originalFaultCode) {

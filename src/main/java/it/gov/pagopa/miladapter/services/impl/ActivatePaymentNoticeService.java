@@ -72,7 +72,7 @@ public class ActivatePaymentNoticeService {
 		QrCode parsedQrCode = qrCodeParser.b64UrlParse(b64UrlQrCode);
 		log.debug("Decoded qrCode: {}", parsedQrCode);
 
-        PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.ACTIVATE).block();
+        PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.ACTIVATE);
         return this.callNodeActivatePaymentNotice(parsedQrCode.getPaTaxCode(), parsedQrCode.getNoticeNumber(), pspConf, activatePaymentNoticeRequest);
 	}
 
@@ -103,7 +103,7 @@ public class ActivatePaymentNoticeService {
 		log.debug("activateByTaxCodeAndNoticeNumber - Input parameters: {}, paTaxCode: {}, noticeNumber: {}, body: {}",
 				headers, paTaxCode, noticeNumber, activatePaymentNoticeRequest);
 
-        PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.VERIFY).block();
+        PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.VERIFY);
 		return callNodeActivatePaymentNotice(paTaxCode, noticeNumber, pspConf, activatePaymentNoticeRequest);
 	}
 
@@ -128,17 +128,14 @@ public class ActivatePaymentNoticeService {
 		nodeActivateRequest.setIdBrokerPSP(pspConfiguration.getBroker());
 		nodeActivateRequest.setIdChannel(pspConfiguration.getChannel());
 		nodeActivateRequest.setPassword(pspConfiguration.getPassword());
-
 		nodeActivateRequest.setIdempotencyKey(activatePaymentNoticeRequest.getIdempotencyKey());
-
 		nodeActivateRequest.setQrCode(ctQrCode);
-
 		nodeActivateRequest.setExpirationTime(paymentNoticeExpirationTime);
 		// conversion from euro cents to euro
 		nodeActivateRequest.setAmount(BigDecimal.valueOf(activatePaymentNoticeRequest.getAmount(), 2));
 
         try {
-            final ActivatePaymentNoticeV2Response activateResponse = this.basePaymentService.activatePaymentNoticeV2(nodeActivateRequest).block();
+            final ActivatePaymentNoticeV2Response activateResponse = this.basePaymentService.activatePaymentNoticeV2(nodeActivateRequest);
 
             if (activateResponse == null) {
                 log.error("[{}] Node returned null response", ErrorCode.ERROR_CALLING_NODE_SOAP_SERVICES);

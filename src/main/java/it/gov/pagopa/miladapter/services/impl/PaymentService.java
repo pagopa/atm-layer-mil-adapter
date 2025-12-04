@@ -56,7 +56,7 @@ public class PaymentService {
         log.debug("closePayment with SendPaymentOutcome - Input parameters: {}, transactionId : {}, {}",
                 headers, transactionId, closePaymentRequest);
 
-        PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.ACTIVATE).block();
+        PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.ACTIVATE);
         return this.callNodeSendPaymentOutcome(pspConf, closePaymentRequest);
     }
 
@@ -76,7 +76,7 @@ public class PaymentService {
         req.setOutcome(closePaymentRequest.getOutcome().equals(PaymentTransactionOutcome.CLOSE.name()) ? StOutcome.OK : StOutcome.KO);
 
         try {
-            SendPaymentOutcomeV2Response outcomeResponse = this.basePaymentService.sendPaymentOutcomeV2(req).block();
+            SendPaymentOutcomeV2Response outcomeResponse = this.basePaymentService.sendPaymentOutcomeV2(req);
             if (outcomeResponse == null) {
                 log.error("[{}] Null response from the node sendPaymentOutcomeV2 service", ErrorCode.ERROR_CALLING_NODE_SOAP_SERVICES);
                 throw new ResponseStatusException(

@@ -45,12 +45,12 @@ public class FeeCalculatorService {
         log.debug("getFee - Input parameters: {}, body {}", headers, getFeeRequest);
 
         try {
-            PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.FEE).block();
+            PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.FEE);
             GecGetFeesRequest gecGetFeeRequest = createGecGetFeeRequest(getFeeRequest, pspConf.getPsp(), headers.getChannel());
 
             log.debug("Calling GEC service: requestId {}, body {}", headers.getRequestId(), gecGetFeeRequest);
 
-            GetFeeResponse response = this.basePaymentService.getFees(headers.getRequestId(), gecGetFeeRequest).block();
+            GetFeeResponse response = this.basePaymentService.getFees(headers.getRequestId(), gecGetFeeRequest);
 
             log.debug("getFee - Response: {}", response);
             return ResponseEntity.status(HttpStatus.OK).body(response);

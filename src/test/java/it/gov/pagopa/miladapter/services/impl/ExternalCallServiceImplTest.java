@@ -1,4 +1,4 @@
-package it.gov.pagopa.miladapter.services;
+package it.gov.pagopa.miladapter.services.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -15,7 +15,6 @@ import it.gov.pagopa.miladapter.enums.FlowValues;
 import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
-import it.gov.pagopa.miladapter.services.impl.*;
 import it.gov.pagopa.miladapter.services.model.ActivatePaymentNoticeResponse;
 import it.gov.pagopa.miladapter.services.model.GetFeeResponse;
 import it.gov.pagopa.miladapter.services.model.VerifyPaymentNoticeResponse;
@@ -34,7 +33,7 @@ import org.springframework.web.client.RestTemplate;
 
 class ExternalCallServiceImplTest {
 
-  private ExternalCallServiceNewImpl spyExternalCallService;
+  private ExternalCallService spyExternalCallService;
   private RestTemplate restTemplate;
   private RestConfigurationProperties restConfigurationProperties;
   private Map<String, Object> testVariables;
@@ -72,7 +71,7 @@ class ExternalCallServiceImplTest {
 
     // Use real implementation and inject mocked dependencies
     spyExternalCallService =
-        new ExternalCallServiceNewImpl(
+        new ExternalCallService(
             restConfigurationProperties,
             restTemplate,
             objectMapper,
@@ -248,9 +247,9 @@ class ExternalCallServiceImplTest {
           NoSuchFieldException,
           IllegalAccessException {
     // Create spy only for this test where we need to mock prepareUri
-    ExternalCallServiceNewImpl spyService =
+    ExternalCallService spyService =
         Mockito.spy(
-            new ExternalCallServiceNewImpl(
+            new ExternalCallService(
                 restConfigurationProperties,
                 restTemplate,
                 objectMapper,
@@ -283,9 +282,9 @@ class ExternalCallServiceImplTest {
           NoSuchFieldException,
           IllegalAccessException {
     // Create spy only for this test where we need to mock prepareUri
-    ExternalCallServiceNewImpl spyService =
+    ExternalCallService spyService =
         Mockito.spy(
-            new ExternalCallServiceNewImpl(
+            new ExternalCallService(
                 restConfigurationProperties,
                 restTemplate,
                 objectMapper,
@@ -318,9 +317,9 @@ class ExternalCallServiceImplTest {
           JsonProcessingException,
           NoSuchFieldException,
           IllegalAccessException {
-    ExternalCallServiceNewImpl spyService =
+    ExternalCallService spyService =
         Mockito.spy(
-            new ExternalCallServiceNewImpl(
+            new ExternalCallService(
                 restConfigurationProperties,
                 restTemplate,
                 objectMapper,

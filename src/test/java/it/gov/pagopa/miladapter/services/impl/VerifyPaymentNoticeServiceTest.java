@@ -1,4 +1,4 @@
-package it.gov.pagopa.miladapter.services;
+package it.gov.pagopa.miladapter.services.impl;
 
 import static it.gov.pagopa.miladapter.util.PaymentTestData.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -7,8 +7,6 @@ import static org.mockito.Mockito.*;
 
 import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.model.QrCode;
-import it.gov.pagopa.miladapter.services.impl.BasePaymentService;
-import it.gov.pagopa.miladapter.services.impl.VerifyPaymentNoticeService;
 import it.gov.pagopa.miladapter.services.model.VerifyPaymentNoticeResponse;
 import it.gov.pagopa.miladapter.util.ErrorCode;
 import it.gov.pagopa.miladapter.util.NodeApi;
@@ -41,7 +39,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Mono;
 
 @ExtendWith(MockitoExtension.class)
 class VerifyPaymentNoticeServiceTest {
@@ -128,9 +125,9 @@ class VerifyPaymentNoticeServiceTest {
     // Arrange
     when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
     when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
-        .thenReturn(Mono.just(pspConfiguration));
+        .thenReturn(pspConfiguration);
     when(basePaymentService.verifyPaymentNotice(any(VerifyPaymentNoticeReq.class)))
-        .thenReturn(Mono.just(verifyPaymentNoticeResOk));
+        .thenReturn(verifyPaymentNoticeResOk);
 
     // Act
     ResponseEntity<VerifyPaymentNoticeResponse> response =
@@ -176,9 +173,9 @@ class VerifyPaymentNoticeServiceTest {
     // Arrange
     when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
     when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
-        .thenReturn(Mono.just(pspConfiguration));
+        .thenReturn(pspConfiguration);
     when(basePaymentService.verifyPaymentNotice(any(VerifyPaymentNoticeReq.class)))
-        .thenReturn(Mono.just(generateKoNodeResponse(faultCode, originalFaultCode)));
+        .thenReturn(generateKoNodeResponse(faultCode, originalFaultCode));
     when(basePaymentService.remapNodeFaultToOutcome(faultCode, originalFaultCode))
         .thenReturn(milOutcome);
 
@@ -202,9 +199,9 @@ class VerifyPaymentNoticeServiceTest {
     // Arrange
     when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
     when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
-        .thenReturn(Mono.just(pspConfiguration));
+        .thenReturn(pspConfiguration);
     when(basePaymentService.verifyPaymentNotice(any(VerifyPaymentNoticeReq.class)))
-        .thenReturn(Mono.error(new RuntimeException("Node error")));
+        .thenThrow(new RuntimeException("Node error"));
 
     // Act & Assert
     ResponseStatusException exception =
@@ -222,9 +219,9 @@ class VerifyPaymentNoticeServiceTest {
     // Arrange
     when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
     when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
-        .thenReturn(Mono.just(pspConfiguration));
+        .thenReturn(pspConfiguration);
     when(basePaymentService.verifyPaymentNotice(any(VerifyPaymentNoticeReq.class)))
-        .thenReturn(Mono.empty());
+        .thenReturn(null);
 
     // Act & Assert
     ResponseStatusException exception =
@@ -241,9 +238,9 @@ class VerifyPaymentNoticeServiceTest {
   void testVerifyByTaxCodeAndNoticeNumber_Success() {
     // Arrange
     when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
-        .thenReturn(Mono.just(pspConfiguration));
+        .thenReturn(pspConfiguration);
     when(basePaymentService.verifyPaymentNotice(any(VerifyPaymentNoticeReq.class)))
-        .thenReturn(Mono.just(verifyPaymentNoticeResOk));
+        .thenReturn(verifyPaymentNoticeResOk);
 
     // Act
     ResponseEntity<VerifyPaymentNoticeResponse> response =
@@ -272,9 +269,9 @@ class VerifyPaymentNoticeServiceTest {
     String expectedOutcome = "WRONG_NOTICE_DATA";
 
     when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
-        .thenReturn(Mono.just(pspConfiguration));
+        .thenReturn(pspConfiguration);
     when(basePaymentService.verifyPaymentNotice(any(VerifyPaymentNoticeReq.class)))
-        .thenReturn(Mono.just(generateKoNodeResponse(faultCode, originalFaultCode)));
+        .thenReturn(generateKoNodeResponse(faultCode, originalFaultCode));
     when(basePaymentService.remapNodeFaultToOutcome(faultCode, originalFaultCode))
         .thenReturn(expectedOutcome);
 
@@ -295,9 +292,9 @@ class VerifyPaymentNoticeServiceTest {
   void testVerifyByTaxCodeAndNoticeNumber_NodeError() {
     // Arrange
     when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
-        .thenReturn(Mono.just(pspConfiguration));
+        .thenReturn(pspConfiguration);
     when(basePaymentService.verifyPaymentNotice(any(VerifyPaymentNoticeReq.class)))
-        .thenReturn(Mono.error(new RuntimeException("Node connection error")));
+        .thenThrow(new RuntimeException("Node connection error"));
 
     // Act & Assert
     ResponseStatusException exception =

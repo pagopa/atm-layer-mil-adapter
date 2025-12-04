@@ -55,8 +55,7 @@ public class VerifyPaymentNoticeService {
 		log.debug("Decoded qrCode: {}", parsedQrCode);
 
         // TODO remove retrievePSPConfiguration call, static initialization of pspConf
-		PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.VERIFY)
-				.block();
+		PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.VERIFY);
 
 		return callNodeVerifyPaymentNotice(parsedQrCode.getPaTaxCode(), parsedQrCode.getNoticeNumber(), pspConf);
 	}
@@ -81,8 +80,7 @@ public class VerifyPaymentNoticeService {
 		log.debug("verifyByTaxCodeAndNoticeNumber - Input parameters: {}, paTaxCode: {}, noticeNumber: {}", headers, paTaxCode, noticeNumber);
 
         // TODO remove retrievePSPConfiguration call, static initialization of pspConf
-		PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.VERIFY)
-				.block();
+		PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.VERIFY);
 
 		return callNodeVerifyPaymentNotice(paTaxCode, noticeNumber, pspConf);
 	}
@@ -100,8 +98,7 @@ public class VerifyPaymentNoticeService {
         final VerifyPaymentNoticeReq verifyPaymentNoticeReq = getVerifyPaymentNoticeReq(paTaxCode, noticeNumber, pspConfiguration);
 
         try {
-			VerifyPaymentNoticeRes nodeResponse = this.basePaymentService.verifyPaymentNotice(verifyPaymentNoticeReq)
-					.block();
+			VerifyPaymentNoticeRes nodeResponse = this.basePaymentService.verifyPaymentNotice(verifyPaymentNoticeReq);
 
 			VerifyPaymentNoticeResponse verifyPaymentNoticeResponse;
 			if (nodeResponse != null && StOutcome.OK.name().equals(nodeResponse.getOutcome().name())) {
@@ -163,7 +160,7 @@ public class VerifyPaymentNoticeService {
 		verifyResponse.setOffice(response.getOfficeName());
 		// only the first element of the payment list is returned
 		if (response.getPaymentList().getPaymentOptionDescription() != null) {
-			CtPaymentOptionDescription paymentOptionDescription = response.getPaymentList().getPaymentOptionDescription().get(0);
+			CtPaymentOptionDescription paymentOptionDescription = response.getPaymentList().getPaymentOptionDescription().getFirst();
 			log.debug("Node verifyPaymentNotice responded with , {}",
 					NodeForPspLoggingUtil.toString(paymentOptionDescription));
 			// conversion from euro to euro cents

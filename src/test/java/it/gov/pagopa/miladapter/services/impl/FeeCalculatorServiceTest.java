@@ -1,4 +1,4 @@
-package it.gov.pagopa.miladapter.services;
+package it.gov.pagopa.miladapter.services.impl;
 
 import static it.gov.pagopa.miladapter.util.PaymentTestData.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,8 +9,6 @@ import static org.mockito.Mockito.*;
 import it.gov.pagopa.miladapter.client.model.GecGetFeesRequest;
 import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.properties.GecProperties;
-import it.gov.pagopa.miladapter.services.impl.BasePaymentService;
-import it.gov.pagopa.miladapter.services.impl.FeeCalculatorService;
 import it.gov.pagopa.miladapter.services.model.GetFeeRequest;
 import it.gov.pagopa.miladapter.services.model.GetFeeResponse;
 import it.gov.pagopa.miladapter.services.model.Notice;
@@ -32,7 +30,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Mono;
 
 @ExtendWith(MockitoExtension.class)
 class FeeCalculatorServiceTest {
@@ -85,9 +82,9 @@ class FeeCalculatorServiceTest {
     void testGetFee_Success() {
         // Arrange
         when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.FEE))
-                .thenReturn(Mono.just(pspConfiguration));
+                .thenReturn(pspConfiguration);
         when(basePaymentService.getFees(eq(commonHeader.getRequestId()), any(GecGetFeesRequest.class)))
-                .thenReturn(Mono.just(getFeeResponse));
+                .thenReturn(getFeeResponse);
 
         // Act
         ResponseEntity<GetFeeResponse> response = feeCalculatorService.getFee(commonHeader, getFeeRequest);
@@ -110,10 +107,10 @@ class FeeCalculatorServiceTest {
         assertEquals("CP", capturedRequest.getPaymentMethod());
         assertEquals("ATM", capturedRequest.getTouchpoint());
         assertEquals(1, capturedRequest.getIdPspList().size());
-        assertEquals(PSP_ID, capturedRequest.getIdPspList().get(0).getIdPsp());
+        assertEquals(PSP_ID, capturedRequest.getIdPspList().getFirst().getIdPsp());
         assertEquals(1, capturedRequest.getTransferList().size());
-        assertEquals(PA_TAX_CODE, capturedRequest.getTransferList().get(0).getCreditorInstitution());
-        assertEquals("KTM", capturedRequest.getTransferList().get(0).getTransferCategory());
+        assertEquals(PA_TAX_CODE, capturedRequest.getTransferList().getFirst().getCreditorInstitution());
+        assertEquals("KTM", capturedRequest.getTransferList().getFirst().getTransferCategory());
     }
 
     @Test
@@ -128,9 +125,9 @@ class FeeCalculatorServiceTest {
         when(gecProperties.getPaymentmethod()).thenReturn(paymentMethod);
 
         when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.FEE))
-                .thenReturn(Mono.just(pspConfiguration));
+                .thenReturn(pspConfiguration);
         when(basePaymentService.getFees(eq(commonHeader.getRequestId()), any(GecGetFeesRequest.class)))
-                .thenReturn(Mono.just(getFeeResponse));
+                .thenReturn(getFeeResponse);
 
         // Act
         ResponseEntity<GetFeeResponse> response = feeCalculatorService.getFee(commonHeader, getFeeRequest);
@@ -156,9 +153,9 @@ class FeeCalculatorServiceTest {
         when(gecProperties.getTouchpoint()).thenReturn(touchpoint);
 
         when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.FEE))
-                .thenReturn(Mono.just(pspConfiguration));
+                .thenReturn(pspConfiguration);
         when(basePaymentService.getFees(eq(commonHeader.getRequestId()), any(GecGetFeesRequest.class)))
-                .thenReturn(Mono.just(getFeeResponse));
+                .thenReturn(getFeeResponse);
 
         // Act
         ResponseEntity<GetFeeResponse> response = feeCalculatorService.getFee(commonHeader, getFeeRequest);
@@ -188,9 +185,9 @@ class FeeCalculatorServiceTest {
         getFeeRequest.setNotices(List.of(notice));
 
         when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.FEE))
-                .thenReturn(Mono.just(pspConfiguration));
+                .thenReturn(pspConfiguration);
         when(basePaymentService.getFees(eq(commonHeader.getRequestId()), any(GecGetFeesRequest.class)))
-                .thenReturn(Mono.just(getFeeResponse));
+                .thenReturn(getFeeResponse);
 
         // Act
         ResponseEntity<GetFeeResponse> response = feeCalculatorService.getFee(commonHeader, getFeeRequest);
@@ -201,7 +198,7 @@ class FeeCalculatorServiceTest {
 
         ArgumentCaptor<GecGetFeesRequest> captorGecRequest = ArgumentCaptor.forClass(GecGetFeesRequest.class);
         verify(basePaymentService).getFees(eq(commonHeader.getRequestId()), captorGecRequest.capture());
-        assertNull(captorGecRequest.getValue().getTransferList().get(0).getTransferCategory());
+        assertNull(captorGecRequest.getValue().getTransferList().getFirst().getTransferCategory());
     }
 
     @Test
@@ -210,9 +207,9 @@ class FeeCalculatorServiceTest {
         getFeeRequest.setPaymentMethod(null);
 
         when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.FEE))
-                .thenReturn(Mono.just(pspConfiguration));
+                .thenReturn(pspConfiguration);
         when(basePaymentService.getFees(eq(commonHeader.getRequestId()), any(GecGetFeesRequest.class)))
-                .thenReturn(Mono.just(getFeeResponse));
+                .thenReturn(getFeeResponse);
 
         // Act
         ResponseEntity<GetFeeResponse> response = feeCalculatorService.getFee(commonHeader, getFeeRequest);
@@ -230,9 +227,9 @@ class FeeCalculatorServiceTest {
     void testGetFee_ConfigurationError() {
         // Arrange
         when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.FEE))
-                .thenReturn(Mono.error(new ResponseStatusException(
+                .thenThrow(new ResponseStatusException(
                         HttpStatus.INTERNAL_SERVER_ERROR,
-                        "Configuration error")));
+                        "Configuration error"));
 
         // Act & Assert
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () ->
@@ -247,11 +244,11 @@ class FeeCalculatorServiceTest {
     void testGetFee_GecServiceError() {
         // Arrange
         when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.FEE))
-                .thenReturn(Mono.just(pspConfiguration));
+                .thenReturn(pspConfiguration);
         when(basePaymentService.getFees(eq(commonHeader.getRequestId()), any(GecGetFeesRequest.class)))
-                .thenReturn(Mono.error(new ResponseStatusException(
+                .thenThrow(new ResponseStatusException(
                         HttpStatus.INTERNAL_SERVER_ERROR,
-                        FeeCalculatorErrorCode.ERROR_RETRIEVING_FEES)));
+                        FeeCalculatorErrorCode.ERROR_RETRIEVING_FEES));
 
         // Act & Assert
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () ->
@@ -267,11 +264,11 @@ class FeeCalculatorServiceTest {
     void testGetFee_NoFeeFound() {
         // Arrange - BasePaymentService returns error for no fee found
         when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.FEE))
-                .thenReturn(Mono.just(pspConfiguration));
+                .thenReturn(pspConfiguration);
         when(basePaymentService.getFees(eq(commonHeader.getRequestId()), any(GecGetFeesRequest.class)))
-                .thenReturn(Mono.error(new ResponseStatusException(
+                .thenThrow(new ResponseStatusException(
                         HttpStatus.INTERNAL_SERVER_ERROR,
-                        FeeCalculatorErrorCode.NO_FEE_FOUND)));
+                        FeeCalculatorErrorCode.NO_FEE_FOUND));
 
         // Act & Assert
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () ->
@@ -287,9 +284,9 @@ class FeeCalculatorServiceTest {
     void testGetFee_UnexpectedException() {
         // Arrange
         when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.FEE))
-                .thenReturn(Mono.just(pspConfiguration));
+                .thenReturn(pspConfiguration);
         when(basePaymentService.getFees(eq(commonHeader.getRequestId()), any(GecGetFeesRequest.class)))
-                .thenReturn(Mono.error(new RuntimeException("Unexpected error")));
+                .thenThrow(new RuntimeException("Unexpected error"));
 
         // Act & Assert
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () ->
@@ -321,9 +318,9 @@ class FeeCalculatorServiceTest {
         getFeeRequest.setNotices(List.of(notice));
 
         when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.FEE))
-                .thenReturn(Mono.just(pspConfiguration));
+                .thenReturn(pspConfiguration);
         when(basePaymentService.getFees(eq(commonHeader.getRequestId()), any(GecGetFeesRequest.class)))
-                .thenReturn(Mono.just(getFeeResponse));
+                .thenReturn(getFeeResponse);
 
         // Act
         ResponseEntity<GetFeeResponse> response = feeCalculatorService.getFee(commonHeader, getFeeRequest);

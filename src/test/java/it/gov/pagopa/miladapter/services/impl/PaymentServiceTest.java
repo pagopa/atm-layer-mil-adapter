@@ -1,4 +1,4 @@
-package it.gov.pagopa.miladapter.services;
+package it.gov.pagopa.miladapter.services.impl;
 
 import static it.gov.pagopa.miladapter.util.PaymentTestData.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -6,8 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import it.gov.pagopa.miladapter.model.PspConfiguration;
-import it.gov.pagopa.miladapter.services.impl.BasePaymentService;
-import it.gov.pagopa.miladapter.services.impl.PaymentService;
 import it.gov.pagopa.miladapter.services.model.ClosePaymentRequest;
 import it.gov.pagopa.miladapter.services.model.ClosePaymentResponse;
 import it.gov.pagopa.miladapter.util.ErrorCode;
@@ -28,7 +26,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Mono;
 
 @ExtendWith(MockitoExtension.class)
 class PaymentServiceTest {
@@ -69,9 +66,9 @@ class PaymentServiceTest {
     @Test
     void testSendPaymentOutcome_Success_OutcomeClose() {
         when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
-                .thenReturn(Mono.just(pspConfiguration));
+                .thenReturn(pspConfiguration);
         when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
-                .thenReturn(Mono.just(sendPaymentOutcomeV2Response));
+                .thenReturn(sendPaymentOutcomeV2Response);
 
         ResponseEntity<ClosePaymentResponse> response =
                 paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestOk);
@@ -98,9 +95,9 @@ class PaymentServiceTest {
     @Test
     void testSendPaymentOutcome_Success_OutcomeError() {
         when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
-                .thenReturn(Mono.just(pspConfiguration));
+                .thenReturn(pspConfiguration);
         when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
-                .thenReturn(Mono.just(sendPaymentOutcomeV2Response));
+                .thenReturn(sendPaymentOutcomeV2Response);
 
         ResponseEntity<ClosePaymentResponse> response =
                 paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestKo);
@@ -122,9 +119,9 @@ class PaymentServiceTest {
         closePaymentRequestOk.setPaymentTokens(multipleTokens);
 
         when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
-                .thenReturn(Mono.just(pspConfiguration));
+                .thenReturn(pspConfiguration);
         when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
-                .thenReturn(Mono.just(sendPaymentOutcomeV2Response));
+                .thenReturn(sendPaymentOutcomeV2Response);
 
         ResponseEntity<ClosePaymentResponse> response =
                 paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestOk);
@@ -144,9 +141,9 @@ class PaymentServiceTest {
     @Test
     void testSendPaymentOutcome_ConfigurationError() {
         when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
-                .thenReturn(Mono.error(new ResponseStatusException(
+                .thenThrow(new ResponseStatusException(
                         HttpStatus.INTERNAL_SERVER_ERROR,
-                        "Configuration error")));
+                        "Configuration error"));
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () ->
                 paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestOk)
@@ -159,9 +156,9 @@ class PaymentServiceTest {
     @Test
     void testSendPaymentOutcome_NodeError() {
         when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
-                .thenReturn(Mono.just(pspConfiguration));
+                .thenReturn(pspConfiguration);
         when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
-                .thenReturn(Mono.error(new RuntimeException("Node connection error")));
+                .thenThrow(new RuntimeException("Node connection error"));
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () ->
                 paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestOk)
@@ -175,9 +172,9 @@ class PaymentServiceTest {
     @Test
     void testSendPaymentOutcome_NodeReturnsNull() {
         when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
-                .thenReturn(Mono.just(pspConfiguration));
+                .thenReturn(pspConfiguration);
         when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
-                .thenReturn(Mono.empty());
+                .thenReturn(null);
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () ->
                 paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestOk)
@@ -191,7 +188,7 @@ class PaymentServiceTest {
     @Test
     void testSendPaymentOutcome_NodeThrowsException() {
         when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
-                .thenReturn(Mono.just(pspConfiguration));
+                .thenReturn(pspConfiguration);
         when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
                 .thenThrow(new RuntimeException("Unexpected error"));
 
@@ -213,9 +210,9 @@ class PaymentServiceTest {
         customPspConfig.setPassword("CUSTOM_PASSWORD");
 
         when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
-                .thenReturn(Mono.just(customPspConfig));
+                .thenReturn(customPspConfig);
         when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
-                .thenReturn(Mono.just(sendPaymentOutcomeV2Response));
+                .thenReturn(sendPaymentOutcomeV2Response);
 
         paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestOk);
 

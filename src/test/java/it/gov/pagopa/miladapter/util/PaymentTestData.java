@@ -23,6 +23,7 @@ public final class PaymentTestData {
     public static final String IDEMPOTENCY_KEY = "key-123456";
     public static final String TRANSACTION_ID = "550e8400e29b41d4a716446655440000";
     public static final String PAYMENT_TOKEN = "a3b4c5d6e7f8g9h0";
+    public static final String TERMINAL_ID = "0aB9wXyZ";
 
     public static Map<String, String> getMilHeaders(boolean isPos, boolean isKnownAcquirer) {
         Map<String, String> headerMap = new HashMap<>();

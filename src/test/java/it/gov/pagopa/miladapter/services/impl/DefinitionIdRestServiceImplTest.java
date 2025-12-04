@@ -1,10 +1,9 @@
-package it.gov.pagopa.miladapter.services;
+package it.gov.pagopa.miladapter.services.impl;
 
 import it.gov.pagopa.miladapter.model.AuthParameters;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.DefinitionIdProperties;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
-import it.gov.pagopa.miladapter.services.impl.DefinitionIdRestServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
