@@ -76,7 +76,7 @@ public class BasePaymentService {
 	 * @return a {@link VerifyPaymentNoticeRes} with the response from the node
 	 */
 	public VerifyPaymentNoticeRes verifyPaymentNotice(VerifyPaymentNoticeReq verifyPaymentNoticeReq) {
-		return nodeWrapper.verifyPaymentNotice(verifyPaymentNoticeReq).block();
+		return nodeWrapper.verifyPaymentNotice(verifyPaymentNoticeReq);
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class BasePaymentService {
 	 * @return an {@link ActivatePaymentNoticeV2Response} with the response from the node
 	 */
 	public ActivatePaymentNoticeV2Response activatePaymentNoticeV2(ActivatePaymentNoticeV2Request activatePaymentNoticeV2Request) {
-		return nodeWrapper.activatePaymentNoticeV2Async(activatePaymentNoticeV2Request).block();
+		return nodeWrapper.activatePaymentNoticeV2(activatePaymentNoticeV2Request);
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class BasePaymentService {
 	 * @return a {@link SendPaymentOutcomeV2Response} with the response from the node
 	 */
 	public SendPaymentOutcomeV2Response sendPaymentOutcomeV2(SendPaymentOutcomeV2Request sendPaymentOutcomeV2Request) {
-		return nodeWrapper.sendPaymentOutcomeV2Async(sendPaymentOutcomeV2Request).block();
+		return nodeWrapper.sendPaymentOutcomeV2(sendPaymentOutcomeV2Request);
 	}
 
 	/**

@@ -8,11 +8,9 @@ import it.gov.pagopa.pagopa_api.node.nodeforpsp.VerifyPaymentNoticeReq;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.VerifyPaymentNoticeRes;
 import it.gov.pagopa.pagopa_api.nodeforpsp.NodeForPsp;
 import jakarta.annotation.PostConstruct;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
@@ -21,10 +19,9 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 /**
- * Bean wrapping the async interfaces of the generated CXF SOAP client, and returning their Mono version
+ * Bean wrapping the interfaces of the generated CXF SOAP client
  */
 @Service
 @Slf4j
@@ -55,60 +52,30 @@ public class NodeForPspWrapper {
     }
 
     /**
-     * Wrapper method of the async verifyPaymentNotice interface, returning its response as a Mono
+     * Wrapper method of verifyPaymentNotice interface
      * @param verifyPaymentNoticeReq the request to be serialized and passed to the node
-     * @return a {@link Mono} emitting the response of the SOAP service
+     * @return a {@link VerifyPaymentNoticeRes} containing the response of the SOAP service
      */
-    public Mono<VerifyPaymentNoticeRes> verifyPaymentNotice(VerifyPaymentNoticeReq verifyPaymentNoticeReq) {
-        return Mono.fromFuture(() -> {
-            CompletableFuture<VerifyPaymentNoticeRes> future = new CompletableFuture<>();
-            nodeForPsp.verifyPaymentNoticeAsync(verifyPaymentNoticeReq, res -> {
-                try {
-                    future.complete(res.get());
-                } catch (Exception e) {
-                    future.completeExceptionally(e);
-                }
-            });
-            return future;
-        });
+    public VerifyPaymentNoticeRes verifyPaymentNotice(VerifyPaymentNoticeReq verifyPaymentNoticeReq) {
+        return nodeForPsp.verifyPaymentNotice(verifyPaymentNoticeReq);
     }
 
     /**
-     * Wrapper method of the async activatePaymentNotice interface, returning its response as a Mono
+     * Wrapper method of the activatePaymentNotice interface
      * @param activatePaymentNoticeV2Request the request to be serialized and passed to the node
-     * @return a {@link Mono} emitting the response of the SOAP service
+     * @return a {@link ActivatePaymentNoticeV2Response} containing the response of the SOAP service
      */
-    public Mono<ActivatePaymentNoticeV2Response> activatePaymentNoticeV2Async(ActivatePaymentNoticeV2Request activatePaymentNoticeV2Request) {
-        return Mono.fromFuture(() -> {
-            CompletableFuture<ActivatePaymentNoticeV2Response> future = new CompletableFuture<>();
-            nodeForPsp.activatePaymentNoticeV2Async(activatePaymentNoticeV2Request, res -> {
-                try {
-                    future.complete(res.get());
-                } catch (Exception e) {
-                    future.completeExceptionally(e);
-                }
-            });
-            return future;
-        });
+    public ActivatePaymentNoticeV2Response activatePaymentNoticeV2(ActivatePaymentNoticeV2Request activatePaymentNoticeV2Request) {
+        return nodeForPsp.activatePaymentNoticeV2(activatePaymentNoticeV2Request);
     }
     
     /**
-     * Wrapper method of the async sendPaymentOutcome interface, returning its response as a Mono
+     * Wrapper method of the sendPaymentOutcome interface
      * @param req the request to be serialized and passed to the node
-     * @return a {@link Mono} emitting the response of the SOAP service
+     * @return a {@link SendPaymentOutcomeV2Response} containing the response of the SOAP service
      */
-    public Mono<SendPaymentOutcomeV2Response> sendPaymentOutcomeV2Async(SendPaymentOutcomeV2Request req) {
-        return Mono.fromFuture(() -> {
-            CompletableFuture<SendPaymentOutcomeV2Response> future = new CompletableFuture<>();
-            nodeForPsp.sendPaymentOutcomeV2Async(req, res -> {
-                try {
-                    future.complete(res.get());
-                } catch (Exception e) {
-                    future.completeExceptionally(e);
-                }
-            });
-            return future;
-        });
+    public SendPaymentOutcomeV2Response sendPaymentOutcomeV2(SendPaymentOutcomeV2Request req) {
+        return nodeForPsp.sendPaymentOutcomeV2(req);
     }
 
     /**
@@ -127,7 +94,7 @@ public class NodeForPspWrapper {
 
         if (apimSubscriptionKey != null && !apimSubscriptionKey.isEmpty()) {
             Map<String, List<String>> headers = new HashMap<>();
-            headers.put("Ocp-Apim-Subscription-Key", Arrays.asList(apimSubscriptionKey));
+            headers.put("Ocp-Apim-Subscription-Key", List.of(apimSubscriptionKey));
             client.getRequestContext().put(Message.PROTOCOL_HEADERS, headers);
         }
     }

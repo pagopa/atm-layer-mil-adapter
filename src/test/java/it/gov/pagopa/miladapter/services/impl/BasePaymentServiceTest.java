@@ -107,7 +107,7 @@ class BasePaymentServiceTest {
     VerifyPaymentNoticeRes expectedResponse = new VerifyPaymentNoticeRes();
     expectedResponse.setOutcome(StOutcome.OK);
 
-    when(nodeWrapper.verifyPaymentNotice(request)).thenReturn(Mono.just(expectedResponse));
+    when(nodeWrapper.verifyPaymentNotice(request)).thenReturn(expectedResponse);
 
     VerifyPaymentNoticeRes result = basePaymentService.verifyPaymentNotice(request);
 
@@ -123,7 +123,7 @@ class BasePaymentServiceTest {
     VerifyPaymentNoticeReq request = new VerifyPaymentNoticeReq();
     RuntimeException exception = new RuntimeException("Node error");
 
-    when(nodeWrapper.verifyPaymentNotice(request)).thenReturn(Mono.error(exception));
+    when(nodeWrapper.verifyPaymentNotice(request)).thenThrow(exception);
 
     RuntimeException thrown =
         assertThrows(
@@ -142,7 +142,7 @@ class BasePaymentServiceTest {
     ActivatePaymentNoticeV2Response expectedResponse = new ActivatePaymentNoticeV2Response();
     expectedResponse.setOutcome(StOutcome.OK);
 
-    when(nodeWrapper.activatePaymentNoticeV2Async(request)).thenReturn(Mono.just(expectedResponse));
+    when(nodeWrapper.activatePaymentNoticeV2(request)).thenReturn(expectedResponse);
 
     ActivatePaymentNoticeV2Response result =
         basePaymentService.activatePaymentNoticeV2(request);
@@ -150,7 +150,7 @@ class BasePaymentServiceTest {
     assertNotNull(result);
     assertEquals(expectedResponse, result);
     assertEquals(StOutcome.OK, result.getOutcome());
-    verify(nodeWrapper).activatePaymentNoticeV2Async(request);
+    verify(nodeWrapper).activatePaymentNoticeV2(request);
   }
 
   @Test
@@ -159,7 +159,7 @@ class BasePaymentServiceTest {
     ActivatePaymentNoticeV2Request request = new ActivatePaymentNoticeV2Request();
     RuntimeException exception = new RuntimeException("Activation error");
 
-    when(nodeWrapper.activatePaymentNoticeV2Async(request)).thenReturn(Mono.error(exception));
+    when(nodeWrapper.activatePaymentNoticeV2(request)).thenThrow(exception);
 
     RuntimeException thrown =
         assertThrows(
@@ -167,7 +167,7 @@ class BasePaymentServiceTest {
             () -> basePaymentService.activatePaymentNoticeV2(request));
 
     assertEquals("Activation error", thrown.getMessage());
-    verify(nodeWrapper).activatePaymentNoticeV2Async(request);
+    verify(nodeWrapper).activatePaymentNoticeV2(request);
   }
 
   // ==================== sendPaymentOutcomeV2 Tests ====================
@@ -179,14 +179,14 @@ class BasePaymentServiceTest {
     SendPaymentOutcomeV2Response expectedResponse = new SendPaymentOutcomeV2Response();
     expectedResponse.setOutcome(StOutcome.OK);
 
-    when(nodeWrapper.sendPaymentOutcomeV2Async(request)).thenReturn(Mono.just(expectedResponse));
+    when(nodeWrapper.sendPaymentOutcomeV2(request)).thenReturn(expectedResponse);
 
     SendPaymentOutcomeV2Response result = basePaymentService.sendPaymentOutcomeV2(request);
 
     assertNotNull(result);
     assertEquals(expectedResponse, result);
     assertEquals(StOutcome.OK, result.getOutcome());
-    verify(nodeWrapper).sendPaymentOutcomeV2Async(request);
+    verify(nodeWrapper).sendPaymentOutcomeV2(request);
   }
 
   @Test
@@ -195,14 +195,14 @@ class BasePaymentServiceTest {
     SendPaymentOutcomeV2Request request = new SendPaymentOutcomeV2Request();
     RuntimeException exception = new RuntimeException("Send outcome error");
 
-    when(nodeWrapper.sendPaymentOutcomeV2Async(request)).thenReturn(Mono.error(exception));
+    when(nodeWrapper.sendPaymentOutcomeV2(request)).thenThrow(exception);
 
     RuntimeException thrown =
         assertThrows(
             RuntimeException.class, () -> basePaymentService.sendPaymentOutcomeV2(request));
 
     assertEquals("Send outcome error", thrown.getMessage());
-    verify(nodeWrapper).sendPaymentOutcomeV2Async(request);
+    verify(nodeWrapper).sendPaymentOutcomeV2(request);
   }
 
   // ==================== getFees Tests ====================
