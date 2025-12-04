@@ -33,7 +33,7 @@ import org.springframework.web.client.RestTemplate;
 
 class ExternalCallServiceImplTest {
 
-  private ExternalCallService spyExternalCallService;
+  private ExternalCallServiceImpl spyExternalCallServiceImpl;
   private RestTemplate restTemplate;
   private RestConfigurationProperties restConfigurationProperties;
   private Map<String, Object> testVariables;
@@ -70,8 +70,8 @@ class ExternalCallServiceImplTest {
     when(span.setAttribute(any(String.class), anyLong())).thenReturn(span);
 
     // Use real implementation and inject mocked dependencies
-    spyExternalCallService =
-        new ExternalCallService(
+    spyExternalCallServiceImpl =
+        new ExternalCallServiceImpl(
             restConfigurationProperties,
             restTemplate,
             objectMapper,
@@ -81,7 +81,7 @@ class ExternalCallServiceImplTest {
             paymentService);
 
     // Set the tracer using reflection
-    setPrivateField(spyExternalCallService, "tracer", tracer);
+    setPrivateField(spyExternalCallServiceImpl, "tracer", tracer);
 
     when(restConfigurationProperties.getMilBasePath()).thenReturn("http://mil-base-path");
     when(restConfigurationProperties.getIdPayBasePath()).thenReturn("http://idpay-base-path");
@@ -118,7 +118,7 @@ class ExternalCallServiceImplTest {
     when(verifyPaymentNoticeService.verifyByQrCode(any(), eq(QRCODE)))
         .thenReturn(ResponseEntity.ok(mockResponse));
 
-    ResponseEntity<String> result = spyExternalCallService.executeExternalCall(testVariables);
+    ResponseEntity<String> result = spyExternalCallServiceImpl.executeExternalCall(testVariables);
 
     verify(verifyPaymentNoticeService).verifyByQrCode(any(), eq(QRCODE));
     assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -143,7 +143,7 @@ class ExternalCallServiceImplTest {
             any(), eq(PA_TAX_CODE), eq(NOTICE_NUMBER)))
         .thenReturn(ResponseEntity.ok(mockResponse));
     
-    ResponseEntity<String> result = spyExternalCallService.executeExternalCall(testVariables);
+    ResponseEntity<String> result = spyExternalCallServiceImpl.executeExternalCall(testVariables);
 
     verify(verifyPaymentNoticeService)
         .verifyByTaxCodeAndNoticeNumber(any(), eq(PA_TAX_CODE), eq(NOTICE_NUMBER));
@@ -168,7 +168,7 @@ class ExternalCallServiceImplTest {
     when(activatePaymentNoticeService.activateByQrCode(any(), eq(QRCODE), any()))
         .thenReturn(ResponseEntity.ok(mockResponse));
     
-    ResponseEntity<String> result = spyExternalCallService.executeExternalCall(testVariables);
+    ResponseEntity<String> result = spyExternalCallServiceImpl.executeExternalCall(testVariables);
     
     verify(activatePaymentNoticeService).activateByQrCode(any(), eq(QRCODE), any());
     assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -193,7 +193,7 @@ class ExternalCallServiceImplTest {
             any(), eq(PA_TAX_CODE), eq(NOTICE_NUMBER), any()))
         .thenReturn(ResponseEntity.ok(mockResponse));
     
-    ResponseEntity<String> result = spyExternalCallService.executeExternalCall(testVariables);
+    ResponseEntity<String> result = spyExternalCallServiceImpl.executeExternalCall(testVariables);
 
     verify(activatePaymentNoticeService)
         .activateByTaxCodeAndNoticeNumber(any(), eq(PA_TAX_CODE), eq(NOTICE_NUMBER), any());
@@ -214,7 +214,7 @@ class ExternalCallServiceImplTest {
     mockResponse.setFee(1000L);
     when(feeCalculatorService.getFee(any(), any())).thenReturn(ResponseEntity.ok(mockResponse));
 
-    ResponseEntity<String> result = spyExternalCallService.executeExternalCall(testVariables);
+    ResponseEntity<String> result = spyExternalCallServiceImpl.executeExternalCall(testVariables);
 
     verify(feeCalculatorService).getFee(any(), any());
     assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -232,7 +232,7 @@ class ExternalCallServiceImplTest {
       
       when(paymentService.sendPaymentOutcome(any(), any(), any())).thenReturn(ResponseEntity.accepted().build());
 
-      ResponseEntity<String> result = spyExternalCallService.executeExternalCall(testVariables);
+      ResponseEntity<String> result = spyExternalCallServiceImpl.executeExternalCall(testVariables);
       
       verify(paymentService).sendPaymentOutcome(any(), any(), any());
       assertEquals(HttpStatus.ACCEPTED, result.getStatusCode());
@@ -247,9 +247,9 @@ class ExternalCallServiceImplTest {
           NoSuchFieldException,
           IllegalAccessException {
     // Create spy only for this test where we need to mock prepareUri
-    ExternalCallService spyService =
+    ExternalCallServiceImpl spyService =
         Mockito.spy(
-            new ExternalCallService(
+            new ExternalCallServiceImpl(
                 restConfigurationProperties,
                 restTemplate,
                 objectMapper,
@@ -282,9 +282,9 @@ class ExternalCallServiceImplTest {
           NoSuchFieldException,
           IllegalAccessException {
     // Create spy only for this test where we need to mock prepareUri
-    ExternalCallService spyService =
+    ExternalCallServiceImpl spyService =
         Mockito.spy(
-            new ExternalCallService(
+            new ExternalCallServiceImpl(
                 restConfigurationProperties,
                 restTemplate,
                 objectMapper,
@@ -317,9 +317,9 @@ class ExternalCallServiceImplTest {
           JsonProcessingException,
           NoSuchFieldException,
           IllegalAccessException {
-    ExternalCallService spyService =
+    ExternalCallServiceImpl spyService =
         Mockito.spy(
-            new ExternalCallService(
+            new ExternalCallServiceImpl(
                 restConfigurationProperties,
                 restTemplate,
                 objectMapper,
@@ -357,17 +357,17 @@ class ExternalCallServiceImplTest {
     configuration.setEndpoint("endpoint");
     configuration.setPathParams(new HashMap<>());
 
-    URI resultMil = spyExternalCallService.prepareUri(configuration, FlowValues.MIL.getValue());
+    URI resultMil = spyExternalCallServiceImpl.prepareUri(configuration, FlowValues.MIL.getValue());
     assertEquals("http://mil-base-pathendpoint", resultMil.toString());
 
-    URI resultIdPay = spyExternalCallService.prepareUri(configuration, FlowValues.IDPAY.getValue());
+    URI resultIdPay = spyExternalCallServiceImpl.prepareUri(configuration, FlowValues.IDPAY.getValue());
     assertEquals("http://idpay-base-pathendpoint", resultIdPay.toString());
 
-    URI resultAuth = spyExternalCallService.prepareUri(configuration, FlowValues.AUTH.getValue());
+    URI resultAuth = spyExternalCallServiceImpl.prepareUri(configuration, FlowValues.AUTH.getValue());
     assertEquals("http://mil-base-path/auth/token", resultAuth.toString());
 
     try {
-      spyExternalCallService.prepareUri(configuration, "unknown flow");
+      spyExternalCallServiceImpl.prepareUri(configuration, "unknown flow");
     } catch (Exception e) {
       assertEquals("Unrecognised flow: unknown flow", e.getMessage());
     }

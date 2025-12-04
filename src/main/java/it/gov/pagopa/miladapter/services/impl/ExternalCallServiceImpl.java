@@ -11,6 +11,7 @@ import it.gov.pagopa.miladapter.enums.MilValues;
 import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
+import it.gov.pagopa.miladapter.services.ExternalCallService;
 import it.gov.pagopa.miladapter.services.model.ActivatePaymentNoticeRequest;
 import it.gov.pagopa.miladapter.services.model.ClosePaymentRequest;
 import it.gov.pagopa.miladapter.services.model.GetFeeRequest;
@@ -35,8 +36,8 @@ import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Service
-public class ExternalCallService extends GenericRestExternalServiceAbstract
-    implements it.gov.pagopa.miladapter.services.ExternalCallService {
+public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
+    implements ExternalCallService {
 
   private final RestConfigurationProperties restConfigurationProperties;
   private final RestTemplate restTemplate;
@@ -62,7 +63,7 @@ public class ExternalCallService extends GenericRestExternalServiceAbstract
 
   record Route(Pattern pattern, HttpMethod method, Handler handler) {}
 
-  public ExternalCallService(
+  public ExternalCallServiceImpl(
       RestConfigurationProperties restConfigurationProperties,
       RestTemplate restTemplate,
       ObjectMapper objectMapper,
