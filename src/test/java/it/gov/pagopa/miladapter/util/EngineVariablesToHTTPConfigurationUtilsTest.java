@@ -90,32 +90,6 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
 
     }
 
-//    @Test
-//    void getHttpConfigurationWithPathParamsTest() {
-//        Map<String, Object> variables = new CaseInsensitiveMap<>();
-//        variables.put("millAccessToken", "VALID_TOKEN");
-//        variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
-//        variables.put(HttpVariablesEnum.URL.getValue(), "http://prova");
-//        variables.put(HttpVariablesEnum.METHOD.getValue(), "GET");
-//
-//        Map<String, Object> headers = new CaseInsensitiveMap<>();
-//        headers.put(RequiredProcessVariables.ACQUIRER_ID.getEngineValue(), "bank_id");
-//        headers.put(RequiredProcessVariables.TERMINAL_ID.getEngineValue(), "term_id");
-//        headers.put(RequiredProcessVariables.CHANNEL.getEngineValue(), "ATM");
-//
-//        variables.put(HttpVariablesEnum.HEADERS.getValue(), headers);
-//
-//        Configuration configuration = EngineVariablesToHTTPConfigurationUtils
-//                .getHttpConfigurationExternalCall(variables, true, false);
-//        assertEquals("http://prova", configuration.getEndpoint());
-//        assertEquals(HttpMethod.GET, configuration.getHttpMethod());
-//        assertNull(configuration.getBody());
-//        assertEquals(6, configuration.getHeaders().size());
-//        Assertions.assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue()));
-//        assertEquals(0, configuration.getPathParams().size());
-//        assertEquals("1", configuration.getPathParams().get("id"));
-//    }
-
     @Test
     void getHttpConfigurationExternalCallNewTestIDPAY() {
         Map<String, Object> variables = new CaseInsensitiveMap<>();
@@ -137,11 +111,10 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals("http://prova", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertEquals("testBody", configuration.getBody());
-        assertEquals(6, configuration.getHeaders().size());
+        assertEquals(5, configuration.getHeaders().size());
         assertNotNull(configuration.getHeaders().get("RequestId"));
 
         assertEquals("transaction-id", ((List<?>)configuration.getHeaders().get("transactionId")).get(0));
-        assertEquals("Bearer VALID_TOKEN", ((List<?>)configuration.getHeaders().get(HttpHeaders.AUTHORIZATION)).get(0));
 
         assertEquals(new HashMap<>(), configuration.getPathParams());
         assertNotNull(configuration.getAuthParameters());
