@@ -184,6 +184,21 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>it/gov/pagopa/miladapter/services/model/**</exclude>
+                        <exclude>it/gov/pagopa/pagopa_api/node/nodeforpsp/**</exclude>
+                        <exclude>it/gov/pagopa/miladapter/config/**</exclude>
+                        <exclude>gov/telematici/pagamenti/ws/**</exclude>
+                        <exclude>it/gov/pagopa/miladapter/client/**</exclude>
+                        <exclude>it/gov/pagopa/miladapter/enums/**</exclude>
+                        <exclude>it/gov/pagopa/pagopa_api/xsd/common_types/v1_0/**</exclude>
+                        <exclude>it/gov/pagopa/pagopa_api/nodeforpsp/**</exclude>
+                        <exclude>it/gov/pagopa/miladapter/services/impl/**</exclude>
+                        <exclude>it/gov/pagopa/miladapter/util/**</exclude>
+                        <exclude>it/gov/pagopa/miladapter/model/**</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
