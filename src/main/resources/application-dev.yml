@@ -30,6 +30,29 @@ rest-configuration:
     url: /api/v1/model/bpmn/function/{functionType}/bank/{acquirerId}/branch/{branchId}/terminal/{terminalId}
 
 
+# Azure AD Configuration
+azure-auth-api:
+  base-url: ${IDENTITY_ENDPOINT:test_IDENTITY_ENDPOINT}
+  version: 2019-08-01
+  identity: ${AZURE_IDENTITY:test_AZURE_IDENTITY}
+
+# Azure Storage API Configuration
+azure-storage-api:
+  version: 2019-07-07
+
+# MIL REST API Configuration
+mil-rest-api:
+  base-url: ${MIL_REST_API_BASE_URL:test_MIL_REST_API_BASE_URL}
+
+# GEC REST API Configuration
+fees-api:
+  base-url: ${FEES_API_BASE_URL:test_GEC_REST_API_BASE}
+  max-occurrences: 10
+
+ocp:
+  apim:
+    subscription: ${OCP_APIM_SUBSCRIPTION:test}
+
 spring:
   application:
     name: atm-layer-mil-adapter
@@ -39,6 +62,17 @@ spring:
         core-size: ${MIL_ADAPTER_CORE_SIZE:100}
         max-size: ${MIL_ADAPTER_MAX_SIZE:200}
         queue-capacity: ${MIL_ADAPTER_QUEUE_CAPACITY:500}
+  task:
+    execution:
+      pool:
+        core-size: ${MIL_ADAPTER_CORE_SIZE:100}
+        max-size: ${MIL_ADAPTER_MAX_SIZE:200}
+        queue-capacity: ${MIL_ADAPTER_QUEUE_CAPACITY:500}
+  cache:
+    type: caffeine
+    cache-names: cache-role
+    caffeine:
+      spec: expireAfterWrite=1h
 
 #tracing:
 #  url: ${MIL_ADAPTER_TRACING_BACKEND_URL}
@@ -52,8 +86,113 @@ spring:
 
 
 logging:
+  level:
+    root: INFO
+    org.apache.cxf: DEBUG
+    org.apache.cxf.services: DEBUG
   pattern:
     level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
 
 id-pay:
   api-key: ${ID_PAY_API_KEY:test}
+  api-key: ${ID_PAY_API_KEY:test}
+
+# ------------------------------------------------------------------------------
+# Service configurations
+# ------------------------------------------------------------------------------
+paymentnotice:
+  closepayment:
+    retry-after: '30'
+    max-retry: '3'
+    location:
+      base-url: https://mil-d-apim.azure-api.net/mil-payment-notice
+  activatepayment:
+    expiration-time: '30000'
+
+# ------------------------------------------------------------------------------
+# Node error remapping and CXF SOAP client configuration to communicate with Nodo
+# ------------------------------------------------------------------------------
+node:
+  soap-client:
+    endpoint-url: ${SOAP_SERVICE_URL}
+    connect-timeout: ${SOAP_CONNECTION_TIMEOUT:30000}
+    read-timeout: ${SOAP_READ_TIMEOUT:30000}
+    apim-subscription-key: ${APIM_SUBSCRIPTION_KEY}
+  paymentmethod:
+      PAYMENT_CARD: CP
+      CASH: CASH
+      BANK_ACCOUNT: BANK_ACCOUNT
+      CREDIT_CARD: CP
+      PAGOBANCOMAT: CP
+      DEBIT_CARD: CP
+  error:
+    map:
+      PPT_INTERMEDIARIO_PA_SCONOSCIUTO: '0'
+      PPT_IBAN_NON_CENSITO: '3'
+      PPT_CANALE_TIMEOUT: '0'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_SINTASSI_EXTRAXSD: '3'
+      PPT_STAZIONE_INT_PA_IRRAGGIUNGIBILE: '3'
+      PPT_INTERMEDIARIO_PSP_DISABILITATO: '1'
+      PPT_ATTIVAZIONE_IN_CORSO: '0'
+      PPT_CANALE_ERRORE_RESPONSE: '0'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_ID_INTERMEDIARIO_ERRATO: '3'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_ATTIVA_RPT_IMPORTO_NON_VALIDO: '3'
+      PPT_PAGAMENTO_DUPLICATO: '7'
+      PPT_PSP_SCONOSCIUTO: '1'
+      PPT_SYSTEM_ERROR: '1'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_SINTASSI_XSD: '3'
+      PPT_CANALE_DISABILITATO: '1'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_PAGAMENTO_DUPLICATO: '7'
+      PPT_DOMINIO_DISABILITATO: '1'
+      PPT_AUTORIZZAZIONE: '1'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_PAGAMENTO_ANNULLATO: '6'
+      PPT_CANALE_IRRAGGIUNGIBILE: '0'
+      PPT_STAZIONE_INT_PA_SERVIZIO_NONATTIVO: '0'
+      PPT_SINTASSI_XSD: '2'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_SEMANTICA: '1'
+      PPT_ERRORE_IDEMPOTENZA: '0'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_PAGAMENTO_SCONOSCIUTO: '8'
+      PPT_ERRORE_EMESSO_DA_PAA: '3'
+      PPT_STAZIONE_INT_PA_ERRORE_RESPONSE: '3'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_PAGAMENTO_IN_CORSO: '4'
+      PPT_AUTENTICAZIONE: '1'
+      PPT_SEMANTICA: '1'
+      PPT_DOMINIO_SCONOSCIUTO: '2'
+      PPT_CODIFICA_PSP_SCONOSCIUTA: '1'
+      PPT_SINTASSI_EXTRAXSD: '2'
+      PPT_PAGAMENTO_IN_CORSO: '4'
+      PPT_INTERMEDIARIO_PSP_SCONOSCIUTO: '1'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_PAGAMENTO_SCADUTO: '5'
+      PPT_CANALE_ERRORE: '0'
+      PPT_PSP_DISABILITATO: '1'
+      PPT_STAZIONE_INT_PA_TIMEOUT: '3'
+      PPT_CANALE_SCONOSCIUTO: '1'
+      PPT_STAZIONE_INT_PA_SCONOSCIUTA: '2'
+      PPT_STAZIONE_INT_PA_SERVIZIO_NON_ATTIVO: '0'
+      PPT_STAZIONE_INT_PA_DISABILITATA: '1'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_SYSTEM_ERROR: '3'
+      PPT_INTERMEDIARIO_PA_DISABILITATO: '1'
+      PPT_CANALE_SERVIZIO_NONATTIVO: '0'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_STAZIONE_INT_ERRATA: '3'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_ID_DOMINIO_ERRATO: '3'
+    outcomes: [UNEXPECTED_ERROR, NOTICE_GLITCH, WRONG_NOTICE_DATA, CREDITOR_PROBLEMS, PAYMENT_ALREADY_IN_PROGRESS, EXPIRED_NOTICE, REVOKED_NOTICE, NOTICE_ALREADY_PAID, UNKNOWN_NOTICE]
+
+# ------------------------------------------------------------------------------
+# GEC paymentMethod and touchpoint remapping
+# ------------------------------------------------------------------------------
+gec:
+  touchpoint:
+    map:
+      ATM: ATM
+      CASH_REGISTER: ANY
+      TOTEM: ANY
+      POS: POS
+      CSA: ANY
+  paymentmethod:
+    map:
+      CASH: ANY
+      BANK_ACCOUNT: ANY
+      CREDIT_CARD: CP
+      PAGOBANCOMAT: CP
+      DEBIT_CARD: CP
+      PAYMENT_CARD: CP

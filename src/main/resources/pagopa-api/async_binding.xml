@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<jaxws:bindings wsdlLocation="./SANP3.6.1/wsdl/nodeForPsp.wsdl" xmlns:jaxws="https://jakarta.ee/xml/ns/jaxws">
+    <jaxws:enableAsyncMapping>true</jaxws:enableAsyncMapping>
+</jaxws:bindings>
