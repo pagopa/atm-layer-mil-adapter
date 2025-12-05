@@ -169,3 +169,12 @@ affinity: {}
 Release:
   Time:
     Seconds: 60
+
+node:
+  soapClient:
+    url: https://api.uat.platform.pagopa.it/nodo/node-for-psp/v1
+    connectTimeout: 30000
+    readTimeout: 30000
+    credentialsSecretName: "pagopa-dev-atm-layer-mil-adapter-node"
+    credentialsSecretKeys:
+      apiKey: API_KEY
