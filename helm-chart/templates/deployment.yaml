@@ -149,6 +149,8 @@ spec:
               value: "{{ .Values.springProfilesActive }}"
             - name: SERVER_PORT
               value: "{{ .Values.service.port }}"
+            - name: SERVER_PORT
+              value: "{{ .Values.service.port }}"
             - name: SOAP_SERVICE_URL
               value: "{{.Values.node.soapClient.url}}"
             - name: SOAP_CONNECTION_TIMEOUT

@@ -29,6 +29,7 @@ rest-configuration:
     method: GET
     url: /api/v1/model/bpmn/function/{functionType}/bank/{acquirerId}/branch/{branchId}/terminal/{terminalId}
 
+
 # Azure AD Configuration
 azure-auth-api:
   base-url: ${IDENTITY_ENDPOINT:test_IDENTITY_ENDPOINT}
@@ -61,6 +62,12 @@ spring:
         core-size: ${MIL_ADAPTER_CORE_SIZE:100}
         max-size: ${MIL_ADAPTER_MAX_SIZE:200}
         queue-capacity: ${MIL_ADAPTER_QUEUE_CAPACITY:500}
+  task:
+    execution:
+      pool:
+        core-size: ${MIL_ADAPTER_CORE_SIZE:100}
+        max-size: ${MIL_ADAPTER_MAX_SIZE:200}
+        queue-capacity: ${MIL_ADAPTER_QUEUE_CAPACITY:500}
   cache:
     type: caffeine
     cache-names: cache-role
@@ -87,6 +94,7 @@ logging:
     level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
 
 id-pay:
+  api-key: ${ID_PAY_API_KEY:test}
   api-key: ${ID_PAY_API_KEY:test}
 
 # ------------------------------------------------------------------------------

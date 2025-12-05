@@ -137,6 +137,19 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals("http://prova", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertEquals("testBody", configuration.getBody());
+        assertEquals(6, configuration.getHeaders().size());
+        assertNotNull(configuration.getHeaders().get("RequestId"));
+
+        assertEquals("transaction-id", ((List<?>)configuration.getHeaders().get("transactionId")).get(0));
+        assertEquals("Bearer VALID_TOKEN", ((List<?>)configuration.getHeaders().get(HttpHeaders.AUTHORIZATION)).get(0));
+
+        assertEquals(new HashMap<>(), configuration.getPathParams());
+        assertNotNull(configuration.getAuthParameters());
+        assertEquals("bank_id", configuration.getAuthParameters().getAcquirerId());
+        assertEquals("ATM", configuration.getAuthParameters().getChannel());
+        assertEquals("term_id", configuration.getAuthParameters().getTerminalId());
+        assertEquals("transaction-id", configuration.getAuthParameters().getTransactionId());
+        assertEquals("testBody", configuration.getBody());
         assertEquals(5, configuration.getHeaders().size());
         assertNotNull(configuration.getHeaders().get("RequestId"));
 
