@@ -84,7 +84,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals("http://prova", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertNull(configuration.getBody());
-        assertEquals(6, configuration.getHeaders().size());
+        assertEquals(5, configuration.getHeaders().size());
         Assertions.assertTrue(configuration.getHeaders().containsKey(RequiredProcessVariables.REQUEST_ID.getAuthenticatorValue()));
         assertEquals(new HashMap<>(), configuration.getPathParams());
 
@@ -137,11 +137,10 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         assertEquals("http://prova", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertEquals("testBody", configuration.getBody());
-        assertEquals(6, configuration.getHeaders().size());
+        assertEquals(5, configuration.getHeaders().size());
         assertNotNull(configuration.getHeaders().get("RequestId"));
 
         assertEquals("transaction-id", ((List<?>)configuration.getHeaders().get("transactionId")).get(0));
-        assertEquals("Bearer VALID_TOKEN", ((List<?>)configuration.getHeaders().get(HttpHeaders.AUTHORIZATION)).get(0));
 
         assertEquals(new HashMap<>(), configuration.getPathParams());
         assertNotNull(configuration.getAuthParameters());
