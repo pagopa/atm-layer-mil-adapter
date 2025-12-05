@@ -10,8 +10,6 @@ import it.gov.pagopa.miladapter.util.QrCodeParser;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.ActivatePaymentNoticeV2Request;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.ActivatePaymentNoticeV2Response;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.CtQrCode;
-import it.pagopa.swclient.mil.bean.CommonHeader;
-import it.pagopa.swclient.mil.bean.Errors;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

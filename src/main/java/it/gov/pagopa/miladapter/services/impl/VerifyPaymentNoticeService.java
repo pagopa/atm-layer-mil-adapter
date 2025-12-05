@@ -2,6 +2,8 @@ package it.gov.pagopa.miladapter.services.impl;
 
 import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.model.QrCode;
+import it.gov.pagopa.miladapter.services.model.CommonHeader;
+import it.gov.pagopa.miladapter.services.model.Errors;
 import it.gov.pagopa.miladapter.services.model.VerifyPaymentNoticeResponse;
 import it.gov.pagopa.miladapter.util.*;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.CtPaymentOptionDescription;
@@ -9,8 +11,6 @@ import it.gov.pagopa.pagopa_api.node.nodeforpsp.CtQrCode;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.VerifyPaymentNoticeReq;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.VerifyPaymentNoticeRes;
 import it.gov.pagopa.pagopa_api.xsd.common_types.v1_0.StOutcome;
-import it.pagopa.swclient.mil.bean.CommonHeader;
-import it.pagopa.swclient.mil.bean.Errors;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import java.math.BigDecimal;
@@ -80,8 +80,12 @@ public class VerifyPaymentNoticeService {
 		log.debug("verifyByTaxCodeAndNoticeNumber - Input parameters: {}, paTaxCode: {}, noticeNumber: {}", headers, paTaxCode, noticeNumber);
 
         // TODO remove retrievePSPConfiguration call, static initialization of pspConf
-		PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.VERIFY);
-
+		// PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.VERIFY);
+        PspConfiguration pspConf = new PspConfiguration();
+        pspConf.setPsp("AGID_01");
+        pspConf.setBroker("97735020584");
+        pspConf.setChannel("97735020584_03");
+        pspConf.setPassword("pwd_AgID");
 		return callNodeVerifyPaymentNotice(paTaxCode, noticeNumber, pspConf);
 	}
 

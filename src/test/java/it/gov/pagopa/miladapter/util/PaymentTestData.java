@@ -4,7 +4,6 @@ package it.gov.pagopa.miladapter.util;
 import it.gov.pagopa.miladapter.client.model.AcquirerConfiguration;
 import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.services.model.*;
-import it.pagopa.swclient.mil.bean.CommonHeader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

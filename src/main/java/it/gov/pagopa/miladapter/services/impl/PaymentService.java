@@ -1,9 +1,7 @@
 package it.gov.pagopa.miladapter.services.impl;
 
 import it.gov.pagopa.miladapter.model.PspConfiguration;
-import it.gov.pagopa.miladapter.services.model.ClosePaymentRequest;
-import it.gov.pagopa.miladapter.services.model.ClosePaymentResponse;
-import it.gov.pagopa.miladapter.services.model.PaymentTransactionOutcome;
+import it.gov.pagopa.miladapter.services.model.*;
 import it.gov.pagopa.miladapter.util.ErrorCode;
 import it.gov.pagopa.miladapter.util.NodeApi;
 import it.gov.pagopa.miladapter.util.PaymentNoticeConstants;
@@ -11,12 +9,9 @@ import it.gov.pagopa.pagopa_api.node.nodeforpsp.SendPaymentOutcomeV2Request;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.SendPaymentOutcomeV2Response;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.StPaymentTokens;
 import it.gov.pagopa.pagopa_api.xsd.common_types.v1_0.StOutcome;
-import it.pagopa.swclient.mil.bean.CommonHeader;
-import it.pagopa.swclient.mil.bean.Errors;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import jakarta.ws.rs.*;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

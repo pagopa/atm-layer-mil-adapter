@@ -21,10 +21,7 @@
         <micrometer.tracing.version>1.2.2</micrometer.tracing.version>
         <lombok.version>1.18.30</lombok.version>
         <sonarsource.scanner.version>3.11.0.3922</sonarsource.scanner.version>
-
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <common.version>2.2.1</common.version>
-
     </properties>
 
     <parent>
@@ -116,11 +113,6 @@
             <groupId>org.sonarsource.scanner.maven</groupId>
             <artifactId>sonar-maven-plugin</artifactId>
             <version>${sonarsource.scanner.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>it.pagopa.swclient.mil</groupId>
-            <artifactId>common</artifactId>
-            <version>${common.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
