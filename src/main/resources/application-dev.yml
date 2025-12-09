@@ -82,8 +82,8 @@ spring:
 logging:
   level:
     root: INFO
-    org.apache.cxf: DEBUG
-    org.apache.cxf.services: DEBUG
+    org.apache.cxf: INFO
+    org.apache.cxf.services: INFO
   pattern:
     level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
 
