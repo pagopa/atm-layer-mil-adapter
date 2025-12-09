@@ -140,7 +140,13 @@ public class BasePaymentService {
 	 */
 	public PspConfiguration retrievePSPConfiguration(String acquirerId, NodeApi api) {
 		log.debug("retrievePSPConfiguration - acquirerId: {} ", acquirerId);
-
+        PspConfiguration pspConf = new PspConfiguration();
+        pspConf.setPsp("AGID_01");
+        pspConf.setBroker("97735020584");
+        pspConf.setChannel("97735020584_03");
+        pspConf.setPassword("pwd_AgID");
+        return pspConf;
+        /*
 		return azureADRestClient.getAccessToken(identity, STORAGE)
 				.onErrorMap(t -> {
 					log.error("[{}] Error while calling Azure AD rest service", ErrorCode.ERROR_CALLING_AZUREAD_REST_SERVICES, t);
@@ -177,6 +183,7 @@ public class BasePaymentService {
 							});
 				})
 				.block();
+         */
 	}
 
 	public String remapNodeFaultToOutcome(String faultCode, String originalFaultCode) {

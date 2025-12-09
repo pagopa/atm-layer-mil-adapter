@@ -80,12 +80,7 @@ public class VerifyPaymentNoticeService {
 		log.debug("verifyByTaxCodeAndNoticeNumber - Input parameters: {}, paTaxCode: {}, noticeNumber: {}", headers, paTaxCode, noticeNumber);
 
         // TODO remove retrievePSPConfiguration call, static initialization of pspConf
-		// PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.VERIFY);
-        PspConfiguration pspConf = new PspConfiguration();
-        pspConf.setPsp("AGID_01");
-        pspConf.setBroker("97735020584");
-        pspConf.setChannel("97735020584_03");
-        pspConf.setPassword("pwd_AgID");
+		PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.VERIFY);
 		return callNodeVerifyPaymentNotice(paTaxCode, noticeNumber, pspConf);
 	}
 

@@ -106,7 +106,7 @@ public class NodeForPspWrapper {
         }
 
         // Disabilita verifica SSL solo in locale
-        disableSSLVerificationForDevelopment(httpConduit);
+        // disableSSLVerificationForDevelopment(httpConduit);
     }
 
     private void disableSSLVerificationForDevelopment(HTTPConduit httpConduit) {

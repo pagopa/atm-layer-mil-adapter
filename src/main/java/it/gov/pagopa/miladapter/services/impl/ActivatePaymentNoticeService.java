@@ -102,7 +102,7 @@ public class ActivatePaymentNoticeService {
 				headers, paTaxCode, noticeNumber, activatePaymentNoticeRequest);
 
         PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.VERIFY);
-		return callNodeActivatePaymentNotice(paTaxCode, noticeNumber, pspConf, activatePaymentNoticeRequest);
+		return this.callNodeActivatePaymentNotice(paTaxCode, noticeNumber, pspConf, activatePaymentNoticeRequest);
 	}
 
 	/**
