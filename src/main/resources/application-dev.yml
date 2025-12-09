@@ -62,12 +62,6 @@ spring:
         core-size: ${MIL_ADAPTER_CORE_SIZE:100}
         max-size: ${MIL_ADAPTER_MAX_SIZE:200}
         queue-capacity: ${MIL_ADAPTER_QUEUE_CAPACITY:500}
-  task:
-    execution:
-      pool:
-        core-size: ${MIL_ADAPTER_CORE_SIZE:100}
-        max-size: ${MIL_ADAPTER_MAX_SIZE:200}
-        queue-capacity: ${MIL_ADAPTER_QUEUE_CAPACITY:500}
   cache:
     type: caffeine
     cache-names: cache-role
@@ -94,7 +88,6 @@ logging:
     level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
 
 id-pay:
-  api-key: ${ID_PAY_API_KEY:test}
   api-key: ${ID_PAY_API_KEY:test}
 
 # ------------------------------------------------------------------------------
