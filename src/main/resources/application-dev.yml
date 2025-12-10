@@ -81,7 +81,7 @@ spring:
 
 logging:
   level:
-    root: INFO
+    root: DEBUG
     org.apache.cxf: INFO
     org.apache.cxf.services: INFO
   pattern:
