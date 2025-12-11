@@ -14,6 +14,7 @@ import io.opentelemetry.context.Scope;
 import it.gov.pagopa.miladapter.enums.FlowValues;
 import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.Configuration;
+import it.gov.pagopa.miladapter.properties.AuthProperties;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.services.model.ActivatePaymentNoticeResponse;
 import it.gov.pagopa.miladapter.services.model.GetFeeResponse;
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 class ExternalCallServiceImplTest {
@@ -56,6 +58,7 @@ class ExternalCallServiceImplTest {
     feeCalculatorService = mock(FeeCalculatorService.class);
     paymentService = mock(PaymentService.class);
     objectMapper = new ObjectMapper();
+    AuthProperties authProperties = mock(AuthProperties.class);
 
     // Mock OpenTelemetry components
     tracer = mock(Tracer.class);
@@ -86,6 +89,10 @@ class ExternalCallServiceImplTest {
     when(restConfigurationProperties.getMilBasePath()).thenReturn("http://mil-base-path");
     when(restConfigurationProperties.getIdPayBasePath()).thenReturn("http://idpay-base-path");
     when(restConfigurationProperties.getGetTokenEndpoint()).thenReturn("/auth/token");
+    when(restConfigurationProperties.getAuth()).thenReturn(authProperties);
+    when(authProperties.getClientId()).thenReturn("test-client-id");
+    when(authProperties.getClientSecret()).thenReturn("test-client-secret");
+    when(authProperties.getGrantType()).thenReturn("client_credentials");
 
     testVariables = new HashMap<>();
     HashMap<String, Object> headersMap = new HashMap<>();
@@ -371,5 +378,157 @@ class ExternalCallServiceImplTest {
     } catch (Exception e) {
       assertEquals("Unrecognised flow: unknown flow", e.getMessage());
     }
+  }
+
+  @Test
+  void executeExternalCall_AuthFlow_Success()
+      throws URISyntaxException, JsonProcessingException, NoSuchFieldException,
+          IllegalAccessException {
+    // Prepare test variables for AUTH flow
+    testVariables.put(RequiredProcessVariables.FLOW.getEngineValue(), FlowValues.AUTH.getValue());
+    testVariables.put("url", "/auth/token");
+    testVariables.put("method", "POST");
+    testVariables.put("body", "{\"grant_type\":\"client_credentials\"}");
+
+    // Create spy to mock prepareUri
+    ExternalCallServiceImpl spyService =
+        Mockito.spy(
+            new ExternalCallServiceImpl(
+                restConfigurationProperties,
+                restTemplate,
+                objectMapper,
+                verifyPaymentNoticeService,
+                activatePaymentNoticeService,
+                feeCalculatorService,
+                paymentService));
+
+    setPrivateField(spyService, "tracer", tracer);
+
+    doReturn(new URI("http://mil-base-path/auth/token"))
+        .when(spyService)
+        .prepareUri(any(), eq(FlowValues.AUTH.getValue()));
+
+    ResponseEntity<String> mockAuthResponse =
+        new ResponseEntity<>("{\"access_token\":\"token123\"}", HttpStatus.OK);
+    when(restTemplate.exchange(
+            any(URI.class), any(HttpMethod.class), any(HttpEntity.class), eq(String.class)))
+        .thenReturn(mockAuthResponse);
+
+    ResponseEntity<String> result = spyService.executeExternalCall(testVariables);
+
+    assertEquals(HttpStatus.OK, result.getStatusCode());
+    assertEquals("{\"access_token\":\"token123\"}", result.getBody());
+    verify(restTemplate)
+        .exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), eq(String.class));
+  }
+
+  @Test
+  void executeExternalCall_LocalMilCall_Exception() throws JsonProcessingException {
+    // Prepare test variables for MIL flow with local endpoint that will throw exception
+    testVariables.put(RequiredProcessVariables.FLOW.getEngineValue(), FlowValues.MIL.getValue());
+    testVariables.put("url", "/mil-payment-notice/paymentNotices/{qrCode}");
+    testVariables.put("method", "GET");
+    testVariables.put("body", "");
+    testVariables.put("PathParams", Map.of("qrCode", QRCODE));
+
+    // Mock the service to throw an exception
+    when(verifyPaymentNoticeService.verifyByQrCode(any(), eq(QRCODE)))
+        .thenThrow(new RuntimeException("Service error"));
+
+    ResponseEntity<String> result = spyExternalCallServiceImpl.executeExternalCall(testVariables);
+
+    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+    verify(verifyPaymentNoticeService).verifyByQrCode(any(), eq(QRCODE));
+    verify(restTemplate, never())
+        .exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), eq(String.class));
+  }
+
+  @Test
+  void executeExternalCall_LocalMilCall_UnsupportedEndpoint() throws JsonProcessingException {
+    // Prepare test variables for MIL flow with unsupported local endpoint
+    testVariables.put(RequiredProcessVariables.FLOW.getEngineValue(), FlowValues.MIL.getValue());
+    testVariables.put("url", "/mil-payment-notice/paymentNotices/{paTaxCode}/{noticeNumber}");
+    testVariables.put("method", "DELETE");
+    testVariables.put("body", "");
+    testVariables.put("PathParams", Map.of());
+
+    ResponseEntity<String> result = spyExternalCallServiceImpl.executeExternalCall(testVariables);
+
+    assertEquals(HttpStatus.NOT_IMPLEMENTED, result.getStatusCode());
+    verify(verifyPaymentNoticeService, never()).verifyByQrCode(any(), any());
+    verify(activatePaymentNoticeService, never()).activateByQrCode(any(), any(), any());
+    verify(feeCalculatorService, never()).getFee(any(), any());
+    verify(paymentService, never()).sendPaymentOutcome(any(), any(), any());
+    verify(restTemplate, never())
+        .exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), eq(String.class));
+  }
+
+  @Test
+  void executeExternalCall_HttpCall_NullResponseBody()
+      throws URISyntaxException, JsonProcessingException, NoSuchFieldException,
+          IllegalAccessException {
+    // Create spy to mock prepareUri
+    ExternalCallServiceImpl spyService =
+        Mockito.spy(
+            new ExternalCallServiceImpl(
+                restConfigurationProperties,
+                restTemplate,
+                objectMapper,
+                verifyPaymentNoticeService,
+                activatePaymentNoticeService,
+                feeCalculatorService,
+                paymentService));
+
+    setPrivateField(spyService, "tracer", tracer);
+
+    doReturn(new URI("http://mil-base-path/endpoint/params"))
+        .when(spyService)
+        .prepareUri(any(), any());
+
+    // Mock response with null body
+    ResponseEntity<String> responseEntity = new ResponseEntity<>(null, HttpStatus.OK);
+    when(restTemplate.exchange(
+            any(URI.class), any(HttpMethod.class), any(HttpEntity.class), eq(String.class)))
+        .thenReturn(responseEntity);
+
+    ResponseEntity<String> result = spyService.executeExternalCall(testVariables);
+
+    assertEquals(HttpStatus.OK, result.getStatusCode());
+    assertEquals("{}", result.getBody()); // Should return empty JSON object
+  }
+
+  @Test
+  void executeExternalCall_HttpCall_ResourceAccessException()
+      throws URISyntaxException, JsonProcessingException, NoSuchFieldException,
+          IllegalAccessException {
+    // Create spy to mock prepareUri
+    ExternalCallServiceImpl spyService =
+        Mockito.spy(
+            new ExternalCallServiceImpl(
+                restConfigurationProperties,
+                restTemplate,
+                objectMapper,
+                verifyPaymentNoticeService,
+                activatePaymentNoticeService,
+                feeCalculatorService,
+                paymentService));
+
+    setPrivateField(spyService, "tracer", tracer);
+
+    doReturn(new URI("http://mil-base-path/endpoint/params"))
+        .when(spyService)
+        .prepareUri(any(), any());
+
+    // Mock ResourceAccessException (timeout or connection error)
+    ResourceAccessException exception =
+        new ResourceAccessException("Connection timeout");
+    when(restTemplate.exchange(
+            any(URI.class), any(HttpMethod.class), any(HttpEntity.class), eq(String.class)))
+        .thenThrow(exception);
+
+    ResponseEntity<String> result = spyService.executeExternalCall(testVariables);
+
+    assertEquals(HttpStatus.GATEWAY_TIMEOUT, result.getStatusCode());
+    assertEquals("{}", result.getBody());
   }
 }
