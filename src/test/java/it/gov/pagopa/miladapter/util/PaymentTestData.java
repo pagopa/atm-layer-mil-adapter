@@ -1,7 +1,5 @@
 package it.gov.pagopa.miladapter.util;
 
-
-import it.gov.pagopa.miladapter.client.model.AcquirerConfiguration;
 import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.services.model.*;
 import java.util.HashMap;
@@ -49,13 +47,6 @@ public final class PaymentTestData {
         HttpHeaders headers = new HttpHeaders();
         headerMap.forEach(headers::add);
         return headers;
-    }
-
-    public static AcquirerConfiguration getAcquirerConfiguration() {
-        AcquirerConfiguration acquirerConfiguration = new AcquirerConfiguration();
-        acquirerConfiguration.setPspConfigForVerifyAndActivate(getPspConfiguration());
-        acquirerConfiguration.setPspConfigForGetFeeAndClosePayment(getPspConfiguration());
-        return acquirerConfiguration;
     }
 
     public static PspConfiguration getPspConfiguration() {

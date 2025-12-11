@@ -9,12 +9,10 @@ import it.gov.pagopa.pagopa_api.node.nodeforpsp.VerifyPaymentNoticeRes;
 import it.gov.pagopa.pagopa_api.nodeforpsp.NodeForPsp;
 import jakarta.annotation.PostConstruct;
 
-import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.message.Message;
@@ -22,10 +20,6 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 /**
  * Bean wrapping the interfaces of the generated CXF SOAP client
@@ -103,34 +97,6 @@ public class NodeForPspWrapper {
             Map<String, List<String>> headers = new HashMap<>();
             headers.put("Ocp-Apim-Subscription-Key", List.of(apimSubscriptionKey));
             client.getRequestContext().put(Message.PROTOCOL_HEADERS, headers);
-        }
-
-        // Disabilita verifica SSL solo in locale
-        // disableSSLVerificationForDevelopment(httpConduit);
-    }
-
-    private void disableSSLVerificationForDevelopment(HTTPConduit httpConduit) {
-        try {
-            TLSClientParameters tlsParams = new TLSClientParameters();
-            tlsParams.setDisableCNCheck(true);
-
-            TrustManager[] trustAllCerts = new TrustManager[]{
-                    new X509TrustManager() {
-                        public X509Certificate[] getAcceptedIssuers() { return null; }
-                        public void checkClientTrusted(X509Certificate[] certs, String authType) {}
-                        public void checkServerTrusted(X509Certificate[] certs, String authType) {}
-                    }
-            };
-
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-            tlsParams.setSSLSocketFactory(sslContext.getSocketFactory());
-
-            httpConduit.setTlsClientParameters(tlsParams);
-
-            log.warn("SSL verification DISABLED - use only in development!");
-        } catch (Exception e) {
-            log.error("Error disabling SSL verification", e);
         }
     }
     
