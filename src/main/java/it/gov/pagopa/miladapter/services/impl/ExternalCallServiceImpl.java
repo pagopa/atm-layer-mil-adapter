@@ -210,7 +210,7 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
 
       String responseBody = this.objectMapper.writeValueAsString(controllerResponse.getBody());
 
-      return new ResponseEntity<>(controllerResponse.getBody(), controllerResponse.getStatusCode());
+      return new ResponseEntity<>(responseBody, controllerResponse.getStatusCode());
 
     } catch (Exception e) {
       log.error("Exception in local MIL call", e);
