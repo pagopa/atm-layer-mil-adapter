@@ -3,12 +3,14 @@ package it.gov.pagopa.miladapter.services.model;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Entity bean containing the data of a payment notice
  */
 @Getter
 @Setter
+@ToString
 public class Notice {
 
     /**
@@ -60,21 +62,4 @@ public class Notice {
      * Transfer essential data
      */
     private List<Transfer> transfers;
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("Notice{");
-        sb.append("paymentToken='").append(paymentToken).append('\'');
-        sb.append(", paTaxCode='").append(paTaxCode).append('\'');
-        sb.append(", noticeNumber='").append(noticeNumber).append('\'');
-        sb.append(", amount=").append(amount);
-        sb.append(", description='").append(description).append('\'');
-        sb.append(", company='").append(company).append('\'');
-        sb.append(", office='").append(office).append('\'');
-        sb.append(", creditorReferenceId='").append(creditorReferenceId).append('\'');
-        sb.append(", debtor='").append(debtor).append('\'');
-        sb.append(", transfers=").append(transfers);
-        sb.append('}');
-        return sb.toString();
-    }
 }

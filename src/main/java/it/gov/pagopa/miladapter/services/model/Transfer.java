@@ -4,12 +4,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Transfer essential data
  */
 @Setter
 @Getter
+@ToString
 public class Transfer {
 
 	/**
@@ -25,14 +27,5 @@ public class Transfer {
 	@NotNull
 	@Pattern(regexp = "^[ -~]{0,1024}$")
 	private String category;
-
-	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder("Transfer{");
-		sb.append("paTaxCode='").append(paTaxCode).append('\'');
-		sb.append(", category='").append(category).append('\'');
-		sb.append('}');
-		return sb.toString();
-	}
 
 }

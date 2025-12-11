@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Response of the activatePaymentNotice API.
@@ -17,6 +18,7 @@ import lombok.Setter;
  */
 @Setter
 @Getter
+@ToString
 public class ActivatePaymentNoticeResponse {
 
 	/**
@@ -53,16 +55,4 @@ public class ActivatePaymentNoticeResponse {
 	 */
 	@JsonInclude(Include.NON_NULL)
 	private List<Transfer> transfers;
-
-	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder("ActivatePaymentResponse{");
-		sb.append("outcome='").append(outcome).append('\'');
-		sb.append(", amount=").append(amount);
-		sb.append(", paTaxCode='").append(paTaxCode).append('\'');
-		sb.append(", paymentToken='").append(paymentToken).append('\'');
-		sb.append(", transfers=").append(transfers);
-		sb.append('}');
-		return sb.toString();
-	}
 }

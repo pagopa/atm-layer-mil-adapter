@@ -15,7 +15,6 @@ import it.gov.pagopa.miladapter.services.ExternalCallService;
 import it.gov.pagopa.miladapter.services.model.ActivatePaymentNoticeRequest;
 import it.gov.pagopa.miladapter.services.model.ClosePaymentRequest;
 import it.gov.pagopa.miladapter.services.model.CommonHeader;
-import it.gov.pagopa.miladapter.services.model.GetFeeRequest;
 import it.gov.pagopa.miladapter.util.EngineVariablesToHTTPConfigurationUtils;
 import it.gov.pagopa.miladapter.util.HttpRequestUtils;
 import java.net.URI;
@@ -44,14 +43,12 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
   private final ObjectMapper objectMapper;
   private final VerifyPaymentNoticeService verifyPaymentNoticeService;
   private final ActivatePaymentNoticeService activatePaymentNoticeService;
-  private final FeeCalculatorService feeCalculatorService;
   private final PaymentService paymentService;
 
   private static final Pattern QR_CODE_PATTERN =
       Pattern.compile("/mil-payment-notice/paymentNotices/([^/]+)$");
   private static final Pattern TAX_CODE_NOTICE_PATTERN =
       Pattern.compile("/mil-payment-notice/paymentNotices/([^/]+)/([^/]+)$");
-  private static final Pattern FEE_CALCULATOR_PATTERN = Pattern.compile("/mil-fee-calculator/fees");
   private static final Pattern CLOSE_PATTERN =
       Pattern.compile("/mil-payment-notice/payments/([^/]+)/sendPaymentOutcome");
   private final List<Route> routes;
@@ -69,14 +66,12 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
       ObjectMapper objectMapper,
       VerifyPaymentNoticeService verifyPaymentNoticeService,
       ActivatePaymentNoticeService activatePaymentNoticeService,
-      FeeCalculatorService feeCalculatorService,
       PaymentService paymentService) {
     this.restConfigurationProperties = restConfigurationProperties;
     this.restTemplate = restTemplate;
     this.objectMapper = objectMapper;
     this.verifyPaymentNoticeService = verifyPaymentNoticeService;
     this.activatePaymentNoticeService = activatePaymentNoticeService;
-    this.feeCalculatorService = feeCalculatorService;
     this.paymentService = paymentService;
 
     this.routes =
@@ -115,13 +110,6 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
                       pathParams.get(MilValues.PA_TAX_CODE.getValue()),
                       pathParams.get(MilValues.NOTICE_NUMBER.getValue()),
                       request);
-                }),
-            new Route(
-                FEE_CALCULATOR_PATTERN,
-                HttpMethod.POST,
-                (h, pathParams, body) -> {
-                  GetFeeRequest request = this.objectMapper.readValue(body, GetFeeRequest.class);
-                  return this.feeCalculatorService.getFee(h, request);
                 }),
             new Route(
                 CLOSE_PATTERN,
@@ -193,7 +181,6 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
   private static boolean isLocalMilEndpoint(String endpoint) {
     return QR_CODE_PATTERN.matcher(endpoint).matches()
         || TAX_CODE_NOTICE_PATTERN.matcher(endpoint).matches()
-        || FEE_CALCULATOR_PATTERN.matcher(endpoint).matches()
         || CLOSE_PATTERN.matcher(endpoint).matches();
   }
 
@@ -223,7 +210,7 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
 
       String responseBody = this.objectMapper.writeValueAsString(controllerResponse.getBody());
 
-      return new ResponseEntity<>(responseBody, controllerResponse.getStatusCode());
+      return new ResponseEntity<>(controllerResponse.getBody(), controllerResponse.getStatusCode());
 
     } catch (Exception e) {
       log.error("Exception in local MIL call", e);

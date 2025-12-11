@@ -29,29 +29,10 @@ rest-configuration:
     method: GET
     url: /api/v1/model/bpmn/function/{functionType}/bank/{acquirerId}/branch/{branchId}/terminal/{terminalId}
 
-
-# Azure AD Configuration
-azure-auth-api:
-  base-url: ${IDENTITY_ENDPOINT:test_IDENTITY_ENDPOINT}
-  version: 2019-08-01
-  identity: ${AZURE_IDENTITY:test_AZURE_IDENTITY}
-
-# Azure Storage API Configuration
-azure-storage-api:
-  version: 2019-07-07
-
-# MIL REST API Configuration
-mil-rest-api:
-  base-url: ${MIL_REST_API_BASE_URL:test_MIL_REST_API_BASE_URL}
-
-# GEC REST API Configuration
-fees-api:
-  base-url: ${FEES_API_BASE_URL:test_GEC_REST_API_BASE}
-  max-occurrences: 10
-
-ocp:
-  apim:
-    subscription: ${OCP_APIM_SUBSCRIPTION:test}
+reporting-service:
+  base-url: ${REPORTING_SERVICE_BASE_URL:test}
+  cbill-abi-federazione:
+    path: ${CBILL_ABI_FEDERAZIONE_PATH:/api/v1/reporting-service/cbill-abi-federazione/{abi}}
 
 spring:
   application:
@@ -62,11 +43,6 @@ spring:
         core-size: ${MIL_ADAPTER_CORE_SIZE:100}
         max-size: ${MIL_ADAPTER_MAX_SIZE:200}
         queue-capacity: ${MIL_ADAPTER_QUEUE_CAPACITY:500}
-  cache:
-    type: caffeine
-    cache-names: cache-role
-    caffeine:
-      spec: expireAfterWrite=1h
 
 #tracing:
 #  url: ${MIL_ADAPTER_TRACING_BACKEND_URL}
@@ -94,11 +70,6 @@ id-pay:
 # Service configurations
 # ------------------------------------------------------------------------------
 paymentnotice:
-  closepayment:
-    retry-after: '30'
-    max-retry: '3'
-    location:
-      base-url: https://mil-d-apim.azure-api.net/mil-payment-notice
   activatepayment:
     expiration-time: '30000'
 
@@ -111,13 +82,6 @@ node:
     connect-timeout: ${SOAP_CONNECTION_TIMEOUT:30000}
     read-timeout: ${SOAP_READ_TIMEOUT:30000}
     apim-subscription-key: ${APIM_SUBSCRIPTION_KEY}
-  paymentmethod:
-      PAYMENT_CARD: CP
-      CASH: CASH
-      BANK_ACCOUNT: BANK_ACCOUNT
-      CREDIT_CARD: CP
-      PAGOBANCOMAT: CP
-      DEBIT_CARD: CP
   error:
     map:
       PPT_INTERMEDIARIO_PA_SCONOSCIUTO: '0'
@@ -169,23 +133,3 @@ node:
       PPT_ERRORE_EMESSO_DA_PAA-PAA_STAZIONE_INT_ERRATA: '3'
       PPT_ERRORE_EMESSO_DA_PAA-PAA_ID_DOMINIO_ERRATO: '3'
     outcomes: [UNEXPECTED_ERROR, NOTICE_GLITCH, WRONG_NOTICE_DATA, CREDITOR_PROBLEMS, PAYMENT_ALREADY_IN_PROGRESS, EXPIRED_NOTICE, REVOKED_NOTICE, NOTICE_ALREADY_PAID, UNKNOWN_NOTICE]
-
-# ------------------------------------------------------------------------------
-# GEC paymentMethod and touchpoint remapping
-# ------------------------------------------------------------------------------
-gec:
-  touchpoint:
-    map:
-      ATM: ATM
-      CASH_REGISTER: ANY
-      TOTEM: ANY
-      POS: POS
-      CSA: ANY
-  paymentmethod:
-    map:
-      CASH: ANY
-      BANK_ACCOUNT: ANY
-      CREDIT_CARD: CP
-      PAGOBANCOMAT: CP
-      DEBIT_CARD: CP
-      PAYMENT_CARD: CP

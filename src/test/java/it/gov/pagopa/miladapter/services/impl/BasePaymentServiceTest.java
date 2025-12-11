@@ -4,16 +4,10 @@ import static it.gov.pagopa.miladapter.util.PaymentTestData.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import it.gov.pagopa.miladapter.client.FeeRestClient;
 import it.gov.pagopa.miladapter.client.NodeForPspWrapper;
-import it.gov.pagopa.miladapter.client.model.GecGetFeesRequest;
-import it.gov.pagopa.miladapter.client.model.GecGetFeesResponse;
-import it.gov.pagopa.miladapter.client.model.BundleOption;
 import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.properties.NodeErrorMappingProperties;
 import it.gov.pagopa.miladapter.services.model.CommonHeader;
-import it.gov.pagopa.miladapter.services.model.GetFeeResponse;
-import it.gov.pagopa.miladapter.util.FeeCalculatorErrorCode;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.ActivatePaymentNoticeV2Request;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.ActivatePaymentNoticeV2Response;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.SendPaymentOutcomeV2Request;
@@ -23,7 +17,6 @@ import it.gov.pagopa.pagopa_api.node.nodeforpsp.VerifyPaymentNoticeRes;
 import it.gov.pagopa.pagopa_api.xsd.common_types.v1_0.StOutcome;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +26,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Mono;
 
 @ExtendWith(MockitoExtension.class)
 class BasePaymentServiceTest {
@@ -44,11 +34,7 @@ class BasePaymentServiceTest {
 
   @Mock private NodeForPspWrapper nodeWrapper;
 
-  @Mock private FeeRestClient feeRestClient;
-
   @InjectMocks private BasePaymentService basePaymentService;
-
-  private static final String REQUEST_ID = "test-request-id";
 
   private CommonHeader commonHeader;
   private PspConfiguration pspConfiguration;
@@ -174,65 +160,6 @@ class BasePaymentServiceTest {
 
     assertEquals("Send outcome error", thrown.getMessage());
     verify(nodeWrapper).sendPaymentOutcomeV2(request);
-  }
-
-  // ==================== getFees Tests ====================
-
-  @Test
-  void testGetFees_Success() {
-
-    GecGetFeesRequest request = new GecGetFeesRequest();
-    GecGetFeesResponse gecResponse = new GecGetFeesResponse();
-    BundleOption bundleOption = new BundleOption();
-    bundleOption.setTaxPayerFee(100L);
-    gecResponse.setBundleOptions(List.of(bundleOption));
-
-    when(feeRestClient.getFees(REQUEST_ID, request)).thenReturn(Mono.just(gecResponse));
-
-    GetFeeResponse response = basePaymentService.getFees(REQUEST_ID, request);
-
-    assertNotNull(response);
-    assertEquals(100L, response.getFee());
-    verify(feeRestClient).getFees(REQUEST_ID, request);
-  }
-
-  @Test
-  void testGetFees_NoFeeFound() {
-
-    GecGetFeesRequest request = new GecGetFeesRequest();
-    GecGetFeesResponse gecResponse = new GecGetFeesResponse();
-    gecResponse.setBundleOptions(new ArrayList<>());
-
-    when(feeRestClient.getFees(REQUEST_ID, request)).thenReturn(Mono.just(gecResponse));
-
-    ResponseStatusException thrown =
-        assertThrows(
-            ResponseStatusException.class,
-            () -> basePaymentService.getFees(REQUEST_ID, request));
-
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, thrown.getStatusCode());
-    assertNotNull(thrown.getReason());
-    assertTrue(thrown.getReason().contains(FeeCalculatorErrorCode.NO_FEE_FOUND));
-    verify(feeRestClient).getFees(REQUEST_ID, request);
-  }
-
-  @Test
-  void testGetFees_ClientError() {
-
-    GecGetFeesRequest request = new GecGetFeesRequest();
-    RuntimeException exception = new RuntimeException("GEC error");
-
-    when(feeRestClient.getFees(REQUEST_ID, request)).thenReturn(Mono.error(exception));
-
-    ResponseStatusException thrown =
-        assertThrows(
-            ResponseStatusException.class,
-            () -> basePaymentService.getFees(REQUEST_ID, request));
-
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, thrown.getStatusCode());
-    assertNotNull(thrown.getReason());
-    assertTrue(thrown.getReason().contains(FeeCalculatorErrorCode.ERROR_RETRIEVING_FEES));
-    verify(feeRestClient).getFees(REQUEST_ID, request);
   }
 
   // ==================== remapNodeFaultToOutcome Tests ====================

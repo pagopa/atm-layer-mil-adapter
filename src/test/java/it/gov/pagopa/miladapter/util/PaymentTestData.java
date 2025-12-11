@@ -3,7 +3,6 @@ package it.gov.pagopa.miladapter.util;
 import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.services.model.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.http.HttpHeaders;
@@ -65,22 +64,6 @@ public final class PaymentTestData {
         return activatePaymentNoticeRequest;
     }
 
-    public static GetFeeRequest getFeeRequest() {
-        GetFeeRequest request = new GetFeeRequest();
-        request.setPaymentMethod("PAGOBANCOMAT");
-
-        Notice notice = new Notice();
-        notice.setAmount(AMOUNT);
-        notice.setPaTaxCode(PA_TAX_CODE);
-
-        Transfer transfer = new Transfer();
-        transfer.setPaTaxCode(PA_TAX_CODE);
-        transfer.setCategory("KTM");
-        notice.setTransfers(List.of(transfer));
-        request.setNotices(List.of(notice));
-        return request;
-    }
-
     public static ClosePaymentRequest getClosePaymentRequest(boolean isOk) {
         ClosePaymentRequest closePaymentRequest = new ClosePaymentRequest();
         closePaymentRequest.setOutcome(isOk ? PaymentTransactionOutcome.CLOSE.name() :
@@ -89,123 +72,6 @@ public final class PaymentTestData {
         closePaymentRequest.setPaymentTimestamp("2022-11-12T08:53:55");
         return closePaymentRequest;
     }
-/*
-    public static PreCloseRequest getPreCloseRequest(boolean isPreClose, int tokens, boolean isPreset) {
-        PreCloseRequest preCloseRequest = new PreCloseRequest();
-        if (isPreClose) {
-            preCloseRequest.setOutcome(PaymentTransactionOutcome.PRE_CLOSE.name());
-            preCloseRequest.setTransactionId(RandomStringUtils.random(32, true, true));
-            preCloseRequest.setTotalAmount(AMOUNT*tokens);
-            preCloseRequest.setFee(100L);
-        }
-        else {
-            preCloseRequest.setOutcome(PaymentTransactionOutcome.ABORT.name());
-        }
-
-        // payment tokens are always present in preclose
-        List<String> paymentTokens = new ArrayList<>(tokens);
-        for (int i = 0; i < tokens; i++) {
-            paymentTokens.add(RandomStringUtils.random(32, true, true));
-        }
-        preCloseRequest.setPaymentTokens(paymentTokens);
-
-        // preset is optional
-        if (isPreset) {
-            preCloseRequest.setPreset(getPreset());
-        }
-
-        return preCloseRequest;
-    }
-
-
-
-    public static Notice getNotice(String paymentToken) {
-        Notice notice = new Notice();
-        notice.setPaymentToken(paymentToken);
-        notice.setPaTaxCode(PA_TAX_CODE);
-        notice.setNoticeNumber(NOTICE_NUMBER);
-        notice.setAmount(AMOUNT);
-        notice.setDescription("Test payment notice");
-        notice.setCompany("Test company");
-        notice.setOffice("Test office");
-        return notice;
-    }
-
-    public static Preset getPreset() {
-        String presetId = UUID.randomUUID().toString();
-        String subscriberId = RandomStringUtils.random(6, 0, 0, true, true, null, new SecureRandom()).toLowerCase();
-        return getPreset(presetId, subscriberId);
-    }
-
-    public static Preset getPreset(String presetId, String subscriberId) {
-        Preset preset = new Preset();
-        preset.setPresetId(presetId);
-        preset.setPaTaxCode(PA_TAX_CODE);
-        preset.setSubscriberId(subscriberId);
-        return preset;
-    }
-
-
-
-    public static PaymentTransactionEntity getPaymentTransaction(String transactionId,
-                                                                 PaymentTransactionStatus status,
-                                                                 Map<String, String> headers,
-                                                                 int tokens,
-                                                                 Preset preset) {
-
-        if (status == PaymentTransactionStatus.ABORTED) throw new IllegalArgumentException();
-
-        String timestamp = LocalDateTime.ofInstant(Instant.now().truncatedTo(ChronoUnit.SECONDS), ZoneOffset.UTC).toString();
-
-        var paymentTransaction = new PaymentTransaction();
-        paymentTransaction.setTransactionId(transactionId);
-        paymentTransaction.setAcquirerId(headers.get("AcquirerId"));
-        paymentTransaction.setChannel(headers.get("Channel"));
-        paymentTransaction.setMerchantId(headers.get("MerchantId"));
-        paymentTransaction.setTerminalId(headers.get("TerminalId"));
-        paymentTransaction.setInsertTimestamp(timestamp);
-
-        List<Notice> notices = new ArrayList<>();
-        for (int i = 0; i < tokens; i++) {
-            notices.add(getNotice(RandomStringUtils.random(32, true, true)));
-        }
-
-        paymentTransaction.setNotices(notices);
-        paymentTransaction.setTotalAmount(notices.stream().map(Notice::getAmount).reduce(Long::sum).orElse(0L));
-
-        paymentTransaction.setFee(100L);
-        paymentTransaction.setStatus(status.name());
-
-        switch (status) {
-            case PRE_CLOSE -> {}
-            case PENDING,ERROR_ON_PAYMENT, ERROR_ON_CLOSE -> {
-                paymentTransaction.setPaymentMethod("PAGOBANCOMAT");
-                paymentTransaction.setPaymentTimestamp(timestamp);
-                paymentTransaction.setCloseTimestamp(timestamp);
-            }
-            case CLOSED, ERROR_ON_RESULT -> {
-                paymentTransaction.setPaymentMethod("PAGOBANCOMAT");
-                paymentTransaction.setPaymentTimestamp(timestamp);
-                paymentTransaction.setCloseTimestamp(timestamp);
-                paymentTransaction.setPaymentDate(timestamp);
-                paymentTransaction.setCallbackTimestamp(timestamp);
-                notices.forEach(n -> {
-                    n.setDebtor("Mario Rossi");
-                    n.setCreditorReferenceId("abcde");
-                });
-            }
-        }
-
-        paymentTransaction.setPreset(preset);
-
-        var paymentTransactionEntity = new PaymentTransactionEntity();
-        paymentTransactionEntity.transactionId = transactionId;
-        paymentTransactionEntity.paymentTransaction = paymentTransaction;
-
-        return paymentTransactionEntity;
-
-    }
-*/
 
     /**
      * Example taken from <a href="https://docs.pagopa.it/avviso-pagamento/struttura/specifiche-tecniche/dati-per-il-pagamento/codice-qr">QR Code specification</a>

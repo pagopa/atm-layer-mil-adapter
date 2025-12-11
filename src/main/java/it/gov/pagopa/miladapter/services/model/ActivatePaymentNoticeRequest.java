@@ -8,12 +8,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Request of the activatePaymentNotice API
  */
 @Getter
 @Setter
+@ToString
 public class ActivatePaymentNoticeRequest {
 
 	/**
@@ -32,13 +34,4 @@ public class ActivatePaymentNoticeRequest {
 	@Max(value = 99999999999L, message = "[" + ErrorCode.ERROR_AMOUNT_MUST_BE_LESS_THAN + "] amount must less than {value}")
     @JsonProperty("amount")
 	private Long amount;
-
-	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder("ActivatePaymentNoticeRequest{");
-		sb.append("idempotencyKey='").append(idempotencyKey).append('\'');
-		sb.append(", amount=").append(amount);
-		sb.append('}');
-		return sb.toString();
-	}
 }

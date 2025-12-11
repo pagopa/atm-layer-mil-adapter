@@ -17,7 +17,6 @@ import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.AuthProperties;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.services.model.ActivatePaymentNoticeResponse;
-import it.gov.pagopa.miladapter.services.model.GetFeeResponse;
 import it.gov.pagopa.miladapter.services.model.VerifyPaymentNoticeResponse;
 import it.gov.pagopa.miladapter.util.PaymentTestData;
 import java.lang.reflect.Field;
@@ -41,7 +40,6 @@ class ExternalCallServiceImplTest {
   private Map<String, Object> testVariables;
   private VerifyPaymentNoticeService verifyPaymentNoticeService;
   private ActivatePaymentNoticeService activatePaymentNoticeService;
-  private FeeCalculatorService feeCalculatorService;
   private PaymentService paymentService;
   private ObjectMapper objectMapper;
   private Tracer tracer;
@@ -55,7 +53,6 @@ class ExternalCallServiceImplTest {
     restConfigurationProperties = mock(RestConfigurationProperties.class);
     verifyPaymentNoticeService = mock(VerifyPaymentNoticeService.class);
     activatePaymentNoticeService = mock(ActivatePaymentNoticeService.class);
-    feeCalculatorService = mock(FeeCalculatorService.class);
     paymentService = mock(PaymentService.class);
     objectMapper = new ObjectMapper();
     AuthProperties authProperties = mock(AuthProperties.class);
@@ -80,7 +77,6 @@ class ExternalCallServiceImplTest {
             objectMapper,
             verifyPaymentNoticeService,
             activatePaymentNoticeService,
-            feeCalculatorService,
             paymentService);
 
     // Set the tracer using reflection
@@ -210,26 +206,6 @@ class ExternalCallServiceImplTest {
   }
 
   @Test
-  void executeExternalCall_getFee() throws JsonProcessingException {
-    // Prepare test variables for MIL flow with local endpoint
-    testVariables.put(RequiredProcessVariables.FLOW.getEngineValue(), FlowValues.MIL.getValue());
-    testVariables.put("url", "/mil-fee-calculator/fees");
-    testVariables.put("method", "POST");
-    testVariables.put("body", objectMapper.writeValueAsString(PaymentTestData.getFeeRequest()));
-    
-    GetFeeResponse mockResponse = new GetFeeResponse();
-    mockResponse.setFee(1000L);
-    when(feeCalculatorService.getFee(any(), any())).thenReturn(ResponseEntity.ok(mockResponse));
-
-    ResponseEntity<String> result = spyExternalCallServiceImpl.executeExternalCall(testVariables);
-
-    verify(feeCalculatorService).getFee(any(), any());
-    assertEquals(HttpStatus.OK, result.getStatusCode());
-    verify(restTemplate, never())
-        .exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), eq(String.class));
-  }
-
-  @Test
   void executeExternalCall_sendPaymentOutcome() throws JsonProcessingException {
       // Prepare test variables for MIL flow with local endpoint
       testVariables.put(RequiredProcessVariables.FLOW.getEngineValue(), FlowValues.MIL.getValue());
@@ -262,7 +238,6 @@ class ExternalCallServiceImplTest {
                 objectMapper,
                 verifyPaymentNoticeService,
                 activatePaymentNoticeService,
-                feeCalculatorService,
                 paymentService));
 
     // Set the tracer for this spy as well
@@ -297,7 +272,6 @@ class ExternalCallServiceImplTest {
                 objectMapper,
                 verifyPaymentNoticeService,
                 activatePaymentNoticeService,
-                feeCalculatorService,
                 paymentService));
 
     // Set the tracer for this spy as well
@@ -332,7 +306,6 @@ class ExternalCallServiceImplTest {
                 objectMapper,
                 verifyPaymentNoticeService,
                 activatePaymentNoticeService,
-                feeCalculatorService,
                 paymentService));
 
     setPrivateField(spyService, "tracer", tracer);
@@ -399,7 +372,6 @@ class ExternalCallServiceImplTest {
                 objectMapper,
                 verifyPaymentNoticeService,
                 activatePaymentNoticeService,
-                feeCalculatorService,
                 paymentService));
 
     setPrivateField(spyService, "tracer", tracer);
@@ -457,7 +429,6 @@ class ExternalCallServiceImplTest {
     assertEquals(HttpStatus.NOT_IMPLEMENTED, result.getStatusCode());
     verify(verifyPaymentNoticeService, never()).verifyByQrCode(any(), any());
     verify(activatePaymentNoticeService, never()).activateByQrCode(any(), any(), any());
-    verify(feeCalculatorService, never()).getFee(any(), any());
     verify(paymentService, never()).sendPaymentOutcome(any(), any(), any());
     verify(restTemplate, never())
         .exchange(any(URI.class), any(HttpMethod.class), any(HttpEntity.class), eq(String.class));
@@ -476,7 +447,6 @@ class ExternalCallServiceImplTest {
                 objectMapper,
                 verifyPaymentNoticeService,
                 activatePaymentNoticeService,
-                feeCalculatorService,
                 paymentService));
 
     setPrivateField(spyService, "tracer", tracer);
@@ -510,7 +480,6 @@ class ExternalCallServiceImplTest {
                 objectMapper,
                 verifyPaymentNoticeService,
                 activatePaymentNoticeService,
-                feeCalculatorService,
                 paymentService));
 
     setPrivateField(spyService, "tracer", tracer);

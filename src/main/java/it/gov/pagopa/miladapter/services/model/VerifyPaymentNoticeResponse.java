@@ -10,12 +10,14 @@ import jakarta.validation.constraints.Size;
 import java.math.BigInteger;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Response of the verifyPaymentNotice API
  */
 @Setter
 @Getter
+@ToString
 public class VerifyPaymentNoticeResponse {
 
     @NotNull
@@ -55,20 +57,4 @@ public class VerifyPaymentNoticeResponse {
     @Pattern(regexp = "^\\d{18}$")
 	@JsonInclude(Include.NON_NULL)
 	private String noticeNumber;
-
-    @Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder("VerifyPaymentNoticeResponse{");
-		sb.append("outcome='").append(outcome).append('\'');
-		sb.append(", amount=").append(amount);
-		sb.append(", dueDate='").append(dueDate).append('\'');
-		sb.append(", note='").append(note).append('\'');
-		sb.append(", description='").append(description).append('\'');
-		sb.append(", company='").append(company).append('\'');
-		sb.append(", office='").append(office).append('\'');
-		sb.append(", paTaxCode='").append(paTaxCode).append('\'');
-		sb.append(", noticeNumber='").append(noticeNumber).append('\'');
-		sb.append('}');
-		return sb.toString();
-	}
 }

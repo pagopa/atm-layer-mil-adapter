@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Request of the closePayment API.
@@ -14,6 +15,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
 public class ClosePaymentRequest {
 
 	/**
@@ -47,14 +49,4 @@ public class ClosePaymentRequest {
     @NotNull(message = "[" + ErrorCode.ERROR_PAYMENT_TOKEN_LIST_MUST_NOT_BE_NULL + "] paymentTokens must not be null")
     @Size(max = 5, message = "[" + ErrorCode.ERROR_PAYMENT_TOKEN_LIST_MUST_HAVE_AT_MOST + "] paymentTokens must have at most {max} elements")
     private List<@Pattern(regexp = "^[ -~]{1,35}$", message = "[" + ErrorCode.ERROR_PAYMENT_TOKEN_MATCH_MATCH_REGEXP + "] paymentTokens element must match \"{regexp}\"") String> paymentTokens;
-
-	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder("ClosePaymentRequest{");
-		sb.append("outcome='").append(outcome).append('\'');
-		sb.append(", paymentMethod='").append(paymentMethod).append('\'');
-		sb.append(", paymentTimestamp='").append(paymentTimestamp).append('\'');
-		sb.append('}');
-		return sb.toString();
-	}
 }
