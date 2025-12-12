@@ -12,5 +12,6 @@ public class CbillAbiFederazioneDto {
     private String pagopaId;
     private String pspFiscalCode;
     private String pspChannel;
+    private String password;
     private Boolean pagopaDirect;
 }

@@ -71,7 +71,7 @@ id-pay:
 # ------------------------------------------------------------------------------
 paymentnotice:
   activatepayment:
-    expiration-time: '30000'
+    expiration-time: '2000'
 
 # ------------------------------------------------------------------------------
 # Node error remapping and CXF SOAP client configuration to communicate with Nodo

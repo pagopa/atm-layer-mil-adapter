@@ -36,12 +36,30 @@ public class ActivatePaymentNoticeResponse {
 	@JsonInclude(Include.NON_NULL)
 	private BigInteger amount;
 
+    /**
+     * Description of the payment
+     */
+    @JsonInclude(Include.NON_NULL)
+    private String description;
+
 	/**
 	 * Tax code of the creditor company
 	 */
 	@Pattern(regexp = "^\\d{11}$")
 	@JsonInclude(Include.NON_NULL)
 	private String paTaxCode;
+
+    /**
+     * Name of the creditor company
+     */
+    @JsonInclude(Include.NON_NULL)
+    private String company;
+
+    /**
+     * Name of the office
+     */
+    @JsonInclude(Include.NON_NULL)
+    private String officeName;
 
 	/**
 	 * ID of the payment activation
@@ -55,4 +73,10 @@ public class ActivatePaymentNoticeResponse {
 	 */
 	@JsonInclude(Include.NON_NULL)
 	private List<Transfer> transfers;
+
+    /**
+     * Creditor reference ID
+     */
+    @JsonInclude(Include.NON_NULL)
+    private String creditorReferenceId;
 }

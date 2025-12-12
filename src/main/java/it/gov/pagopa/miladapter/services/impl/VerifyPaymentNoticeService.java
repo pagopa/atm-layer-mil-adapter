@@ -186,6 +186,8 @@ public class VerifyPaymentNoticeService {
 						response.getFault().getFaultCode(),
 						response.getFault().getOriginalFaultCode()
 				));
+        log.error("Node verifyPaymentNotice responded with fault [{}] and fault code [{}]",
+                response.getFault().getFaultString(), response.getFault().getFaultCode());
 		return verifyResponse;
 	}
 
