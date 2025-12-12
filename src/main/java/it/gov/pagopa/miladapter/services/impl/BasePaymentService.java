@@ -1,9 +1,11 @@
 package it.gov.pagopa.miladapter.services.impl;
 
 import it.gov.pagopa.miladapter.client.NodeForPspWrapper;
+import it.gov.pagopa.miladapter.client.model.CbillAbiFederazioneDto;
 import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.properties.NodeErrorMappingProperties;
 import it.gov.pagopa.miladapter.services.model.CommonHeader;
+import it.gov.pagopa.miladapter.services.model.Fault;
 import it.gov.pagopa.miladapter.util.NodeApi;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.ActivatePaymentNoticeV2Request;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.ActivatePaymentNoticeV2Response;
@@ -19,6 +21,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import it.gov.pagopa.pagopa_api.xsd.common_types.v1_0.CtFaultBean;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -133,5 +137,18 @@ public class BasePaymentService {
      */
     protected String getDeviceId(CommonHeader commonHeader) {
         return StringUtils.join(List.of(commonHeader.getAcquirerId(), commonHeader.getTerminalId()), "|");
+    }
+
+    public Fault setFaultDetails(CtFaultBean faultBean) {
+        Fault fault = new Fault();
+        fault.setId(faultBean.getId());
+        fault.setFaultCode(faultBean.getFaultCode());
+        fault.setFaultString(faultBean.getOriginalFaultString());
+        fault.setDescription(faultBean.getDescription());
+        fault.setSerial(faultBean.getSerial());
+        fault.setOriginalFaultCode(faultBean.getOriginalFaultCode());
+        fault.setOriginalFaultString(faultBean.getOriginalFaultString());
+        fault.setOriginalDescription(faultBean.getOriginalDescription());
+        return fault;
     }
 }

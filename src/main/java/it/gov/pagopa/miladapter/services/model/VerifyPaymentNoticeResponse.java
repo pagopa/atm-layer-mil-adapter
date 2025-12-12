@@ -57,4 +57,10 @@ public class VerifyPaymentNoticeResponse {
     @Pattern(regexp = "^\\d{18}$")
 	@JsonInclude(Include.NON_NULL)
 	private String noticeNumber;
+
+    /**
+     * Fault details in case of outcome KO
+     */
+    @JsonInclude(Include.NON_NULL)
+    private Fault fault;
 }

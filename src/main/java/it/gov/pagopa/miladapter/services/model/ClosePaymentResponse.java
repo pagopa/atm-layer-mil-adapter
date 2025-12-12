@@ -1,5 +1,6 @@
 package it.gov.pagopa.miladapter.services.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -21,5 +22,11 @@ public class ClosePaymentResponse {
 	 */
 	@NotNull
 	@Pattern(regexp = "^(?:OK|KO)$")
-	private Outcome outcome;
+	private String outcome;
+
+    /**
+     * Fault details in case of outcome KO
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Fault fault;
 }

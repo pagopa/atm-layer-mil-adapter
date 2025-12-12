@@ -79,4 +79,10 @@ public class ActivatePaymentNoticeResponse {
      */
     @JsonInclude(Include.NON_NULL)
     private String creditorReferenceId;
+
+    /**
+     * Fault details in case of outcome KO
+     */
+    @JsonInclude(Include.NON_NULL)
+    private Fault fault;
 }

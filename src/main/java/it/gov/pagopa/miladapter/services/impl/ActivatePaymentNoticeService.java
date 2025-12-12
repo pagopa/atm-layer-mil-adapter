@@ -214,6 +214,7 @@ public class ActivatePaymentNoticeService {
 						response.getFault().getFaultCode(),
 						response.getFault().getOriginalFaultCode()
 				));
+        activatePaymentNoticeResponse.setFault(this.basePaymentService.setFaultDetails(response.getFault()));
 		log.error("Node activatePaymentNoticeV2 responded with fault [{}] and fault code [{}]",
                 response.getFault().getFaultString(), response.getFault().getFaultCode());
 		return activatePaymentNoticeResponse;

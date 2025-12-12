@@ -8,12 +8,14 @@ import it.gov.pagopa.miladapter.client.NodeForPspWrapper;
 import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.properties.NodeErrorMappingProperties;
 import it.gov.pagopa.miladapter.services.model.CommonHeader;
+import it.gov.pagopa.miladapter.services.model.Fault;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.ActivatePaymentNoticeV2Request;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.ActivatePaymentNoticeV2Response;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.SendPaymentOutcomeV2Request;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.SendPaymentOutcomeV2Response;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.VerifyPaymentNoticeReq;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.VerifyPaymentNoticeRes;
+import it.gov.pagopa.pagopa_api.xsd.common_types.v1_0.CtFaultBean;
 import it.gov.pagopa.pagopa_api.xsd.common_types.v1_0.StOutcome;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -273,5 +275,129 @@ class BasePaymentServiceTest {
     assertEquals(timestamp1.length(), timestamp2.length());
     assertTrue(timestamp1.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"));
     assertTrue(timestamp2.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"));
+  }
+
+  // ==================== setFaultDetails Tests ====================
+
+  @Test
+  void testSetFaultDetails_AllFieldsPopulated() {
+    CtFaultBean ctFaultBean = new CtFaultBean();
+    ctFaultBean.setId("FAULT_ID_123");
+    ctFaultBean.setFaultCode("PAA_PAGAMENTO_DUPLICATO");
+    ctFaultBean.setFaultString("Payment duplicate fault");
+    ctFaultBean.setDescription("Il pagamento è già stato processato");
+    ctFaultBean.setSerial(12345);
+    ctFaultBean.setOriginalFaultCode("ORIGINAL_CODE_123");
+    ctFaultBean.setOriginalFaultString("Original fault string");
+    ctFaultBean.setOriginalDescription("Original description");
+
+    Fault result = basePaymentService.setFaultDetails(ctFaultBean);
+
+    assertNotNull(result);
+    assertEquals("FAULT_ID_123", result.getId());
+    assertEquals("PAA_PAGAMENTO_DUPLICATO", result.getFaultCode());
+    assertEquals("Original fault string", result.getFaultString());
+    assertEquals("Il pagamento è già stato processato", result.getDescription());
+    assertEquals(12345, result.getSerial());
+    assertEquals("ORIGINAL_CODE_123", result.getOriginalFaultCode());
+    assertEquals("Original fault string", result.getOriginalFaultString());
+    assertEquals("Original description", result.getOriginalDescription());
+  }
+
+  @Test
+  void testSetFaultDetails_MinimalFields() {
+    CtFaultBean ctFaultBean = new CtFaultBean();
+    ctFaultBean.setFaultCode("PPT_ERRORE_GENERICO");
+
+    Fault result = basePaymentService.setFaultDetails(ctFaultBean);
+
+    assertNotNull(result);
+    assertNull(result.getId());
+    assertEquals("PPT_ERRORE_GENERICO", result.getFaultCode());
+    assertNull(result.getFaultString());
+    assertNull(result.getDescription());
+    assertNull(result.getSerial());
+    assertNull(result.getOriginalFaultCode());
+    assertNull(result.getOriginalFaultString());
+    assertNull(result.getOriginalDescription());
+  }
+
+  @Test
+  void testSetFaultDetails_NullOriginalFields() {
+    CtFaultBean ctFaultBean = new CtFaultBean();
+    ctFaultBean.setId("ID_001");
+    ctFaultBean.setFaultCode("PAA_SEMANTICA");
+    ctFaultBean.setFaultString("Semantic error");
+    ctFaultBean.setDescription("Errore semantico");
+    ctFaultBean.setSerial(99);
+    // originalFaultCode, originalFaultString, originalDescription are null
+
+    Fault result = basePaymentService.setFaultDetails(ctFaultBean);
+
+    assertNotNull(result);
+    assertEquals("ID_001", result.getId());
+    assertEquals("PAA_SEMANTICA", result.getFaultCode());
+    assertNull(result.getFaultString()); // uses originalFaultString which is null
+    assertEquals("Errore semantico", result.getDescription());
+    assertEquals(99, result.getSerial());
+    assertNull(result.getOriginalFaultCode());
+    assertNull(result.getOriginalFaultString());
+    assertNull(result.getOriginalDescription());
+  }
+
+  @Test
+  void testSetFaultDetails_WithDifferentOriginalAndFaultCodes() {
+    CtFaultBean ctFaultBean = new CtFaultBean();
+    ctFaultBean.setFaultCode("PPT_CANALE_ERRORE");
+    ctFaultBean.setOriginalFaultCode("CANALE_INDISPONIBILE");
+    ctFaultBean.setFaultString("Standard fault string");
+    ctFaultBean.setOriginalFaultString("Original channel error");
+    ctFaultBean.setDescription("Channel error description");
+    ctFaultBean.setOriginalDescription("Original channel error description");
+
+    Fault result = basePaymentService.setFaultDetails(ctFaultBean);
+
+    assertNotNull(result);
+    assertEquals("PPT_CANALE_ERRORE", result.getFaultCode());
+    assertEquals("CANALE_INDISPONIBILE", result.getOriginalFaultCode());
+    assertEquals("Original channel error", result.getFaultString());
+    assertEquals("Channel error description", result.getDescription());
+    assertEquals("Original channel error", result.getOriginalFaultString());
+    assertEquals("Original channel error description", result.getOriginalDescription());
+  }
+
+  @Test
+  void testSetFaultDetails_ZeroSerial() {
+    CtFaultBean ctFaultBean = new CtFaultBean();
+    ctFaultBean.setFaultCode("TEST_CODE");
+    ctFaultBean.setSerial(0);
+
+    Fault result = basePaymentService.setFaultDetails(ctFaultBean);
+
+    assertNotNull(result);
+    assertEquals(0, result.getSerial());
+  }
+
+  @Test
+  void testSetFaultDetails_EmptyStrings() {
+    CtFaultBean ctFaultBean = new CtFaultBean();
+    ctFaultBean.setId("");
+    ctFaultBean.setFaultCode("");
+    ctFaultBean.setFaultString("");
+    ctFaultBean.setDescription("");
+    ctFaultBean.setOriginalFaultCode("");
+    ctFaultBean.setOriginalFaultString("");
+    ctFaultBean.setOriginalDescription("");
+
+    Fault result = basePaymentService.setFaultDetails(ctFaultBean);
+
+    assertNotNull(result);
+    assertEquals("", result.getId());
+    assertEquals("", result.getFaultCode());
+    assertEquals("", result.getFaultString());
+    assertEquals("", result.getDescription());
+    assertEquals("", result.getOriginalFaultCode());
+    assertEquals("", result.getOriginalFaultString());
+    assertEquals("", result.getOriginalDescription());
   }
 }
