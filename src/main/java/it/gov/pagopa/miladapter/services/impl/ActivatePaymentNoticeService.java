@@ -18,7 +18,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -182,15 +181,23 @@ public class ActivatePaymentNoticeService {
 		activateResponse.setAmount(response.getTotalAmount().multiply(new BigDecimal(100)).toBigInteger());
 		activateResponse.setPaTaxCode(response.getFiscalCodePA());
 		activateResponse.setPaymentToken(response.getPaymentToken());
+        activateResponse.setDescription(response.getPaymentDescription());
+        activateResponse.setCompany(response.getCompanyName());
+        activateResponse.setOfficeName(response.getOfficeName());
 		List<Transfer> transfers = new ArrayList<>();
 		response.getTransferList().getTransfer().forEach(t -> {
 			Transfer transfer = new Transfer();
+            transfer.setIdTransfer(t.getIdTransfer());
+            transfer.setTransferAmount(t.getTransferAmount().multiply(new BigDecimal(100)).toBigInteger());
 			transfer.setPaTaxCode(t.getFiscalCodePA());
-			transfer.setCategory(StringUtils.EMPTY); // Currently the node doesn't return the category, will return empty string
+            transfer.setCompany(t.getCompanyName());
+			transfer.setCategory(t.getTransferCategory());
+            transfer.setIban(t.getIBAN());
+            transfer.setRemittanceInformation(t.getRemittanceInformation());
 			transfers.add(transfer);
 		});
 		activateResponse.setTransfers(transfers);
-		
+		activateResponse.setCreditorReferenceId(response.getCreditorReferenceId());
 		return activateResponse;
 	}
 
@@ -207,7 +214,9 @@ public class ActivatePaymentNoticeService {
 						response.getFault().getFaultCode(),
 						response.getFault().getOriginalFaultCode()
 				));
-		
+        activatePaymentNoticeResponse.setFault(this.basePaymentService.setFaultDetails(response.getFault()));
+		log.error("Node activatePaymentNoticeV2 responded with fault [{}] and fault code [{}]",
+                response.getFault().getFaultString(), response.getFault().getFaultCode());
 		return activatePaymentNoticeResponse;
 	}
 }

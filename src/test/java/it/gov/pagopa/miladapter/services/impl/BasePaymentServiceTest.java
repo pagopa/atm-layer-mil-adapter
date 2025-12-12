@@ -2,81 +2,47 @@ package it.gov.pagopa.miladapter.services.impl;
 
 import static it.gov.pagopa.miladapter.util.PaymentTestData.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-import it.gov.pagopa.miladapter.client.AzureADRestClient;
-import it.gov.pagopa.miladapter.client.FeeRestClient;
 import it.gov.pagopa.miladapter.client.NodeForPspWrapper;
-import it.gov.pagopa.miladapter.client.model.ADAccessToken;
-import it.gov.pagopa.miladapter.client.model.AcquirerConfiguration;
-import it.gov.pagopa.miladapter.client.model.GecGetFeesRequest;
-import it.gov.pagopa.miladapter.client.model.GecGetFeesResponse;
-import it.gov.pagopa.miladapter.client.model.BundleOption;
 import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.properties.NodeErrorMappingProperties;
 import it.gov.pagopa.miladapter.services.model.CommonHeader;
-import it.gov.pagopa.miladapter.services.model.GetFeeResponse;
-import it.gov.pagopa.miladapter.util.ErrorCode;
-import it.gov.pagopa.miladapter.util.FeeCalculatorErrorCode;
-import it.gov.pagopa.miladapter.util.NodeApi;
+import it.gov.pagopa.miladapter.services.model.Fault;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.ActivatePaymentNoticeV2Request;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.ActivatePaymentNoticeV2Response;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.SendPaymentOutcomeV2Request;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.SendPaymentOutcomeV2Response;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.VerifyPaymentNoticeReq;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.VerifyPaymentNoticeRes;
+import it.gov.pagopa.pagopa_api.xsd.common_types.v1_0.CtFaultBean;
 import it.gov.pagopa.pagopa_api.xsd.common_types.v1_0.StOutcome;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
-import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Mono;
 
 @ExtendWith(MockitoExtension.class)
-@Disabled
 class BasePaymentServiceTest {
 
   @Mock private NodeErrorMappingProperties nodeErrorMappingProperties;
 
-  @Mock private AzureADRestClient azureADRestClient;
-
-  @Mock private MilRestService milRestService;
-
   @Mock private NodeForPspWrapper nodeWrapper;
-
-  @Mock private FeeRestClient feeRestClient;
 
   @InjectMocks private BasePaymentService basePaymentService;
 
-  private static final String IDENTITY = "test-identity";
-  private static final String ACCESS_TOKEN = "test-access-token";
-  private static final String REQUEST_ID = "test-request-id";
-
   private CommonHeader commonHeader;
   private PspConfiguration pspConfiguration;
-  private ADAccessToken adAccessToken;
-  private AcquirerConfiguration acquirerConfiguration;
 
   @BeforeEach
   void setup() {
-    // Set identity field
-    ReflectionTestUtils.setField(basePaymentService, "identity", IDENTITY);
-
     // Common header
     commonHeader = new CommonHeader();
     commonHeader.setAcquirerId(ACQUIRER_ID);
@@ -90,15 +56,6 @@ class BasePaymentServiceTest {
     pspConfiguration.setBroker("BROKER_CODE");
     pspConfiguration.setChannel("CHANNEL_CODE");
     pspConfiguration.setPassword("PASSWORD");
-
-    // Azure AD Token
-    adAccessToken = new ADAccessToken();
-    adAccessToken.setToken(ACCESS_TOKEN);
-
-    // Acquirer Configuration
-    acquirerConfiguration = new AcquirerConfiguration();
-    acquirerConfiguration.setPspConfigForVerifyAndActivate(pspConfiguration);
-    acquirerConfiguration.setPspConfigForGetFeeAndClosePayment(pspConfiguration);
   }
 
   // ==================== verifyPaymentNotice Tests ====================
@@ -205,202 +162,6 @@ class BasePaymentServiceTest {
 
     assertEquals("Send outcome error", thrown.getMessage());
     verify(nodeWrapper).sendPaymentOutcomeV2(request);
-  }
-
-  // ==================== getFees Tests ====================
-
-  @Test
-  void testGetFees_Success() {
-
-    GecGetFeesRequest request = new GecGetFeesRequest();
-    GecGetFeesResponse gecResponse = new GecGetFeesResponse();
-    BundleOption bundleOption = new BundleOption();
-    bundleOption.setTaxPayerFee(100L);
-    gecResponse.setBundleOptions(List.of(bundleOption));
-
-    when(feeRestClient.getFees(REQUEST_ID, request)).thenReturn(Mono.just(gecResponse));
-
-    GetFeeResponse response = basePaymentService.getFees(REQUEST_ID, request);
-
-    assertNotNull(response);
-    assertEquals(100L, response.getFee());
-    verify(feeRestClient).getFees(REQUEST_ID, request);
-  }
-
-  @Test
-  void testGetFees_NoFeeFound() {
-
-    GecGetFeesRequest request = new GecGetFeesRequest();
-    GecGetFeesResponse gecResponse = new GecGetFeesResponse();
-    gecResponse.setBundleOptions(new ArrayList<>());
-
-    when(feeRestClient.getFees(REQUEST_ID, request)).thenReturn(Mono.just(gecResponse));
-
-    ResponseStatusException thrown =
-        assertThrows(
-            ResponseStatusException.class,
-            () -> basePaymentService.getFees(REQUEST_ID, request));
-
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, thrown.getStatusCode());
-    assertNotNull(thrown.getReason());
-    assertTrue(thrown.getReason().contains(FeeCalculatorErrorCode.NO_FEE_FOUND));
-    verify(feeRestClient).getFees(REQUEST_ID, request);
-  }
-
-  @Test
-  void testGetFees_ClientError() {
-
-    GecGetFeesRequest request = new GecGetFeesRequest();
-    RuntimeException exception = new RuntimeException("GEC error");
-
-    when(feeRestClient.getFees(REQUEST_ID, request)).thenReturn(Mono.error(exception));
-
-    ResponseStatusException thrown =
-        assertThrows(
-            ResponseStatusException.class,
-            () -> basePaymentService.getFees(REQUEST_ID, request));
-
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, thrown.getStatusCode());
-    assertNotNull(thrown.getReason());
-    assertTrue(thrown.getReason().contains(FeeCalculatorErrorCode.ERROR_RETRIEVING_FEES));
-    verify(feeRestClient).getFees(REQUEST_ID, request);
-  }
-
-  // ==================== retrievePSPConfiguration Tests ====================
-
-  @Test
-  void testRetrievePSPConfiguration_Success_VerifyApi() {
-
-    when(azureADRestClient.getAccessToken(IDENTITY, BasePaymentService.STORAGE))
-        .thenReturn(Mono.just(adAccessToken));
-    when(milRestService.getPspConfiguration("Bearer " + ACCESS_TOKEN, ACQUIRER_ID))
-        .thenReturn(Mono.just(acquirerConfiguration));
-
-    PspConfiguration config =
-        basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY);
-
-    assertNotNull(config);
-    assertEquals(pspConfiguration.getPsp(), config.getPsp());
-    assertEquals(pspConfiguration.getBroker(), config.getBroker());
-    verify(azureADRestClient).getAccessToken(IDENTITY, BasePaymentService.STORAGE);
-    verify(milRestService).getPspConfiguration("Bearer " + ACCESS_TOKEN, ACQUIRER_ID);
-  }
-
-  @Test
-  void testRetrievePSPConfiguration_Success_ActivateApi() {
-
-    when(azureADRestClient.getAccessToken(IDENTITY, BasePaymentService.STORAGE))
-        .thenReturn(Mono.just(adAccessToken));
-    when(milRestService.getPspConfiguration(anyString(), eq(ACQUIRER_ID)))
-        .thenReturn(Mono.just(acquirerConfiguration));
-
-    PspConfiguration config =
-        basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE);
-
-    assertNotNull(config);
-  }
-
-  @Test
-  void testRetrievePSPConfiguration_Success_CloseApi() {
-
-    when(azureADRestClient.getAccessToken(IDENTITY, BasePaymentService.STORAGE))
-        .thenReturn(Mono.just(adAccessToken));
-    when(milRestService.getPspConfiguration(anyString(), eq(ACQUIRER_ID)))
-        .thenReturn(Mono.just(acquirerConfiguration));
-
-    PspConfiguration config =
-        basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.CLOSE);
-
-    assertNotNull(config);
-  }
-
-  @Test
-  void testRetrievePSPConfiguration_Success_FeeApi() {
-
-    when(azureADRestClient.getAccessToken(IDENTITY, BasePaymentService.STORAGE))
-        .thenReturn(Mono.just(adAccessToken));
-    when(milRestService.getPspConfiguration(anyString(), eq(ACQUIRER_ID)))
-        .thenReturn(Mono.just(acquirerConfiguration));
-
-    PspConfiguration config =
-        basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.FEE);
-
-    assertNotNull(config);
-  }
-
-  @Test
-  void testRetrievePSPConfiguration_AzureADError() {
-
-    when(azureADRestClient.getAccessToken(IDENTITY, BasePaymentService.STORAGE))
-        .thenReturn(Mono.error(new RuntimeException("Azure AD error")));
-
-    ResponseStatusException thrown =
-        assertThrows(
-            ResponseStatusException.class,
-            () -> basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY));
-
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, thrown.getStatusCode());
-    assertNotNull(thrown.getReason());
-    assertTrue(thrown.getReason().contains(ErrorCode.ERROR_CALLING_AZUREAD_REST_SERVICES));
-    verify(azureADRestClient).getAccessToken(IDENTITY, BasePaymentService.STORAGE);
-    verify(milRestService, never()).getPspConfiguration(anyString(), anyString());
-  }
-
-  @Test
-  void testRetrievePSPConfiguration_NullToken() {
-
-    ADAccessToken nullToken = new ADAccessToken();
-    nullToken.setToken(null);
-
-    when(azureADRestClient.getAccessToken(IDENTITY, BasePaymentService.STORAGE))
-        .thenReturn(Mono.just(nullToken));
-
-    ResponseStatusException thrown =
-        assertThrows(
-            ResponseStatusException.class,
-            () -> basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY));
-
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, thrown.getStatusCode());
-    assertNotNull(thrown.getReason());
-    assertTrue(thrown.getReason().contains(ErrorCode.AZUREAD_ACCESS_TOKEN_IS_NULL));
-    verify(milRestService, never()).getPspConfiguration(anyString(), anyString());
-  }
-
-  @Test
-  void testRetrievePSPConfiguration_UnknownAcquirerId() {
-
-    when(azureADRestClient.getAccessToken(IDENTITY, BasePaymentService.STORAGE))
-        .thenReturn(Mono.just(adAccessToken));
-    when(milRestService.getPspConfiguration(anyString(), eq(ACQUIRER_ID)))
-        .thenReturn(
-            Mono.error(WebClientResponseException.create(404, "Not Found", null, null, null)));
-
-    ResponseStatusException thrown =
-        assertThrows(
-            ResponseStatusException.class,
-            () -> basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY));
-
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, thrown.getStatusCode());
-    assertNotNull(thrown.getReason());
-    assertTrue(thrown.getReason().contains(ErrorCode.UNKNOWN_ACQUIRER_ID));
-  }
-
-  @Test
-  void testRetrievePSPConfiguration_MilRestServiceError() {
-
-    when(azureADRestClient.getAccessToken(IDENTITY, BasePaymentService.STORAGE))
-        .thenReturn(Mono.just(adAccessToken));
-    when(milRestService.getPspConfiguration(anyString(), eq(ACQUIRER_ID)))
-        .thenReturn(Mono.error(new RuntimeException("MIL error")));
-
-    ResponseStatusException thrown =
-        assertThrows(
-            ResponseStatusException.class,
-            () -> basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY));
-
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, thrown.getStatusCode());
-    assertNotNull(thrown.getReason());
-    assertTrue(thrown.getReason().contains(ErrorCode.ERROR_CALLING_MIL_REST_SERVICES));
   }
 
   // ==================== remapNodeFaultToOutcome Tests ====================
@@ -514,5 +275,129 @@ class BasePaymentServiceTest {
     assertEquals(timestamp1.length(), timestamp2.length());
     assertTrue(timestamp1.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"));
     assertTrue(timestamp2.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"));
+  }
+
+  // ==================== setFaultDetails Tests ====================
+
+  @Test
+  void testSetFaultDetails_AllFieldsPopulated() {
+    CtFaultBean ctFaultBean = new CtFaultBean();
+    ctFaultBean.setId("FAULT_ID_123");
+    ctFaultBean.setFaultCode("PAA_PAGAMENTO_DUPLICATO");
+    ctFaultBean.setFaultString("Payment duplicate fault");
+    ctFaultBean.setDescription("Il pagamento è già stato processato");
+    ctFaultBean.setSerial(12345);
+    ctFaultBean.setOriginalFaultCode("ORIGINAL_CODE_123");
+    ctFaultBean.setOriginalFaultString("Original fault string");
+    ctFaultBean.setOriginalDescription("Original description");
+
+    Fault result = basePaymentService.setFaultDetails(ctFaultBean);
+
+    assertNotNull(result);
+    assertEquals("FAULT_ID_123", result.getId());
+    assertEquals("PAA_PAGAMENTO_DUPLICATO", result.getFaultCode());
+    assertEquals("Original fault string", result.getFaultString());
+    assertEquals("Il pagamento è già stato processato", result.getDescription());
+    assertEquals(12345, result.getSerial());
+    assertEquals("ORIGINAL_CODE_123", result.getOriginalFaultCode());
+    assertEquals("Original fault string", result.getOriginalFaultString());
+    assertEquals("Original description", result.getOriginalDescription());
+  }
+
+  @Test
+  void testSetFaultDetails_MinimalFields() {
+    CtFaultBean ctFaultBean = new CtFaultBean();
+    ctFaultBean.setFaultCode("PPT_ERRORE_GENERICO");
+
+    Fault result = basePaymentService.setFaultDetails(ctFaultBean);
+
+    assertNotNull(result);
+    assertNull(result.getId());
+    assertEquals("PPT_ERRORE_GENERICO", result.getFaultCode());
+    assertNull(result.getFaultString());
+    assertNull(result.getDescription());
+    assertNull(result.getSerial());
+    assertNull(result.getOriginalFaultCode());
+    assertNull(result.getOriginalFaultString());
+    assertNull(result.getOriginalDescription());
+  }
+
+  @Test
+  void testSetFaultDetails_NullOriginalFields() {
+    CtFaultBean ctFaultBean = new CtFaultBean();
+    ctFaultBean.setId("ID_001");
+    ctFaultBean.setFaultCode("PAA_SEMANTICA");
+    ctFaultBean.setFaultString("Semantic error");
+    ctFaultBean.setDescription("Errore semantico");
+    ctFaultBean.setSerial(99);
+    // originalFaultCode, originalFaultString, originalDescription are null
+
+    Fault result = basePaymentService.setFaultDetails(ctFaultBean);
+
+    assertNotNull(result);
+    assertEquals("ID_001", result.getId());
+    assertEquals("PAA_SEMANTICA", result.getFaultCode());
+    assertNull(result.getFaultString()); // uses originalFaultString which is null
+    assertEquals("Errore semantico", result.getDescription());
+    assertEquals(99, result.getSerial());
+    assertNull(result.getOriginalFaultCode());
+    assertNull(result.getOriginalFaultString());
+    assertNull(result.getOriginalDescription());
+  }
+
+  @Test
+  void testSetFaultDetails_WithDifferentOriginalAndFaultCodes() {
+    CtFaultBean ctFaultBean = new CtFaultBean();
+    ctFaultBean.setFaultCode("PPT_CANALE_ERRORE");
+    ctFaultBean.setOriginalFaultCode("CANALE_INDISPONIBILE");
+    ctFaultBean.setFaultString("Standard fault string");
+    ctFaultBean.setOriginalFaultString("Original channel error");
+    ctFaultBean.setDescription("Channel error description");
+    ctFaultBean.setOriginalDescription("Original channel error description");
+
+    Fault result = basePaymentService.setFaultDetails(ctFaultBean);
+
+    assertNotNull(result);
+    assertEquals("PPT_CANALE_ERRORE", result.getFaultCode());
+    assertEquals("CANALE_INDISPONIBILE", result.getOriginalFaultCode());
+    assertEquals("Original channel error", result.getFaultString());
+    assertEquals("Channel error description", result.getDescription());
+    assertEquals("Original channel error", result.getOriginalFaultString());
+    assertEquals("Original channel error description", result.getOriginalDescription());
+  }
+
+  @Test
+  void testSetFaultDetails_ZeroSerial() {
+    CtFaultBean ctFaultBean = new CtFaultBean();
+    ctFaultBean.setFaultCode("TEST_CODE");
+    ctFaultBean.setSerial(0);
+
+    Fault result = basePaymentService.setFaultDetails(ctFaultBean);
+
+    assertNotNull(result);
+    assertEquals(0, result.getSerial());
+  }
+
+  @Test
+  void testSetFaultDetails_EmptyStrings() {
+    CtFaultBean ctFaultBean = new CtFaultBean();
+    ctFaultBean.setId("");
+    ctFaultBean.setFaultCode("");
+    ctFaultBean.setFaultString("");
+    ctFaultBean.setDescription("");
+    ctFaultBean.setOriginalFaultCode("");
+    ctFaultBean.setOriginalFaultString("");
+    ctFaultBean.setOriginalDescription("");
+
+    Fault result = basePaymentService.setFaultDetails(ctFaultBean);
+
+    assertNotNull(result);
+    assertEquals("", result.getId());
+    assertEquals("", result.getFaultCode());
+    assertEquals("", result.getFaultString());
+    assertEquals("", result.getDescription());
+    assertEquals("", result.getOriginalFaultCode());
+    assertEquals("", result.getOriginalFaultString());
+    assertEquals("", result.getOriginalDescription());
   }
 }

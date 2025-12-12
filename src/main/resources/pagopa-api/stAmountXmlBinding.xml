@@ -1,6 +1,6 @@
 <jxb:bindings xmlns:xs="http://www.w3.org/2001/XMLSchema"
               xmlns:jxb="https://jakarta.ee/xml/ns/jaxb" version="3.0">
-    <jxb:bindings schemaLocation="./SANP3.6.1/xsd-common/sac-common-types-1.0.xsd">
+    <jxb:bindings schemaLocation="./SANP3.10.0/xsd-common/sac-common-types-1.0.xsd">
         <jxb:bindings node="//xs:simpleType[@name='stAmount']">
 
                     <jxb:javaType name="java.math.BigDecimal"

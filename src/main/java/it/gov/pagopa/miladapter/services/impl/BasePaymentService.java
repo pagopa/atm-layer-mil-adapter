@@ -1,17 +1,11 @@
 package it.gov.pagopa.miladapter.services.impl;
 
-import it.gov.pagopa.miladapter.client.AzureADRestClient;
-import it.gov.pagopa.miladapter.client.FeeRestClient;
 import it.gov.pagopa.miladapter.client.NodeForPspWrapper;
-import it.gov.pagopa.miladapter.client.model.GecGetFeesRequest;
+import it.gov.pagopa.miladapter.client.model.CbillAbiFederazioneDto;
 import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.properties.NodeErrorMappingProperties;
 import it.gov.pagopa.miladapter.services.model.CommonHeader;
-import it.gov.pagopa.miladapter.services.model.Errors;
-import it.gov.pagopa.miladapter.services.model.GetFeeResponse;
-import it.gov.pagopa.miladapter.util.ErrorCode;
-import it.gov.pagopa.miladapter.util.FeeCalculatorErrorCode;
-import it.gov.pagopa.miladapter.util.FeeSelector;
+import it.gov.pagopa.miladapter.services.model.Fault;
 import it.gov.pagopa.miladapter.util.NodeApi;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.ActivatePaymentNoticeV2Request;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.ActivatePaymentNoticeV2Response;
@@ -25,44 +19,37 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import it.gov.pagopa.pagopa_api.xsd.common_types.v1_0.CtFaultBean;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
-import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @Slf4j
 public class BasePaymentService {
 
 	private final NodeErrorMappingProperties nodeErrorMappingProperties;
-	private final AzureADRestClient azureADRestClient;
-	private final MilRestService milRestService;
 	private final NodeForPspWrapper nodeWrapper;
-    private final FeeRestClient feeRestClient;
+    private final RestTemplate restTemplate;
 
-	@Value("${azure-auth-api.identity}")
-	private String identity;
+    @Value("${reporting-service.base-url}")
+    private String reportingServiceBaseUrl;
 
-	public static final String STORAGE = "https://storage.azure.com";
-	private static final String BEARER = "Bearer ";
+    @Value("${reporting-service.cbill-abi-federazione.path}")
+    private String cbillAbiFederazionePath;
 
 	public BasePaymentService(NodeErrorMappingProperties nodeErrorMappingProperties,
-                              MilRestService milRestService,
                               NodeForPspWrapper nodeWrapper,
-                              AzureADRestClient azureADRestClient,
-                              FeeRestClient feeRestClient) {
+                              RestTemplate restTemplate) {
 		this.nodeErrorMappingProperties = nodeErrorMappingProperties;
 		this.nodeWrapper = nodeWrapper;
-		this.milRestService = milRestService;
-		this.azureADRestClient = azureADRestClient;
-        this.feeRestClient = feeRestClient;
+        this.restTemplate = restTemplate;
 	}
 
 	/**
@@ -96,42 +83,6 @@ public class BasePaymentService {
 	}
 
 	/**
-	 * Delegates the call to getFees to the FeeRestClient and processes the response
-	 *
-	 * @param requestId the requestId from headers
-	 * @param gecGetFeesRequest the request to be sent to GEC
-	 * @return a {@link GetFeeResponse} with the calculated fee
-	 */
-	public GetFeeResponse getFees(String requestId, GecGetFeesRequest gecGetFeesRequest) {
-		return (GetFeeResponse) feeRestClient.getFees(requestId, gecGetFeesRequest)
-				.onErrorMap(t -> {
-					log.error("[{}] Error while calling Fee REST service", FeeCalculatorErrorCode.ERROR_RETRIEVING_FEES, t);
-					return new ResponseStatusException(
-							HttpStatus.INTERNAL_SERVER_ERROR,
-							new Errors(List.of(FeeCalculatorErrorCode.ERROR_RETRIEVING_FEES)).toString());
-				})
-				.handle((getFeesResponse, sink) -> {
-					log.debug("Received GEC response: {}", getFeesResponse);
-					long fee;
-					try {
-						fee = FeeSelector.getFirstFee(getFeesResponse.getBundleOptions());
-					} catch (NoSuchElementException e) {
-						log.error("[{}] No fee found for data in request", FeeCalculatorErrorCode.NO_FEE_FOUND);
-						sink.error(new ResponseStatusException(
-								HttpStatus.INTERNAL_SERVER_ERROR,
-								new Errors(List.of(FeeCalculatorErrorCode.NO_FEE_FOUND)).toString()
-						));
-						return;
-					}
-					GetFeeResponse response = new GetFeeResponse();
-					response.setFee(fee);
-					log.debug("Fee calculation completed: {}", response);
-					sink.next(response);
-				})
-				.block();
-	}
-
-	/**
 	 * Retrieves the PSP configuration for the given acquirer and API type
 	 *
 	 * @param acquirerId the acquirer ID
@@ -140,50 +91,20 @@ public class BasePaymentService {
 	 */
 	public PspConfiguration retrievePSPConfiguration(String acquirerId, NodeApi api) {
 		log.debug("retrievePSPConfiguration - acquirerId: {} ", acquirerId);
+        //TODO integrare chiamata al reporting service per recuperare i dati reali e adattarli a PspConfiguration
+        String url = UriComponentsBuilder
+                .fromUriString(reportingServiceBaseUrl)
+                .path(cbillAbiFederazionePath)
+                .buildAndExpand(acquirerId)
+                .toUriString();
+        // CbillAbiFederazioneDto cbillAbiFederazione = restTemplate.getForObject(url, CbillAbiFederazioneDto.class);
+
         PspConfiguration pspConf = new PspConfiguration();
         pspConf.setPsp("AGID_01");
         pspConf.setBroker("97735020584");
         pspConf.setChannel("97735020584_03");
         pspConf.setPassword("pwd_AgID");
         return pspConf;
-        /*
-		return azureADRestClient.getAccessToken(identity, STORAGE)
-				.onErrorMap(t -> {
-					log.error("[{}] Error while calling Azure AD rest service", ErrorCode.ERROR_CALLING_AZUREAD_REST_SERVICES, t);
-					return new ResponseStatusException(
-							HttpStatus.INTERNAL_SERVER_ERROR,
-							new Errors(List.of(ErrorCode.ERROR_CALLING_AZUREAD_REST_SERVICES)).toString());
-				})
-				.flatMap(token -> {
-					log.debug("BasePaymentService -> retrievePspConfiguration: Azure AD service returned a 200 status, response token: [{}]", token);
-
-					if (token.getToken() == null) {
-						return Mono.error(new ResponseStatusException(
-								HttpStatus.INTERNAL_SERVER_ERROR,
-								new Errors(List.of(ErrorCode.AZUREAD_ACCESS_TOKEN_IS_NULL)).toString()));
-					}
-
-					return milRestService.getPspConfiguration(BEARER + token.getToken(), acquirerId)
-							.onErrorMap(t -> {
-								if (t instanceof WebClientResponseException webEx && webEx.getStatusCode().value() == 404) {
-									log.error("[{}] Missing psp configuration for acquirerId", ErrorCode.UNKNOWN_ACQUIRER_ID, t);
-									return new ResponseStatusException(
-											HttpStatus.INTERNAL_SERVER_ERROR,
-											new Errors(List.of(ErrorCode.UNKNOWN_ACQUIRER_ID)).toString());
-								} else {
-									log.error("[{}] Error retrieving the psp configuration", ErrorCode.ERROR_CALLING_MIL_REST_SERVICES, t);
-									return new ResponseStatusException(
-											HttpStatus.INTERNAL_SERVER_ERROR,
-											new Errors(List.of(ErrorCode.ERROR_CALLING_MIL_REST_SERVICES)).toString());
-								}
-							})
-							.map(acquirerConfiguration -> switch (api) {
-								case ACTIVATE, VERIFY -> acquirerConfiguration.getPspConfigForVerifyAndActivate();
-								case CLOSE, FEE -> acquirerConfiguration.getPspConfigForGetFeeAndClosePayment();
-							});
-				})
-				.block();
-         */
 	}
 
 	public String remapNodeFaultToOutcome(String faultCode, String originalFaultCode) {
@@ -216,5 +137,18 @@ public class BasePaymentService {
      */
     protected String getDeviceId(CommonHeader commonHeader) {
         return StringUtils.join(List.of(commonHeader.getAcquirerId(), commonHeader.getTerminalId()), "|");
+    }
+
+    public Fault setFaultDetails(CtFaultBean faultBean) {
+        Fault fault = new Fault();
+        fault.setId(faultBean.getId());
+        fault.setFaultCode(faultBean.getFaultCode());
+        fault.setFaultString(faultBean.getOriginalFaultString());
+        fault.setDescription(faultBean.getDescription());
+        fault.setSerial(faultBean.getSerial());
+        fault.setOriginalFaultCode(faultBean.getOriginalFaultCode());
+        fault.setOriginalFaultString(faultBean.getOriginalFaultString());
+        fault.setOriginalDescription(faultBean.getOriginalDescription());
+        return fault;
     }
 }

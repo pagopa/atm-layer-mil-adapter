@@ -78,13 +78,36 @@ public class PaymentService {
                         HttpStatus.INTERNAL_SERVER_ERROR,
                         new Errors(List.of(ErrorCode.ERROR_CALLING_NODE_SOAP_SERVICES)).toString());
             }
-            log.debug("verifyPaymentNotice: Response {}", outcomeResponse);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+            ClosePaymentResponse response = this.buildResponse(outcomeResponse);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
             log.error("[{}] Error calling the node sendPaymentOutcomeV2 service", ErrorCode.ERROR_CALLING_NODE_SOAP_SERVICES, e);
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     new Errors(List.of(ErrorCode.ERROR_CALLING_NODE_SOAP_SERVICES)).toString());
         }
+    }
+
+    private ClosePaymentResponse buildResponse(SendPaymentOutcomeV2Response outcomeResponse) {
+        if (Outcome.OK.name().equals(outcomeResponse.getOutcome().value())) {
+            ClosePaymentResponse closePaymentResponse = new ClosePaymentResponse();
+            closePaymentResponse.setOutcome(outcomeResponse.getOutcome().value());
+            return closePaymentResponse;
+        } else {
+            return this.buildResponseKo(outcomeResponse);
+        }
+    }
+
+    private ClosePaymentResponse buildResponseKo(SendPaymentOutcomeV2Response outcomeResponse) {
+        ClosePaymentResponse closePaymentResponse = new ClosePaymentResponse();
+        closePaymentResponse.setOutcome(
+                this.basePaymentService.remapNodeFaultToOutcome(
+                        outcomeResponse.getFault().getFaultCode(),
+                        outcomeResponse.getFault().getOriginalFaultCode()
+                ));
+        closePaymentResponse.setFault(this.basePaymentService.setFaultDetails(outcomeResponse.getFault()));
+        log.error("Node sendPaymentOutcomeV2 responded with fault [{}] and fault code [{}]",
+                outcomeResponse.getFault().getFaultString(), outcomeResponse.getFault().getFaultCode());
+        return closePaymentResponse;
     }
 }

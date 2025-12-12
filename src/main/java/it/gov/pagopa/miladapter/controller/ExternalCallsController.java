@@ -25,8 +25,6 @@ public class ExternalCallsController {
     public ResponseEntity<String> externalcall(@RequestBody Map<String, Object> body) throws JsonProcessingException {
         // Log before starting async method
         log.info("Starting call external");
-        // log the body received
-        log.debug("Request body: {}", body);
         return externalCallService.executeExternalCall(body);
     }
 

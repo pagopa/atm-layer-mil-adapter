@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Response of the activatePaymentNotice API.
@@ -17,6 +18,7 @@ import lombok.Setter;
  */
 @Setter
 @Getter
+@ToString
 public class ActivatePaymentNoticeResponse {
 
 	/**
@@ -34,12 +36,30 @@ public class ActivatePaymentNoticeResponse {
 	@JsonInclude(Include.NON_NULL)
 	private BigInteger amount;
 
+    /**
+     * Description of the payment
+     */
+    @JsonInclude(Include.NON_NULL)
+    private String description;
+
 	/**
 	 * Tax code of the creditor company
 	 */
 	@Pattern(regexp = "^\\d{11}$")
 	@JsonInclude(Include.NON_NULL)
 	private String paTaxCode;
+
+    /**
+     * Name of the creditor company
+     */
+    @JsonInclude(Include.NON_NULL)
+    private String company;
+
+    /**
+     * Name of the office
+     */
+    @JsonInclude(Include.NON_NULL)
+    private String officeName;
 
 	/**
 	 * ID of the payment activation
@@ -54,15 +74,15 @@ public class ActivatePaymentNoticeResponse {
 	@JsonInclude(Include.NON_NULL)
 	private List<Transfer> transfers;
 
-	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder("ActivatePaymentResponse{");
-		sb.append("outcome='").append(outcome).append('\'');
-		sb.append(", amount=").append(amount);
-		sb.append(", paTaxCode='").append(paTaxCode).append('\'');
-		sb.append(", paymentToken='").append(paymentToken).append('\'');
-		sb.append(", transfers=").append(transfers);
-		sb.append('}');
-		return sb.toString();
-	}
+    /**
+     * Creditor reference ID
+     */
+    @JsonInclude(Include.NON_NULL)
+    private String creditorReferenceId;
+
+    /**
+     * Fault details in case of outcome KO
+     */
+    @JsonInclude(Include.NON_NULL)
+    private Fault fault;
 }

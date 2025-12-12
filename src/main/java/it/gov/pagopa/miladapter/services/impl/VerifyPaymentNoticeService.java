@@ -4,13 +4,13 @@ import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.model.QrCode;
 import it.gov.pagopa.miladapter.services.model.CommonHeader;
 import it.gov.pagopa.miladapter.services.model.Errors;
+import it.gov.pagopa.miladapter.services.model.Outcome;
 import it.gov.pagopa.miladapter.services.model.VerifyPaymentNoticeResponse;
 import it.gov.pagopa.miladapter.util.*;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.CtPaymentOptionDescription;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.CtQrCode;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.VerifyPaymentNoticeReq;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.VerifyPaymentNoticeRes;
-import it.gov.pagopa.pagopa_api.xsd.common_types.v1_0.StOutcome;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import java.math.BigDecimal;
@@ -100,7 +100,7 @@ public class VerifyPaymentNoticeService {
 			VerifyPaymentNoticeRes nodeResponse = this.basePaymentService.verifyPaymentNotice(verifyPaymentNoticeReq);
 
 			VerifyPaymentNoticeResponse verifyPaymentNoticeResponse;
-			if (nodeResponse != null && StOutcome.OK.name().equals(nodeResponse.getOutcome().name())) {
+			if (nodeResponse != null && Outcome.OK.name().equals(nodeResponse.getOutcome().name())) {
 				log.debug("Node verifyPaymentNotice responded with outcome OK, {}",
 						NodeForPspLoggingUtil.toString(nodeResponse));
 				verifyPaymentNoticeResponse = buildResponseOk(nodeResponse, noticeNumber);
@@ -186,6 +186,9 @@ public class VerifyPaymentNoticeService {
 						response.getFault().getFaultCode(),
 						response.getFault().getOriginalFaultCode()
 				));
+        verifyResponse.setFault(this.basePaymentService.setFaultDetails(response.getFault()));
+        log.error("Node verifyPaymentNotice responded with fault [{}] and fault code [{}]",
+                response.getFault().getFaultString(), response.getFault().getFaultCode());
 		return verifyResponse;
 	}
 

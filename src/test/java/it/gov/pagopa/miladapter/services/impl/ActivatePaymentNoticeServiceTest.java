@@ -18,7 +18,6 @@ import it.gov.pagopa.pagopa_api.node.nodeforpsp.*;
 import it.gov.pagopa.pagopa_api.xsd.common_types.v1_0.CtFaultBean;
 import it.gov.pagopa.pagopa_api.xsd.common_types.v1_0.StOutcome;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +31,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,8 +56,6 @@ class ActivatePaymentNoticeServiceTest {
 
 	@BeforeEach
 	void setup() {
-		// Set expiration time via reflection
-		ReflectionTestUtils.setField(activatePaymentNoticeService, "paymentNoticeExpirationTime", BigInteger.valueOf(30000));
 
 		// Common headers
 		commonHeader = PaymentTestData.getCommonHeader();
@@ -83,6 +79,11 @@ class ActivatePaymentNoticeServiceTest {
         CtTransferPSPV2 transfer = new CtTransferPSPV2();
 		transfer.setFiscalCodePA(PA_TAX_CODE);
 		transfer.setCompanyName("Test Company");
+        transfer.setIBAN("IT0000000000000000000000000");
+        transfer.setIdTransfer(1);
+        transfer.setTransferAmount(BigDecimal.valueOf(PaymentTestData.AMOUNT,2));
+        transfer.setRemittanceInformation("Pagamento di Test");
+        transfer.setTransferCategory("Categoria di Test");
 
         CtTransferListPSPV2 transferList = new CtTransferListPSPV2();
 		transferList.getTransfer().add(transfer);

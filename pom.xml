@@ -67,10 +67,6 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <dependency>
@@ -115,10 +111,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -227,17 +219,8 @@
                 <version>${jacoco.version}</version>
                 <configuration>
                     <excludes>
-                        <exclude>it/gov/pagopa/miladapter/services/model/**</exclude>
-                        <exclude>it/gov/pagopa/pagopa_api/node/nodeforpsp/**</exclude>
-                        <exclude>it/gov/pagopa/miladapter/config/**</exclude>
+                        <exclude>it/gov/pagopa/pagopa_api/**</exclude>
                         <exclude>gov/telematici/pagamenti/ws/**</exclude>
-                        <exclude>it/gov/pagopa/miladapter/client/**</exclude>
-                        <exclude>it/gov/pagopa/miladapter/enums/**</exclude>
-                        <exclude>it/gov/pagopa/pagopa_api/xsd/common_types/v1_0/**</exclude>
-                        <exclude>it/gov/pagopa/pagopa_api/nodeforpsp/**</exclude>
-                        <exclude>it/gov/pagopa/miladapter/services/impl/**</exclude>
-                        <exclude>it/gov/pagopa/miladapter/util/**</exclude>
-                        <exclude>it/gov/pagopa/miladapter/model/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -279,7 +262,7 @@
                             </defaultOptions>
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <wsdl>${basedir}/src/main/resources/pagopa-api/SANP3.6.1/wsdl/nodeForPsp.wsdl</wsdl>
+                                    <wsdl>${basedir}/src/main/resources/pagopa-api/SANP3.10.0/wsdl/nodeForPsp.wsdl</wsdl>
                                     <bindingFiles>
                                         <bindingFile>${basedir}/src/main/resources/pagopa-api/async_binding.xml</bindingFile>
                                         <bindingFile>${basedir}/src/main/resources/pagopa-api/stAmountXmlBinding.xml</bindingFile>

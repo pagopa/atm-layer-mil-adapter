@@ -9,11 +9,13 @@ import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.services.model.ClosePaymentRequest;
 import it.gov.pagopa.miladapter.services.model.ClosePaymentResponse;
 import it.gov.pagopa.miladapter.services.model.CommonHeader;
+import it.gov.pagopa.miladapter.services.model.Fault;
 import it.gov.pagopa.miladapter.util.ErrorCode;
 import it.gov.pagopa.miladapter.util.NodeApi;
 import it.gov.pagopa.miladapter.util.PaymentTestData;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.SendPaymentOutcomeV2Request;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.SendPaymentOutcomeV2Response;
+import it.gov.pagopa.pagopa_api.xsd.common_types.v1_0.CtFaultBean;
 import it.gov.pagopa.pagopa_api.xsd.common_types.v1_0.StOutcome;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,7 +76,7 @@ class PaymentServiceTest {
                 paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestOk);
 
         assertNotNull(response);
-        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 
         verify(basePaymentService).retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE);
 
@@ -103,7 +105,7 @@ class PaymentServiceTest {
                 paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestKo);
 
         assertNotNull(response);
-        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 
         ArgumentCaptor<SendPaymentOutcomeV2Request> captorSendPaymentOutcome =
                 ArgumentCaptor.forClass(SendPaymentOutcomeV2Request.class);
@@ -127,7 +129,7 @@ class PaymentServiceTest {
                 paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestOk);
 
         assertNotNull(response);
-        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 
         ArgumentCaptor<SendPaymentOutcomeV2Request> captorSendPaymentOutcome =
                 ArgumentCaptor.forClass(SendPaymentOutcomeV2Request.class);
@@ -227,5 +229,113 @@ class PaymentServiceTest {
         assertEquals("CUSTOM_CHANNEL", capturedRequest.getIdChannel());
         assertEquals("CUSTOM_PASSWORD", capturedRequest.getPassword());
     }
-}
 
+    @Test
+    void testSendPaymentOutcome_NodeReturnsKoWithFault() {
+        // Prepare node response with KO outcome and fault
+        SendPaymentOutcomeV2Response koResponse = new SendPaymentOutcomeV2Response();
+        koResponse.setOutcome(StOutcome.KO);
+
+        CtFaultBean ctFaultBean = new CtFaultBean();
+        ctFaultBean.setFaultCode("PAA_PAGAMENTO_DUPLICATO");
+        ctFaultBean.setOriginalFaultCode("PAA_PAGAMENTO_DUPLICATO");
+        ctFaultBean.setFaultString("Payment already processed");
+        ctFaultBean.setDescription("Il pagamento è già stato processato");
+        koResponse.setFault(ctFaultBean);
+
+        Fault expectedFault = new Fault();
+        expectedFault.setFaultCode("PAA_PAGAMENTO_DUPLICATO");
+        expectedFault.setDescription("Il pagamento è già stato processato");
+
+        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
+                .thenReturn(pspConfiguration);
+        when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
+                .thenReturn(koResponse);
+        when(basePaymentService.remapNodeFaultToOutcome("PAA_PAGAMENTO_DUPLICATO", "PAA_PAGAMENTO_DUPLICATO"))
+                .thenReturn("PAYMENT_DUPLICATED");
+        when(basePaymentService.setFaultDetails(ctFaultBean))
+                .thenReturn(expectedFault);
+
+        ResponseEntity<ClosePaymentResponse> response =
+                paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestOk);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("PAYMENT_DUPLICATED", response.getBody().getOutcome());
+        assertNotNull(response.getBody().getFault());
+        assertEquals("PAA_PAGAMENTO_DUPLICATO", response.getBody().getFault().getFaultCode());
+        assertEquals("Il pagamento è già stato processato", response.getBody().getFault().getDescription());
+
+        verify(basePaymentService).remapNodeFaultToOutcome("PAA_PAGAMENTO_DUPLICATO", "PAA_PAGAMENTO_DUPLICATO");
+        verify(basePaymentService).setFaultDetails(ctFaultBean);
+    }
+
+    @Test
+    void testSendPaymentOutcome_NodeReturnsKoWithDifferentFaultCodes() {
+        SendPaymentOutcomeV2Response koResponse = new SendPaymentOutcomeV2Response();
+        koResponse.setOutcome(StOutcome.KO);
+
+        CtFaultBean ctFaultBean = new CtFaultBean();
+        ctFaultBean.setFaultCode("PPT_CANALE_ERRORE");
+        ctFaultBean.setOriginalFaultCode("ORIGINAL_ERROR");
+        ctFaultBean.setFaultString("Channel error");
+        koResponse.setFault(ctFaultBean);
+
+        Fault expectedFault = new Fault();
+        expectedFault.setFaultCode("PPT_CANALE_ERRORE");
+
+        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
+                .thenReturn(pspConfiguration);
+        when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
+                .thenReturn(koResponse);
+        when(basePaymentService.remapNodeFaultToOutcome("PPT_CANALE_ERRORE", "ORIGINAL_ERROR"))
+                .thenReturn("GENERIC_ERROR");
+        when(basePaymentService.setFaultDetails(ctFaultBean))
+                .thenReturn(expectedFault);
+
+        ResponseEntity<ClosePaymentResponse> response =
+                paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestOk);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("GENERIC_ERROR", response.getBody().getOutcome());
+        assertNotNull(response.getBody().getFault());
+
+        verify(basePaymentService).remapNodeFaultToOutcome("PPT_CANALE_ERRORE", "ORIGINAL_ERROR");
+        verify(basePaymentService).setFaultDetails(ctFaultBean);
+    }
+
+    @Test
+    void testSendPaymentOutcome_NodeReturnsKoWithMinimalFaultInfo() {
+        SendPaymentOutcomeV2Response koResponse = new SendPaymentOutcomeV2Response();
+        koResponse.setOutcome(StOutcome.KO);
+
+        CtFaultBean ctFaultBean = new CtFaultBean();
+        ctFaultBean.setFaultCode("GENERIC_ERROR");
+        koResponse.setFault(ctFaultBean);
+
+        Fault expectedFault = new Fault();
+        expectedFault.setFaultCode("GENERIC_ERROR");
+
+        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
+                .thenReturn(pspConfiguration);
+        when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
+                .thenReturn(koResponse);
+        when(basePaymentService.remapNodeFaultToOutcome(eq("GENERIC_ERROR"), isNull()))
+                .thenReturn("UNKNOWN_ERROR");
+        when(basePaymentService.setFaultDetails(ctFaultBean))
+                .thenReturn(expectedFault);
+
+        ResponseEntity<ClosePaymentResponse> response =
+                paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestOk);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("UNKNOWN_ERROR", response.getBody().getOutcome());
+
+        verify(basePaymentService).remapNodeFaultToOutcome(eq("GENERIC_ERROR"), isNull());
+    }
+}
