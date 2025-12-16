@@ -171,7 +171,7 @@ Release:
     Seconds: 60
 
 reportingService:
-    baseUrl: http://pagopa-dev-atm-layer-reporting-service
+    baseUrl: http://pagopa-dev-atm-layer-reporting-service.pagopa.svc.cluster.local:8080
     cbillAbiFederazione:
       path: /api/v1/reporting-service/cbill-abi-federazione/{abi}
 
