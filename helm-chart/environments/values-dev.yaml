@@ -170,6 +170,11 @@ Release:
   Time:
     Seconds: 60
 
+reportingService:
+    baseUrl: http://pagopa-dev-atm-layer-reporting-service
+    cbillAbiFederazione:
+      path: /api/v1/reporting-service/cbill-abi-federazione/{abi}
+
 node:
   soapClient:
     url: https://api.uat.platform.pagopa.it/nodo/node-for-psp/v1

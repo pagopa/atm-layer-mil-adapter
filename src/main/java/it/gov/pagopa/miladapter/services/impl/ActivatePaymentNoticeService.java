@@ -4,7 +4,6 @@ import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.model.QrCode;
 import it.gov.pagopa.miladapter.services.model.*;
 import it.gov.pagopa.miladapter.util.ErrorCode;
-import it.gov.pagopa.miladapter.util.NodeApi;
 import it.gov.pagopa.miladapter.util.PaymentNoticeConstants;
 import it.gov.pagopa.miladapter.util.QrCodeParser;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.ActivatePaymentNoticeV2Request;
@@ -69,7 +68,7 @@ public class ActivatePaymentNoticeService {
 		QrCode parsedQrCode = qrCodeParser.b64UrlParse(b64UrlQrCode);
 		log.debug("Decoded qrCode: {}", parsedQrCode);
 
-        PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.ACTIVATE);
+        PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId());
         return this.callNodeActivatePaymentNotice(parsedQrCode.getPaTaxCode(), parsedQrCode.getNoticeNumber(), pspConf, activatePaymentNoticeRequest);
 	}
 
@@ -100,7 +99,7 @@ public class ActivatePaymentNoticeService {
 		log.debug("activateByTaxCodeAndNoticeNumber - Input parameters: {}, paTaxCode: {}, noticeNumber: {}, body: {}",
 				headers, paTaxCode, noticeNumber, activatePaymentNoticeRequest);
 
-        PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.VERIFY);
+        PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId());
 		return this.callNodeActivatePaymentNotice(paTaxCode, noticeNumber, pspConf, activatePaymentNoticeRequest);
 	}
 

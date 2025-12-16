@@ -54,8 +54,7 @@ public class VerifyPaymentNoticeService {
 		QrCode parsedQrCode = qrCodeParser.b64UrlParse(b64UrlQrCode);
 		log.debug("Decoded qrCode: {}", parsedQrCode);
 
-        // TODO remove retrievePSPConfiguration call, static initialization of pspConf
-		PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.VERIFY);
+		PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId());
 
 		return callNodeVerifyPaymentNotice(parsedQrCode.getPaTaxCode(), parsedQrCode.getNoticeNumber(), pspConf);
 	}
@@ -79,8 +78,7 @@ public class VerifyPaymentNoticeService {
 
 		log.debug("verifyByTaxCodeAndNoticeNumber - Input parameters: {}, paTaxCode: {}, noticeNumber: {}", headers, paTaxCode, noticeNumber);
 
-        // TODO remove retrievePSPConfiguration call, static initialization of pspConf
-		PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.VERIFY);
+		PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId());
 		return callNodeVerifyPaymentNotice(paTaxCode, noticeNumber, pspConf);
 	}
 

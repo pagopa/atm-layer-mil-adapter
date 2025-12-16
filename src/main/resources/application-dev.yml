@@ -30,7 +30,7 @@ rest-configuration:
     url: /api/v1/model/bpmn/function/{functionType}/bank/{acquirerId}/branch/{branchId}/terminal/{terminalId}
 
 reporting-service:
-  base-url: ${REPORTING_SERVICE_BASE_URL:test}
+  base-url: ${REPORTING_SERVICE_BASE_URL:http://pagopa-dev-atm-layer-reporting-service.pagopa.svc.cluster.local:8080}
   cbill-abi-federazione:
     path: ${CBILL_ABI_FEDERAZIONE_PATH:/api/v1/reporting-service/cbill-abi-federazione/{abi}}
 

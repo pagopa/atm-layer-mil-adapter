@@ -3,7 +3,6 @@ package it.gov.pagopa.miladapter.services.impl;
 import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.services.model.*;
 import it.gov.pagopa.miladapter.util.ErrorCode;
-import it.gov.pagopa.miladapter.util.NodeApi;
 import it.gov.pagopa.miladapter.util.PaymentNoticeConstants;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.SendPaymentOutcomeV2Request;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.SendPaymentOutcomeV2Response;
@@ -51,7 +50,7 @@ public class PaymentService {
         log.debug("closePayment with SendPaymentOutcome - Input parameters: {}, transactionId : {}, {}",
                 headers, transactionId, closePaymentRequest);
 
-        PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId(), NodeApi.ACTIVATE);
+        PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId());
         return this.callNodeSendPaymentOutcome(pspConf, closePaymentRequest);
     }
 

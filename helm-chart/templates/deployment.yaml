@@ -162,6 +162,10 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.node.soapClient.credentialsSecretName }}
                   key: {{ .Values.node.soapClient.credentialsSecretKeys.apiKey }}
+            - name: REPORTING_SERVICE_BASE_URL
+              value: "{{ .Values.reportingService.baseUrl }}"
+            - name: CBILL_ABI_FEDERAZIONE_PATH
+              value: "{{ .Values.reportingService.cbillAbiFederazione.path }}"
           volumeMounts:
           {{- if .Values.secretProviderClass.enabled }}
           - name: secrets-store-inline

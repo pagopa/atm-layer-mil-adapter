@@ -6,7 +6,6 @@ import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.properties.NodeErrorMappingProperties;
 import it.gov.pagopa.miladapter.services.model.CommonHeader;
 import it.gov.pagopa.miladapter.services.model.Fault;
-import it.gov.pagopa.miladapter.util.NodeApi;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.ActivatePaymentNoticeV2Request;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.ActivatePaymentNoticeV2Response;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.SendPaymentOutcomeV2Request;
@@ -83,27 +82,38 @@ public class BasePaymentService {
 	}
 
 	/**
-	 * Retrieves the PSP configuration for the given acquirer and API type
+	 * Retrieves the PSP configuration for the given acquirer
 	 *
 	 * @param acquirerId the acquirer ID
-	 * @param api the type of API (VERIFY, ACTIVATE, CLOSE, FEE)
 	 * @return the {@link PspConfiguration} for the given acquirer
 	 */
-	public PspConfiguration retrievePSPConfiguration(String acquirerId, NodeApi api) {
+	public PspConfiguration retrievePSPConfiguration(String acquirerId) {
 		log.debug("retrievePSPConfiguration - acquirerId: {} ", acquirerId);
-        //TODO integrare chiamata al reporting service per recuperare i dati reali e adattarli a PspConfiguration
         String url = UriComponentsBuilder
                 .fromUriString(reportingServiceBaseUrl)
                 .path(cbillAbiFederazionePath)
                 .buildAndExpand(acquirerId)
                 .toUriString();
-        // CbillAbiFederazioneDto cbillAbiFederazione = restTemplate.getForObject(url, CbillAbiFederazioneDto.class);
+        CbillAbiFederazioneDto cbillAbiFederazione = restTemplate.getForObject(url, CbillAbiFederazioneDto.class);
 
+        if (cbillAbiFederazione == null) {
+            log.error("retrievePSPConfiguration - No configuration found for acquirerId: {}", acquirerId);
+            throw new IllegalStateException("PSP configuration not found for acquirer: " + acquirerId);
+        }
+
+        if (StringUtils.isBlank(cbillAbiFederazione.getPagopaId()) ||
+                StringUtils.isBlank(cbillAbiFederazione.getPspFiscalCode()) ||
+                StringUtils.isBlank(cbillAbiFederazione.getPspChannel())) {
+            log.error("retrievePSPConfiguration - Invalid configuration for acquirerId: {}, missing required fields", acquirerId);
+            throw new IllegalStateException("Invalid PSP configuration for acquirer: " + acquirerId);
+        }
+
+        log.debug("retrievePSPConfiguration - retrieved CbillAbiFederazioneDto: {} ", cbillAbiFederazione);
         PspConfiguration pspConf = new PspConfiguration();
-        pspConf.setPsp("AGID_01");
-        pspConf.setBroker("97735020584");
-        pspConf.setChannel("97735020584_03");
-        pspConf.setPassword("pwd_AgID");
+        pspConf.setPsp(cbillAbiFederazione.getPagopaId());
+        pspConf.setBroker(cbillAbiFederazione.getPspFiscalCode());
+        pspConf.setChannel(cbillAbiFederazione.getPspFiscalCode().concat("_").concat(cbillAbiFederazione.getPspChannel()));
+        pspConf.setPassword(cbillAbiFederazione.getPassword());
         return pspConf;
 	}
 
