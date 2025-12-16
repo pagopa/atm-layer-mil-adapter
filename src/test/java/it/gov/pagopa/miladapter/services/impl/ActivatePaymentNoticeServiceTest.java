@@ -11,7 +11,6 @@ import it.gov.pagopa.miladapter.services.model.ActivatePaymentNoticeRequest;
 import it.gov.pagopa.miladapter.services.model.ActivatePaymentNoticeResponse;
 import it.gov.pagopa.miladapter.services.model.CommonHeader;
 import it.gov.pagopa.miladapter.util.ErrorCode;
-import it.gov.pagopa.miladapter.util.NodeApi;
 import it.gov.pagopa.miladapter.util.PaymentTestData;
 import it.gov.pagopa.miladapter.util.QrCodeParser;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.*;
@@ -115,7 +114,7 @@ class ActivatePaymentNoticeServiceTest {
 	void testActivateByQrCode_Success() {
 		// Arrange
 		when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
-		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
+		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
 				.thenReturn(pspConfiguration);
 		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
 				.thenReturn(activatePaymentNoticeV2ResponseOk);
@@ -142,7 +141,7 @@ class ActivatePaymentNoticeServiceTest {
 
 		// Verify interactions
 		verify(qrCodeParser).b64UrlParse(encodedQrCode);
-		verify(basePaymentService).retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE);
+		verify(basePaymentService).retrievePSPConfiguration(ACQUIRER_ID);
 	}
 
 	@ParameterizedTest
@@ -150,7 +149,7 @@ class ActivatePaymentNoticeServiceTest {
 	void testActivateByQrCode_NodeKo(String faultCode, String originalFaultCode, String milOutcome) {
 		// Arrange
 		when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
-		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
+		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
 				.thenReturn(pspConfiguration);
 		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
 				.thenReturn(generateKoNodeResponse(faultCode, originalFaultCode));
@@ -176,7 +175,7 @@ class ActivatePaymentNoticeServiceTest {
 	void testActivateByQrCode_NodeError() {
 		// Arrange
 		when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
-		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
+		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
 				.thenReturn(pspConfiguration);
 		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
 				.thenThrow(new RuntimeException("Node error"));
@@ -195,7 +194,7 @@ class ActivatePaymentNoticeServiceTest {
 	void testActivateByQrCode_NodeReturnsNull() {
 		// Arrange
 		when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
-		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
+		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
 				.thenReturn(pspConfiguration);
 		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
 				.thenReturn(null);
@@ -213,7 +212,7 @@ class ActivatePaymentNoticeServiceTest {
 	@Test
 	void testActivateByTaxCodeAndNoticeNumber_Success() {
 		// Arrange
-		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
+		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
 				.thenReturn(pspConfiguration);
 		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
 				.thenReturn(activatePaymentNoticeV2ResponseOk);
@@ -244,7 +243,7 @@ class ActivatePaymentNoticeServiceTest {
 		String originalFaultCode = null;
 		String expectedOutcome = "NOTICE_ALREADY_PAID";
 
-		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
+		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
 				.thenReturn(pspConfiguration);
 		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
 				.thenReturn(generateKoNodeResponse(faultCode, originalFaultCode));
@@ -268,7 +267,7 @@ class ActivatePaymentNoticeServiceTest {
 	@Test
 	void testActivateByTaxCodeAndNoticeNumber_NodeError() {
 		// Arrange
-		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
+		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
 				.thenReturn(pspConfiguration);
 		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
 				.thenThrow(new RuntimeException("Node connection error"));
@@ -287,7 +286,7 @@ class ActivatePaymentNoticeServiceTest {
 	@Test
 	void testActivateByTaxCodeAndNoticeNumber_ConfigurationError() {
 		// Arrange
-		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
+		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
 				.thenThrow(new ResponseStatusException(
 						HttpStatus.INTERNAL_SERVER_ERROR,
 						"Configuration error"));

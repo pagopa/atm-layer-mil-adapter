@@ -11,7 +11,6 @@ import it.gov.pagopa.miladapter.services.model.ClosePaymentResponse;
 import it.gov.pagopa.miladapter.services.model.CommonHeader;
 import it.gov.pagopa.miladapter.services.model.Fault;
 import it.gov.pagopa.miladapter.util.ErrorCode;
-import it.gov.pagopa.miladapter.util.NodeApi;
 import it.gov.pagopa.miladapter.util.PaymentTestData;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.SendPaymentOutcomeV2Request;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.SendPaymentOutcomeV2Response;
@@ -67,7 +66,7 @@ class PaymentServiceTest {
 
     @Test
     void testSendPaymentOutcome_Success_OutcomeClose() {
-        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
+        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
                 .thenReturn(pspConfiguration);
         when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
                 .thenReturn(sendPaymentOutcomeV2Response);
@@ -78,7 +77,7 @@ class PaymentServiceTest {
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        verify(basePaymentService).retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE);
+        verify(basePaymentService).retrievePSPConfiguration(ACQUIRER_ID);
 
         ArgumentCaptor<SendPaymentOutcomeV2Request> captorSendPaymentOutcome =
                 ArgumentCaptor.forClass(SendPaymentOutcomeV2Request.class);
@@ -96,7 +95,7 @@ class PaymentServiceTest {
 
     @Test
     void testSendPaymentOutcome_Success_OutcomeError() {
-        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
+        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
                 .thenReturn(pspConfiguration);
         when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
                 .thenReturn(sendPaymentOutcomeV2Response);
@@ -120,7 +119,7 @@ class PaymentServiceTest {
         List<String> multipleTokens = List.of(PAYMENT_TOKEN, "token2", "token3");
         closePaymentRequestOk.setPaymentTokens(multipleTokens);
 
-        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
+        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
                 .thenReturn(pspConfiguration);
         when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
                 .thenReturn(sendPaymentOutcomeV2Response);
@@ -142,7 +141,7 @@ class PaymentServiceTest {
 
     @Test
     void testSendPaymentOutcome_ConfigurationError() {
-        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
+        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
                 .thenThrow(new ResponseStatusException(
                         HttpStatus.INTERNAL_SERVER_ERROR,
                         "Configuration error"));
@@ -157,7 +156,7 @@ class PaymentServiceTest {
 
     @Test
     void testSendPaymentOutcome_NodeError() {
-        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
+        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
                 .thenReturn(pspConfiguration);
         when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
                 .thenThrow(new RuntimeException("Node connection error"));
@@ -173,7 +172,7 @@ class PaymentServiceTest {
 
     @Test
     void testSendPaymentOutcome_NodeReturnsNull() {
-        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
+        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
                 .thenReturn(pspConfiguration);
         when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
                 .thenReturn(null);
@@ -189,7 +188,7 @@ class PaymentServiceTest {
 
     @Test
     void testSendPaymentOutcome_NodeThrowsException() {
-        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
+        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
                 .thenReturn(pspConfiguration);
         when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
                 .thenThrow(new RuntimeException("Unexpected error"));
@@ -211,7 +210,7 @@ class PaymentServiceTest {
         customPspConfig.setChannel("CUSTOM_CHANNEL");
         customPspConfig.setPassword("CUSTOM_PASSWORD");
 
-        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
+        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
                 .thenReturn(customPspConfig);
         when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
                 .thenReturn(sendPaymentOutcomeV2Response);
@@ -247,7 +246,7 @@ class PaymentServiceTest {
         expectedFault.setFaultCode("PAA_PAGAMENTO_DUPLICATO");
         expectedFault.setDescription("Il pagamento è già stato processato");
 
-        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
+        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
                 .thenReturn(pspConfiguration);
         when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
                 .thenReturn(koResponse);
@@ -285,7 +284,7 @@ class PaymentServiceTest {
         Fault expectedFault = new Fault();
         expectedFault.setFaultCode("PPT_CANALE_ERRORE");
 
-        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
+        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
                 .thenReturn(pspConfiguration);
         when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
                 .thenReturn(koResponse);
@@ -319,7 +318,7 @@ class PaymentServiceTest {
         Fault expectedFault = new Fault();
         expectedFault.setFaultCode("GENERIC_ERROR");
 
-        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.ACTIVATE))
+        when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
                 .thenReturn(pspConfiguration);
         when(basePaymentService.sendPaymentOutcomeV2(any(SendPaymentOutcomeV2Request.class)))
                 .thenReturn(koResponse);

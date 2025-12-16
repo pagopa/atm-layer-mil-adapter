@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import it.gov.pagopa.miladapter.client.NodeForPspWrapper;
+import it.gov.pagopa.miladapter.client.model.CbillAbiFederazioneDto;
 import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.properties.NodeErrorMappingProperties;
 import it.gov.pagopa.miladapter.services.model.CommonHeader;
@@ -28,6 +29,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 @ExtendWith(MockitoExtension.class)
 class BasePaymentServiceTest {
@@ -36,6 +40,8 @@ class BasePaymentServiceTest {
 
   @Mock private NodeForPspWrapper nodeWrapper;
 
+  @Mock private RestTemplate restTemplate;
+
   @InjectMocks private BasePaymentService basePaymentService;
 
   private CommonHeader commonHeader;
@@ -43,6 +49,10 @@ class BasePaymentServiceTest {
 
   @BeforeEach
   void setup() {
+    // Set properties via reflection
+    ReflectionTestUtils.setField(basePaymentService, "reportingServiceBaseUrl", "http://localhost:8080");
+    ReflectionTestUtils.setField(basePaymentService, "cbillAbiFederazionePath", "/cbill-abi-federazione/{acquirerId}");
+
     // Common header
     commonHeader = new CommonHeader();
     commonHeader.setAcquirerId(ACQUIRER_ID);
@@ -399,5 +409,176 @@ class BasePaymentServiceTest {
     assertEquals("", result.getOriginalFaultCode());
     assertEquals("", result.getOriginalFaultString());
     assertEquals("", result.getOriginalDescription());
+  }
+
+  // ==================== retrievePSPConfiguration Tests ====================
+
+  @Test
+  void testRetrievePSPConfiguration_Success() {
+    CbillAbiFederazioneDto cbillDto = new CbillAbiFederazioneDto();
+    cbillDto.setAbi("12345");
+    cbillDto.setPagopaId("PSP_PAGOPA_ID");
+    cbillDto.setPspFiscalCode("PSP_FISCAL_CODE");
+    cbillDto.setPspChannel("CHANNEL_01");
+    cbillDto.setPassword("test_password");
+    cbillDto.setPagopaDirect(true);
+
+    String expectedUrl = "http://localhost:8080/cbill-abi-federazione/" + ACQUIRER_ID;
+
+    when(restTemplate.getForObject(expectedUrl, CbillAbiFederazioneDto.class))
+        .thenReturn(cbillDto);
+
+    PspConfiguration result = basePaymentService.retrievePSPConfiguration(ACQUIRER_ID);
+
+    assertNotNull(result);
+    assertEquals("PSP_PAGOPA_ID", result.getPsp());
+    assertEquals("PSP_FISCAL_CODE", result.getBroker());
+    assertEquals("PSP_FISCAL_CODE_CHANNEL_01", result.getChannel());
+    assertEquals("test_password", result.getPassword());
+
+    verify(restTemplate).getForObject(expectedUrl, CbillAbiFederazioneDto.class);
+  }
+
+  @Test
+  void testRetrievePSPConfiguration_NotFound() {
+    String expectedUrl = "http://localhost:8080/cbill-abi-federazione/" + ACQUIRER_ID;
+
+    when(restTemplate.getForObject(expectedUrl, CbillAbiFederazioneDto.class))
+        .thenReturn(null);
+
+    IllegalStateException exception = assertThrows(
+        IllegalStateException.class,
+        () -> basePaymentService.retrievePSPConfiguration(ACQUIRER_ID)
+    );
+
+    assertEquals("PSP configuration not found for acquirer: " + ACQUIRER_ID, exception.getMessage());
+    verify(restTemplate).getForObject(expectedUrl, CbillAbiFederazioneDto.class);
+  }
+
+  @Test
+  void testRetrievePSPConfiguration_MissingPagopaId() {
+    CbillAbiFederazioneDto cbillDto = new CbillAbiFederazioneDto();
+    cbillDto.setAbi("12345");
+    // pagopaId is null
+    cbillDto.setPspFiscalCode("PSP_FISCAL_CODE");
+    cbillDto.setPspChannel("CHANNEL_01");
+    cbillDto.setPassword("test_password");
+
+    String expectedUrl = "http://localhost:8080/cbill-abi-federazione/" + ACQUIRER_ID;
+
+    when(restTemplate.getForObject(expectedUrl, CbillAbiFederazioneDto.class))
+        .thenReturn(cbillDto);
+
+    IllegalStateException exception = assertThrows(
+        IllegalStateException.class,
+        () -> basePaymentService.retrievePSPConfiguration(ACQUIRER_ID)
+    );
+
+    assertEquals("Invalid PSP configuration for acquirer: " + ACQUIRER_ID, exception.getMessage());
+  }
+
+  @Test
+  void testRetrievePSPConfiguration_MissingPspFiscalCode() {
+    CbillAbiFederazioneDto cbillDto = new CbillAbiFederazioneDto();
+    cbillDto.setAbi("12345");
+    cbillDto.setPagopaId("PSP_PAGOPA_ID");
+    // pspFiscalCode is null
+    cbillDto.setPspChannel("CHANNEL_01");
+    cbillDto.setPassword("test_password");
+
+    String expectedUrl = "http://localhost:8080/cbill-abi-federazione/" + ACQUIRER_ID;
+
+    when(restTemplate.getForObject(expectedUrl, CbillAbiFederazioneDto.class))
+        .thenReturn(cbillDto);
+
+    IllegalStateException exception = assertThrows(
+        IllegalStateException.class,
+        () -> basePaymentService.retrievePSPConfiguration(ACQUIRER_ID)
+    );
+
+    assertEquals("Invalid PSP configuration for acquirer: " + ACQUIRER_ID, exception.getMessage());
+  }
+
+  @Test
+  void testRetrievePSPConfiguration_MissingPspChannel() {
+    CbillAbiFederazioneDto cbillDto = new CbillAbiFederazioneDto();
+    cbillDto.setAbi("12345");
+    cbillDto.setPagopaId("PSP_PAGOPA_ID");
+    cbillDto.setPspFiscalCode("PSP_FISCAL_CODE");
+    // pspChannel is null
+    cbillDto.setPassword("test_password");
+
+    String expectedUrl = "http://localhost:8080/cbill-abi-federazione/" + ACQUIRER_ID;
+
+    when(restTemplate.getForObject(expectedUrl, CbillAbiFederazioneDto.class))
+        .thenReturn(cbillDto);
+
+    IllegalStateException exception = assertThrows(
+        IllegalStateException.class,
+        () -> basePaymentService.retrievePSPConfiguration(ACQUIRER_ID)
+    );
+
+    assertEquals("Invalid PSP configuration for acquirer: " + ACQUIRER_ID, exception.getMessage());
+  }
+
+  @Test
+  void testRetrievePSPConfiguration_EmptyPagopaId() {
+    CbillAbiFederazioneDto cbillDto = new CbillAbiFederazioneDto();
+    cbillDto.setAbi("12345");
+    cbillDto.setPagopaId(""); // empty string
+    cbillDto.setPspFiscalCode("PSP_FISCAL_CODE");
+    cbillDto.setPspChannel("CHANNEL_01");
+    cbillDto.setPassword("test_password");
+
+    String expectedUrl = "http://localhost:8080/cbill-abi-federazione/" + ACQUIRER_ID;
+
+    when(restTemplate.getForObject(expectedUrl, CbillAbiFederazioneDto.class))
+        .thenReturn(cbillDto);
+
+    IllegalStateException exception = assertThrows(
+        IllegalStateException.class,
+        () -> basePaymentService.retrievePSPConfiguration(ACQUIRER_ID)
+    );
+
+    assertEquals("Invalid PSP configuration for acquirer: " + ACQUIRER_ID, exception.getMessage());
+  }
+
+  @Test
+  void testRetrievePSPConfiguration_RestClientException() {
+    String expectedUrl = "http://localhost:8080/cbill-abi-federazione/" + ACQUIRER_ID;
+
+    when(restTemplate.getForObject(expectedUrl, CbillAbiFederazioneDto.class))
+        .thenThrow(new RestClientException("Connection error"));
+
+    assertThrows(
+        RestClientException.class,
+        () -> basePaymentService.retrievePSPConfiguration(ACQUIRER_ID)
+    );
+
+    verify(restTemplate).getForObject(expectedUrl, CbillAbiFederazioneDto.class);
+  }
+
+  @Test
+  void testRetrievePSPConfiguration_WithDifferentAcquirerId() {
+    String differentAcquirer = "67890";
+    CbillAbiFederazioneDto cbillDto = new CbillAbiFederazioneDto();
+    cbillDto.setAbi(differentAcquirer);
+    cbillDto.setPagopaId("DIFFERENT_PSP");
+    cbillDto.setPspFiscalCode("DIFFERENT_FISCAL");
+    cbillDto.setPspChannel("CHANNEL_02");
+    cbillDto.setPassword("different_password");
+
+    String expectedUrl = "http://localhost:8080/cbill-abi-federazione/" + differentAcquirer;
+
+    when(restTemplate.getForObject(expectedUrl, CbillAbiFederazioneDto.class))
+        .thenReturn(cbillDto);
+
+    PspConfiguration result = basePaymentService.retrievePSPConfiguration(differentAcquirer);
+
+    assertNotNull(result);
+    assertEquals("DIFFERENT_PSP", result.getPsp());
+    assertEquals("DIFFERENT_FISCAL", result.getBroker());
+    assertEquals("DIFFERENT_FISCAL_CHANNEL_02", result.getChannel());
+    assertEquals("different_password", result.getPassword());
   }
 }

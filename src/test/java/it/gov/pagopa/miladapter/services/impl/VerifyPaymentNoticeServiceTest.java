@@ -10,7 +10,6 @@ import it.gov.pagopa.miladapter.model.QrCode;
 import it.gov.pagopa.miladapter.services.model.CommonHeader;
 import it.gov.pagopa.miladapter.services.model.VerifyPaymentNoticeResponse;
 import it.gov.pagopa.miladapter.util.ErrorCode;
-import it.gov.pagopa.miladapter.util.NodeApi;
 import it.gov.pagopa.miladapter.util.PaymentTestData;
 import it.gov.pagopa.miladapter.util.QrCodeParser;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.*;
@@ -125,7 +124,7 @@ class VerifyPaymentNoticeServiceTest {
   void testVerifyByQrCode_Success() {
     // Arrange
     when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
-    when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
+    when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
         .thenReturn(pspConfiguration);
     when(basePaymentService.verifyPaymentNotice(any(VerifyPaymentNoticeReq.class)))
         .thenReturn(verifyPaymentNoticeResOk);
@@ -158,7 +157,7 @@ class VerifyPaymentNoticeServiceTest {
 
     // Verify interactions
     verify(qrCodeParser).b64UrlParse(encodedQrCode);
-    verify(basePaymentService).retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY);
+    verify(basePaymentService).retrievePSPConfiguration(ACQUIRER_ID);
 
     ArgumentCaptor<VerifyPaymentNoticeReq> captorVerifyReq =
         ArgumentCaptor.forClass(VerifyPaymentNoticeReq.class);
@@ -173,7 +172,7 @@ class VerifyPaymentNoticeServiceTest {
   void testVerifyByQrCode_NodeKo(String faultCode, String originalFaultCode, String milOutcome) {
     // Arrange
     when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
-    when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
+    when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
         .thenReturn(pspConfiguration);
     when(basePaymentService.verifyPaymentNotice(any(VerifyPaymentNoticeReq.class)))
         .thenReturn(generateKoNodeResponse(faultCode, originalFaultCode));
@@ -199,7 +198,7 @@ class VerifyPaymentNoticeServiceTest {
   void testVerifyByQrCode_NodeError() {
     // Arrange
     when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
-    when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
+    when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
         .thenReturn(pspConfiguration);
     when(basePaymentService.verifyPaymentNotice(any(VerifyPaymentNoticeReq.class)))
         .thenThrow(new RuntimeException("Node error"));
@@ -219,7 +218,7 @@ class VerifyPaymentNoticeServiceTest {
   void testVerifyByQrCode_NodeReturnsNull() {
     // Arrange
     when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
-    when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
+    when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
         .thenReturn(pspConfiguration);
     when(basePaymentService.verifyPaymentNotice(any(VerifyPaymentNoticeReq.class)))
         .thenReturn(null);
@@ -238,7 +237,7 @@ class VerifyPaymentNoticeServiceTest {
   @Test
   void testVerifyByTaxCodeAndNoticeNumber_Success() {
     // Arrange
-    when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
+    when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
         .thenReturn(pspConfiguration);
     when(basePaymentService.verifyPaymentNotice(any(VerifyPaymentNoticeReq.class)))
         .thenReturn(verifyPaymentNoticeResOk);
@@ -269,7 +268,7 @@ class VerifyPaymentNoticeServiceTest {
     String originalFaultCode = null;
     String expectedOutcome = "WRONG_NOTICE_DATA";
 
-    when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
+    when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
         .thenReturn(pspConfiguration);
     when(basePaymentService.verifyPaymentNotice(any(VerifyPaymentNoticeReq.class)))
         .thenReturn(generateKoNodeResponse(faultCode, originalFaultCode));
@@ -292,7 +291,7 @@ class VerifyPaymentNoticeServiceTest {
   @Test
   void testVerifyByTaxCodeAndNoticeNumber_NodeError() {
     // Arrange
-    when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID, NodeApi.VERIFY))
+    when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
         .thenReturn(pspConfiguration);
     when(basePaymentService.verifyPaymentNotice(any(VerifyPaymentNoticeReq.class)))
         .thenThrow(new RuntimeException("Node connection error"));
