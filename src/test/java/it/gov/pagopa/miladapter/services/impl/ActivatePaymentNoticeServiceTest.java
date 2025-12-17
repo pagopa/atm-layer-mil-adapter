@@ -16,7 +16,7 @@ import it.gov.pagopa.miladapter.util.QrCodeParser;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.*;
 import it.gov.pagopa.pagopa_api.xsd.common_types.v1_0.CtFaultBean;
 import it.gov.pagopa.pagopa_api.xsd.common_types.v1_0.StOutcome;
-import java.math.BigDecimal;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,7 +80,7 @@ class ActivatePaymentNoticeServiceTest {
 		transfer.setCompanyName("Test Company");
         transfer.setIBAN("IT0000000000000000000000000");
         transfer.setIdTransfer(1);
-        transfer.setTransferAmount(BigDecimal.valueOf(PaymentTestData.AMOUNT,2));
+        transfer.setTransferAmount(PaymentTestData.AMOUNT);
         transfer.setRemittanceInformation("Pagamento di Test");
         transfer.setTransferCategory("Categoria di Test");
 
@@ -90,7 +90,7 @@ class ActivatePaymentNoticeServiceTest {
 		activatePaymentNoticeV2ResponseOk = new ActivatePaymentNoticeV2Response();
 		activatePaymentNoticeV2ResponseOk.setOutcome(StOutcome.OK);
 		activatePaymentNoticeV2ResponseOk.setPaymentToken(PAYMENT_TOKEN);
-		activatePaymentNoticeV2ResponseOk.setTotalAmount(BigDecimal.valueOf(PaymentTestData.AMOUNT,2));
+		activatePaymentNoticeV2ResponseOk.setTotalAmount(PaymentTestData.AMOUNT);
 		activatePaymentNoticeV2ResponseOk.setPaymentDescription("Pagamento di Test");
 		activatePaymentNoticeV2ResponseOk.setFiscalCodePA(PA_TAX_CODE);
 		activatePaymentNoticeV2ResponseOk.setCompanyName("companyName");
@@ -130,10 +130,8 @@ class ActivatePaymentNoticeServiceTest {
 		assertEquals("OK", response.getBody().getOutcome());
         assertEquals(
                 activatePaymentNoticeV2ResponseOk
-                        .getTotalAmount()
-                        .multiply(new BigDecimal(100))
-                        .longValue(),
-                response.getBody().getAmount().longValue());
+                        .getTotalAmount(),
+                response.getBody().getAmount());
 		assertEquals(PAYMENT_TOKEN, response.getBody().getPaymentToken());
 		assertEquals(PA_TAX_CODE, response.getBody().getPaTaxCode());
 		assertNotNull(response.getBody().getTransfers());
@@ -227,7 +225,7 @@ class ActivatePaymentNoticeServiceTest {
 		assertEquals(HttpStatus.OK, response.getStatusCode());
 		assertNotNull(response.getBody());
 		assertEquals("OK", response.getBody().getOutcome());
-		assertEquals(AMOUNT, response.getBody().getAmount().longValue());
+		assertEquals(AMOUNT, response.getBody().getAmount());
 		assertEquals(PAYMENT_TOKEN, response.getBody().getPaymentToken());
 
 		ArgumentCaptor<ActivatePaymentNoticeV2Request> captorActivateReq = ArgumentCaptor.forClass(ActivatePaymentNoticeV2Request.class);

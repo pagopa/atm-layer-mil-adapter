@@ -13,7 +13,7 @@ import it.gov.pagopa.pagopa_api.node.nodeforpsp.VerifyPaymentNoticeReq;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.VerifyPaymentNoticeRes;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
-import java.math.BigDecimal;
+
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -160,8 +160,7 @@ public class VerifyPaymentNoticeService {
 			CtPaymentOptionDescription paymentOptionDescription = response.getPaymentList().getPaymentOptionDescription().getFirst();
 			log.debug("Node verifyPaymentNotice responded with , {}",
 					NodeForPspLoggingUtil.toString(paymentOptionDescription));
-			// conversion from euro to euro cents
-			verifyResponse.setAmount(paymentOptionDescription.getAmount().multiply(new BigDecimal(100)).toBigInteger());
+			verifyResponse.setAmount(paymentOptionDescription.getAmount());
 			verifyResponse.setDueDate(paymentOptionDescription.getDueDate().toString());
 			verifyResponse.setNote(paymentOptionDescription.getPaymentNote());
 		}

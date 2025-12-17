@@ -2,6 +2,8 @@ package it.gov.pagopa.miladapter.util;
 
 import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.services.model.*;
+
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -14,7 +16,7 @@ public final class PaymentTestData {
     public static final String NOTICE_NUMBER = "302051234567890124";
     public static final String PSP_ID = "AGID_01";
     public static final String CHANNEL = "ATM";
-    public static final long AMOUNT = 9999;
+    public static final BigDecimal AMOUNT = BigDecimal.valueOf(9999);
     public static final long FEE = 200;
     public static final String IDEMPOTENCY_KEY = "key-123456";
     public static final String TRANSACTION_ID = "550e8400e29b41d4a716446655440000";

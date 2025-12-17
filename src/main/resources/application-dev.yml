@@ -57,7 +57,7 @@ spring:
 
 logging:
   level:
-    root: DEBUG
+    root: INFO
     org.apache.cxf: INFO
     org.apache.cxf.services: INFO
   pattern:
@@ -65,13 +65,6 @@ logging:
 
 id-pay:
   api-key: ${ID_PAY_API_KEY:test}
-
-# ------------------------------------------------------------------------------
-# Service configurations
-# ------------------------------------------------------------------------------
-paymentnotice:
-  activatepayment:
-    expiration-time: ${ACTIVATE_PAYMENT_EXPIRATION_TIME:20000}
 
 # ------------------------------------------------------------------------------
 # Node error remapping and CXF SOAP client configuration to communicate with Nodo

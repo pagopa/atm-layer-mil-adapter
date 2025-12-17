@@ -6,7 +6,8 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import java.math.BigInteger;
+
+import java.math.BigDecimal;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,7 +35,7 @@ public class ActivatePaymentNoticeResponse {
 	@Min(1)
 	@Max(99999999999L)
 	@JsonInclude(Include.NON_NULL)
-	private BigInteger amount;
+	private BigDecimal amount;
 
     /**
      * Description of the payment
@@ -85,4 +86,16 @@ public class ActivatePaymentNoticeResponse {
      */
     @JsonInclude(Include.NON_NULL)
     private Fault fault;
+
+    /**
+     * Suggested user fee amount
+     */
+    @JsonInclude(Include.NON_NULL)
+    private BigDecimal suggestedUserFee;
+
+    /**
+     * Suggested PA fee amount
+     */
+    @JsonInclude(Include.NON_NULL)
+    private BigDecimal suggestedPaFee;
 }
