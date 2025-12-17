@@ -10,6 +10,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 /**
  * Request of the activatePaymentNotice API
  */
@@ -33,5 +36,7 @@ public class ActivatePaymentNoticeRequest {
 	@Min(value = 1L, message = "[" + ErrorCode.ERROR_AMOUNT_MUST_BE_GREATER_THAN + "] amount must be greater than {value}")
 	@Max(value = 99999999999L, message = "[" + ErrorCode.ERROR_AMOUNT_MUST_BE_LESS_THAN + "] amount must less than {value}")
     @JsonProperty("amount")
-	private Long amount;
+	private BigDecimal amount;
+
+    private BigInteger expirationTime;
 }

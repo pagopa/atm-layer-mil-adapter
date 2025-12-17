@@ -13,11 +13,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -36,12 +34,6 @@ public class ActivatePaymentNoticeService {
 		this.qrCodeParser = qrCodeParser;
         this.basePaymentService = basePaymentService;
     }
-
-	/**
-	 * The expiration time of the payment token passed to the node
-	 */
-    @Value("${paymentnotice.activatepayment.expiration-time}")
-	BigInteger paymentNoticeExpirationTime;
 
 	/**
 	 * Activate a payment notice by its qr-code.
@@ -126,9 +118,7 @@ public class ActivatePaymentNoticeService {
 		nodeActivateRequest.setPassword(pspConfiguration.getPassword());
 		nodeActivateRequest.setIdempotencyKey(activatePaymentNoticeRequest.getIdempotencyKey());
 		nodeActivateRequest.setQrCode(ctQrCode);
-		nodeActivateRequest.setExpirationTime(paymentNoticeExpirationTime);
-		// conversion from euro cents to euro
-		nodeActivateRequest.setAmount(BigDecimal.valueOf(activatePaymentNoticeRequest.getAmount(), 2));
+		nodeActivateRequest.setAmount(activatePaymentNoticeRequest.getAmount());
 
         try {
             final ActivatePaymentNoticeV2Response activateResponse = this.basePaymentService.activatePaymentNoticeV2(nodeActivateRequest);
@@ -176,8 +166,7 @@ public class ActivatePaymentNoticeService {
 	private ActivatePaymentNoticeResponse buildResponseOk(ActivatePaymentNoticeV2Response response) {
 		ActivatePaymentNoticeResponse activateResponse = new ActivatePaymentNoticeResponse();
 		activateResponse.setOutcome(response.getOutcome().value());
-		// conversion from euro cents to euro
-		activateResponse.setAmount(response.getTotalAmount().multiply(new BigDecimal(100)).toBigInteger());
+		activateResponse.setAmount(response.getTotalAmount());
 		activateResponse.setPaTaxCode(response.getFiscalCodePA());
 		activateResponse.setPaymentToken(response.getPaymentToken());
         activateResponse.setDescription(response.getPaymentDescription());
@@ -197,6 +186,8 @@ public class ActivatePaymentNoticeService {
 		});
 		activateResponse.setTransfers(transfers);
 		activateResponse.setCreditorReferenceId(response.getCreditorReferenceId());
+        activateResponse.setSuggestedPaFee(response.getSuggestedPaFee() != null ? response.getSuggestedPaFee() : BigDecimal.ZERO);
+        activateResponse.setSuggestedUserFee(response.getSuggestedUserFee() != null ? response.getSuggestedUserFee() : BigDecimal.ZERO);
 		return activateResponse;
 	}
 

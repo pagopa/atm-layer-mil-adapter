@@ -20,6 +20,7 @@ import it.gov.pagopa.miladapter.services.model.ActivatePaymentNoticeResponse;
 import it.gov.pagopa.miladapter.services.model.VerifyPaymentNoticeResponse;
 import it.gov.pagopa.miladapter.util.PaymentTestData;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -117,7 +118,7 @@ class ExternalCallServiceImplTest {
 
     VerifyPaymentNoticeResponse mockResponse = new VerifyPaymentNoticeResponse();
     mockResponse.setOutcome("OK");
-    mockResponse.setAmount(new java.math.BigInteger("1000"));
+    mockResponse.setAmount(new BigDecimal("1000"));
     when(verifyPaymentNoticeService.verifyByQrCode(any(), eq(QRCODE)))
         .thenReturn(ResponseEntity.ok(mockResponse));
 
@@ -141,7 +142,7 @@ class ExternalCallServiceImplTest {
 
     VerifyPaymentNoticeResponse mockResponse = new VerifyPaymentNoticeResponse();
     mockResponse.setOutcome("OK");
-    mockResponse.setAmount(new java.math.BigInteger("1000"));
+    mockResponse.setAmount(new BigDecimal("1000"));
     when(verifyPaymentNoticeService.verifyByTaxCodeAndNoticeNumber(
             any(), eq(PA_TAX_CODE), eq(NOTICE_NUMBER)))
         .thenReturn(ResponseEntity.ok(mockResponse));
@@ -191,7 +192,7 @@ class ExternalCallServiceImplTest {
     
     ActivatePaymentNoticeResponse mockResponse = new ActivatePaymentNoticeResponse();
     mockResponse.setOutcome("OK");
-    mockResponse.setAmount(new java.math.BigInteger("1000"));
+    mockResponse.setAmount(new BigDecimal("1000"));
     when(activatePaymentNoticeService.activateByTaxCodeAndNoticeNumber(
             any(), eq(PA_TAX_CODE), eq(NOTICE_NUMBER), any()))
         .thenReturn(ResponseEntity.ok(mockResponse));

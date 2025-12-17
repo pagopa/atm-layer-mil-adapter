@@ -143,10 +143,8 @@ class VerifyPaymentNoticeServiceTest {
             .getPaymentList()
             .getPaymentOptionDescription()
             .getFirst()
-            .getAmount()
-            .multiply(new BigDecimal(100))
-            .longValue(),
-        response.getBody().getAmount().longValue());
+            .getAmount(),
+        response.getBody().getAmount());
     assertEquals("2021-07-31", response.getBody().getDueDate());
     assertEquals("paymentNote", response.getBody().getNote());
     assertEquals("Pagamento di Test", response.getBody().getDescription());
@@ -252,7 +250,7 @@ class VerifyPaymentNoticeServiceTest {
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertNotNull(response.getBody());
     assertEquals("OK", response.getBody().getOutcome());
-    assertEquals(10099, response.getBody().getAmount().intValue());
+    assertEquals(BigDecimal.valueOf(100.99), response.getBody().getAmount());
 
     ArgumentCaptor<VerifyPaymentNoticeReq> captorVerifyReq =
         ArgumentCaptor.forClass(VerifyPaymentNoticeReq.class);

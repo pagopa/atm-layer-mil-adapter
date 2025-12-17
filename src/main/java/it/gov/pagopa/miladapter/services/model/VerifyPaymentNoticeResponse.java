@@ -7,7 +7,9 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import java.math.BigInteger;
+
+import java.math.BigDecimal;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -27,7 +29,7 @@ public class VerifyPaymentNoticeResponse {
     @Min(1)
 	@Max(99999999999L)
 	@JsonInclude(Include.NON_NULL)
-	private BigInteger amount;
+	private BigDecimal amount;
 
     // string($date) 2022-11-30
 	@Size(min =10, max = 10)
