@@ -78,7 +78,7 @@ public class PaymentService {
                         new Errors(List.of(ErrorCode.ERROR_CALLING_NODE_SOAP_SERVICES)).toString());
             }
             ClosePaymentResponse response = this.buildResponse(outcomeResponse);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
         } catch (Exception e) {
             log.error("[{}] Error calling the node sendPaymentOutcomeV2 service", ErrorCode.ERROR_CALLING_NODE_SOAP_SERVICES, e);
             throw new ResponseStatusException(

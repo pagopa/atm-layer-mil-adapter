@@ -75,7 +75,7 @@ class PaymentServiceTest {
                 paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestOk);
 
         assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
 
         verify(basePaymentService).retrievePSPConfiguration(ACQUIRER_ID);
 
@@ -104,7 +104,7 @@ class PaymentServiceTest {
                 paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestKo);
 
         assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
 
         ArgumentCaptor<SendPaymentOutcomeV2Request> captorSendPaymentOutcome =
                 ArgumentCaptor.forClass(SendPaymentOutcomeV2Request.class);
@@ -128,7 +128,7 @@ class PaymentServiceTest {
                 paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestOk);
 
         assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
 
         ArgumentCaptor<SendPaymentOutcomeV2Request> captorSendPaymentOutcome =
                 ArgumentCaptor.forClass(SendPaymentOutcomeV2Request.class);
@@ -259,7 +259,7 @@ class PaymentServiceTest {
                 paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestOk);
 
         assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals("PAYMENT_DUPLICATED", response.getBody().getOutcome());
         assertNotNull(response.getBody().getFault());
@@ -297,7 +297,7 @@ class PaymentServiceTest {
                 paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestOk);
 
         assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals("GENERIC_ERROR", response.getBody().getOutcome());
         assertNotNull(response.getBody().getFault());
@@ -331,7 +331,7 @@ class PaymentServiceTest {
                 paymentService.sendPaymentOutcome(commonHeader, TRANSACTION_ID, closePaymentRequestOk);
 
         assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals("UNKNOWN_ERROR", response.getBody().getOutcome());
 
