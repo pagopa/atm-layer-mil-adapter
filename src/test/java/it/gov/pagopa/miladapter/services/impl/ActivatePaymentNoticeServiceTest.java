@@ -17,6 +17,7 @@ import it.gov.pagopa.pagopa_api.node.nodeforpsp.*;
 import it.gov.pagopa.pagopa_api.xsd.common_types.v1_0.CtFaultBean;
 import it.gov.pagopa.pagopa_api.xsd.common_types.v1_0.StOutcome;
 
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import org.junit.jupiter.api.BeforeEach;
@@ -136,10 +137,51 @@ class ActivatePaymentNoticeServiceTest {
 		assertEquals(PA_TAX_CODE, response.getBody().getPaTaxCode());
 		assertNotNull(response.getBody().getTransfers());
 		assertEquals(1, response.getBody().getTransfers().size());
+		// Verify default values for null suggested fees
+		assertEquals(BigDecimal.ZERO, response.getBody().getSuggestedPaFee());
+		assertEquals(BigDecimal.ZERO, response.getBody().getSuggestedUserFee());
 
 		// Verify interactions
 		verify(qrCodeParser).b64UrlParse(encodedQrCode);
 		verify(basePaymentService).retrievePSPConfiguration(ACQUIRER_ID);
+	}
+
+	@Test
+	void testActivateByQrCode_Success_WithSuggestedFees() {
+		// Arrange
+		BigDecimal suggestedPaFee = new BigDecimal("1.50");
+		BigDecimal suggestedUserFee = new BigDecimal("2.00");
+
+		ActivatePaymentNoticeV2Response responseWithFees = new ActivatePaymentNoticeV2Response();
+		responseWithFees.setOutcome(StOutcome.OK);
+		responseWithFees.setPaymentToken(PAYMENT_TOKEN);
+		responseWithFees.setTotalAmount(PaymentTestData.AMOUNT);
+		responseWithFees.setPaymentDescription("Pagamento di Test");
+		responseWithFees.setFiscalCodePA(PA_TAX_CODE);
+		responseWithFees.setCompanyName("companyName");
+		responseWithFees.setOfficeName("officeName");
+		responseWithFees.setTransferList(activatePaymentNoticeV2ResponseOk.getTransferList());
+		responseWithFees.setSuggestedPaFee(suggestedPaFee);
+		responseWithFees.setSuggestedUserFee(suggestedUserFee);
+
+		when(qrCodeParser.b64UrlParse(encodedQrCode)).thenReturn(parsedQrCode);
+		when(basePaymentService.retrievePSPConfiguration(ACQUIRER_ID))
+				.thenReturn(pspConfiguration);
+		when(basePaymentService.activatePaymentNoticeV2(any(ActivatePaymentNoticeV2Request.class)))
+				.thenReturn(responseWithFees);
+
+		// Act
+		ResponseEntity<ActivatePaymentNoticeResponse> response =
+				activatePaymentNoticeService.activateByQrCode(commonHeader, encodedQrCode, activatePaymentNoticeRequest);
+
+		// Assert
+		assertNotNull(response);
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertEquals("OK", response.getBody().getOutcome());
+		// Verify that suggested fees are preserved when not null
+		assertEquals(suggestedPaFee, response.getBody().getSuggestedPaFee());
+		assertEquals(suggestedUserFee, response.getBody().getSuggestedUserFee());
 	}
 
 	@ParameterizedTest
@@ -227,6 +269,9 @@ class ActivatePaymentNoticeServiceTest {
 		assertEquals("OK", response.getBody().getOutcome());
 		assertEquals(AMOUNT, response.getBody().getAmount());
 		assertEquals(PAYMENT_TOKEN, response.getBody().getPaymentToken());
+		// Verify default values for null suggested fees
+		assertEquals(BigDecimal.ZERO, response.getBody().getSuggestedPaFee());
+		assertEquals(BigDecimal.ZERO, response.getBody().getSuggestedUserFee());
 
 		ArgumentCaptor<ActivatePaymentNoticeV2Request> captorActivateReq = ArgumentCaptor.forClass(ActivatePaymentNoticeV2Request.class);
 		verify(basePaymentService).activatePaymentNoticeV2(captorActivateReq.capture());
