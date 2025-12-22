@@ -1,4 +1,4 @@
-package it.gov.pagopa.miladapter.client.model;
+package it.gov.pagopa.miladapter.services.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

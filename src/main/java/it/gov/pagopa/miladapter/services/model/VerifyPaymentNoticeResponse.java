@@ -40,6 +40,9 @@ public class VerifyPaymentNoticeResponse {
 	@JsonInclude(Include.NON_NULL)
 	private String note;
 
+    @JsonInclude(Include.NON_NULL)
+    private String options;
+
     @Pattern(regexp = "^[ -~]{1,140}$")
 	@JsonInclude(Include.NON_NULL)
 	private String description;

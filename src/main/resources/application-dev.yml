@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${SERVER_PORT:8085}
 camunda:
   bpm:
     client:
@@ -33,6 +33,10 @@ reporting-service:
   base-url: ${REPORTING_SERVICE_BASE_URL:http://pagopa-dev-atm-layer-reporting-service.pagopa.svc.cluster.local:8080}
   cbill-abi-federazione:
     path: ${CBILL_ABI_FEDERAZIONE_PATH:/api/v1/reporting-service/cbill-abi-federazione/{abi}}
+  pagopa-transactions:
+    path: ${PAGOPA_TRANSACTIONS_PATH:/api/v1/reporting-service/transactions}
+  pagopa-transfer-list:
+    path: ${PAGOPA_TRANSFER_LIST_PATH:/api/v1/reporting-service/bank/transfer-lists}
 
 spring:
   application:
@@ -66,6 +70,10 @@ logging:
 id-pay:
   api-key: ${ID_PAY_API_KEY:test}
 
+
+paymentnotice:
+  activatepayment:
+    expiration-time: ${ACTIVATE_PAYMENT_EXPIRATION_TIME:120000} # in milliseconds
 # ------------------------------------------------------------------------------
 # Node error remapping and CXF SOAP client configuration to communicate with Nodo
 # ------------------------------------------------------------------------------

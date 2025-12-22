@@ -163,6 +163,7 @@ public class VerifyPaymentNoticeService {
 			verifyResponse.setAmount(paymentOptionDescription.getAmount());
 			verifyResponse.setDueDate(paymentOptionDescription.getDueDate().toString());
 			verifyResponse.setNote(paymentOptionDescription.getPaymentNote());
+			verifyResponse.setOptions(paymentOptionDescription.getOptions().value());
 		}
 		verifyResponse.setPaTaxCode(response.getFiscalCodePA());
 		verifyResponse.setNoticeNumber(noticeNumber);
