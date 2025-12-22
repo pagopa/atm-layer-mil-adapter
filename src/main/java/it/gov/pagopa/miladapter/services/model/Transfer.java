@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 
 /**
  * Transfer essential data
@@ -28,7 +28,7 @@ public class Transfer {
      * Transfer amount
      */
     @JsonInclude(Include.NON_NULL)
-    private BigInteger transferAmount;
+    private BigDecimal transferAmount;
 
 	/**
 	 * Tax code of the creditor company

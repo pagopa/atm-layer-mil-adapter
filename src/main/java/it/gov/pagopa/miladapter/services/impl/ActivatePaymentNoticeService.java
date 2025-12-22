@@ -186,7 +186,7 @@ public class ActivatePaymentNoticeService {
 		response.getTransferList().getTransfer().forEach(t -> {
 			Transfer transfer = new Transfer();
             transfer.setIdTransfer(t.getIdTransfer());
-            transfer.setTransferAmount(t.getTransferAmount().multiply(new BigDecimal(100)).toBigInteger());
+            transfer.setTransferAmount(t.getTransferAmount());
 			transfer.setPaTaxCode(t.getFiscalCodePA());
             transfer.setCompany(t.getCompanyName());
 			transfer.setCategory(t.getTransferCategory());

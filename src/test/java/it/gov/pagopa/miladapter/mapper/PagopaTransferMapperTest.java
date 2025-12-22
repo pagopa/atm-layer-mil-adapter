@@ -40,7 +40,7 @@ class PagopaTransferMapperTest {
 
         Transfer transfer = new Transfer();
         transfer.setIdTransfer(1);
-        transfer.setTransferAmount(BigInteger.valueOf(10000)); // 100.00 euro in cents
+        transfer.setTransferAmount(BigDecimal.valueOf(10000)); // 100.00 euro in cents
         transfer.setPaTaxCode("12345678901");
         transfer.setCompany("Test Company SPA");
         transfer.setIban("IT60X0542811101000000123456");
@@ -52,7 +52,7 @@ class PagopaTransferMapperTest {
         assertNotNull(result);
         assertEquals(request.getTransactionId().intValue(), result.getTransactionId());
         assertEquals(transfer.getIdTransfer(), result.getTransferId());
-        assertEquals(new BigDecimal(transfer.getTransferAmount()), result.getTransferAmount());
+        assertEquals(transfer.getTransferAmount(), result.getTransferAmount());
         assertEquals(request.getPagopaReported(), result.getPagopaReported());
         assertEquals(LocalDate.now(), result.getTransferExecutionDt());
         assertEquals(transfer.getPaTaxCode(), result.getPaFiscalCode());
@@ -69,7 +69,7 @@ class PagopaTransferMapperTest {
 
         Transfer transfer = new Transfer();
         transfer.setIdTransfer(2);
-        transfer.setTransferAmount(BigInteger.valueOf(5000));
+        transfer.setTransferAmount(BigDecimal.valueOf(5000));
         transfer.setPaTaxCode("98765432109");
         transfer.setCompany(null); // Optional field
         transfer.setIban("IT45T0300203280486870136629");
@@ -96,7 +96,7 @@ class PagopaTransferMapperTest {
 
         Transfer transfer = new Transfer();
         transfer.setIdTransfer(3);
-        transfer.setTransferAmount(BigInteger.ZERO);
+        transfer.setTransferAmount(BigDecimal.ZERO);
         transfer.setPaTaxCode("11111111111");
         transfer.setCompany("Zero Amount Company");
         transfer.setIban("IT28W8000000292100645211111");
@@ -117,7 +117,7 @@ class PagopaTransferMapperTest {
 
         Transfer transfer = new Transfer();
         transfer.setIdTransfer(1);
-        transfer.setTransferAmount(BigInteger.valueOf(10000));
+        transfer.setTransferAmount(BigDecimal.valueOf(10000));
         transfer.setPaTaxCode("12345678901");
         transfer.setIban("IT60X0542811101000000123456");
         transfer.setRemittanceInformation("Test");
@@ -139,7 +139,7 @@ class PagopaTransferMapperTest {
         
         Transfer transfer1 = new Transfer();
         transfer1.setIdTransfer(1);
-        transfer1.setTransferAmount(BigInteger.valueOf(5000));
+        transfer1.setTransferAmount(BigDecimal.valueOf(5000));
         transfer1.setPaTaxCode("12345678901");
         transfer1.setCompany("Company One");
         transfer1.setIban("IT60X0542811101000000123456");
@@ -149,7 +149,7 @@ class PagopaTransferMapperTest {
 
         Transfer transfer2 = new Transfer();
         transfer2.setIdTransfer(2);
-        transfer2.setTransferAmount(BigInteger.valueOf(3000));
+        transfer2.setTransferAmount(BigDecimal.valueOf(3000));
         transfer2.setPaTaxCode("98765432109");
         transfer2.setCompany("Company Two");
         transfer2.setIban("IT45T0300203280486870136629");
@@ -159,7 +159,7 @@ class PagopaTransferMapperTest {
 
         Transfer transfer3 = new Transfer();
         transfer3.setIdTransfer(3);
-        transfer3.setTransferAmount(BigInteger.valueOf(2000));
+        transfer3.setTransferAmount(BigDecimal.valueOf(2000));
         transfer3.setPaTaxCode("11111111111");
         transfer3.setCompany("Company Three");
         transfer3.setIban("IT28W8000000292100645211111");
@@ -240,7 +240,7 @@ class PagopaTransferMapperTest {
 
         Transfer transfer = new Transfer();
         transfer.setIdTransfer(1);
-        transfer.setTransferAmount(BigInteger.valueOf(15000));
+        transfer.setTransferAmount(BigDecimal.valueOf(15000));
         transfer.setPaTaxCode("12345678901");
         transfer.setCompany("Single Transfer Company");
         transfer.setIban("IT60X0542811101000000123456");
@@ -268,7 +268,7 @@ class PagopaTransferMapperTest {
         
         Transfer transfer1 = new Transfer();
         transfer1.setIdTransfer(1);
-        transfer1.setTransferAmount(BigInteger.valueOf(1000));
+        transfer1.setTransferAmount(BigDecimal.valueOf(1000));
         transfer1.setPaTaxCode("12345678901");
         transfer1.setIban("IT60X0542811101000000123456");
         transfer1.setRemittanceInformation("Reported payment 1");
@@ -277,7 +277,7 @@ class PagopaTransferMapperTest {
 
         Transfer transfer2 = new Transfer();
         transfer2.setIdTransfer(2);
-        transfer2.setTransferAmount(BigInteger.valueOf(2000));
+        transfer2.setTransferAmount(BigDecimal.valueOf(2000));
         transfer2.setPaTaxCode("98765432109");
         transfer2.setIban("IT45T0300203280486870136629");
         transfer2.setRemittanceInformation("Reported payment 2");
@@ -302,7 +302,7 @@ class PagopaTransferMapperTest {
 
         Transfer transfer = new Transfer();
         transfer.setIdTransfer(1);
-        transfer.setTransferAmount(new BigInteger("999999999999")); // Very large amount
+        transfer.setTransferAmount(new BigDecimal("999999999999")); // Very large amount
         transfer.setPaTaxCode("12345678901");
         transfer.setCompany("Large Transfer Company");
         transfer.setIban("IT60X0542811101000000123456");
@@ -327,7 +327,7 @@ class PagopaTransferMapperTest {
 
         Transfer transfer = new Transfer();
         transfer.setIdTransfer(1);
-        transfer.setTransferAmount(BigInteger.valueOf(10000));
+        transfer.setTransferAmount(BigDecimal.valueOf(10000));
         transfer.setPaTaxCode("12345678901");
         transfer.setCompany(maxLengthCompany);
         transfer.setIban(validIban);
