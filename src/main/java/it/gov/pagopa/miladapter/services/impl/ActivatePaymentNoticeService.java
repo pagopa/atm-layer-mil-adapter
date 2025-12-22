@@ -13,9 +13,11 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,10 +32,17 @@ public class ActivatePaymentNoticeService {
     private final QrCodeParser qrCodeParser;
     private final BasePaymentService basePaymentService;
 
+    /**
+     * The expiration time of the payment token passed to the node
+     */
+    @Value("${paymentnotice.activatepayment.expiration-time}")
+    BigInteger paymentNoticeExpirationTime;
+
 	public ActivatePaymentNoticeService(QrCodeParser qrCodeParser, BasePaymentService basePaymentService) {
 		this.qrCodeParser = qrCodeParser;
         this.basePaymentService = basePaymentService;
     }
+
 
 	/**
 	 * Activate a payment notice by its qr-code.
@@ -119,6 +128,7 @@ public class ActivatePaymentNoticeService {
 		nodeActivateRequest.setIdempotencyKey(activatePaymentNoticeRequest.getIdempotencyKey());
 		nodeActivateRequest.setQrCode(ctQrCode);
 		nodeActivateRequest.setAmount(activatePaymentNoticeRequest.getAmount());
+        nodeActivateRequest.setExpirationTime(paymentNoticeExpirationTime);
 
         try {
             final ActivatePaymentNoticeV2Response activateResponse = this.basePaymentService.activatePaymentNoticeV2(nodeActivateRequest);

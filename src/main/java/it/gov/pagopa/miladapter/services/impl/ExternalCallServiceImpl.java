@@ -15,6 +15,7 @@ import it.gov.pagopa.miladapter.services.ExternalCallService;
 import it.gov.pagopa.miladapter.services.model.ActivatePaymentNoticeRequest;
 import it.gov.pagopa.miladapter.services.model.ClosePaymentRequest;
 import it.gov.pagopa.miladapter.services.model.CommonHeader;
+import it.gov.pagopa.miladapter.services.model.PagoPaTransactionRequest;
 import it.gov.pagopa.miladapter.util.EngineVariablesToHTTPConfigurationUtils;
 import it.gov.pagopa.miladapter.util.HttpRequestUtils;
 import java.net.URI;
@@ -44,6 +45,7 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
   private final VerifyPaymentNoticeService verifyPaymentNoticeService;
   private final ActivatePaymentNoticeService activatePaymentNoticeService;
   private final PaymentService paymentService;
+  private final ReportingService reportingService;
 
   private static final Pattern QR_CODE_PATTERN =
       Pattern.compile("/mil-payment-notice/paymentNotices/([^/]+)$");
@@ -51,6 +53,7 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
       Pattern.compile("/mil-payment-notice/paymentNotices/([^/]+)/([^/]+)$");
   private static final Pattern CLOSE_PATTERN =
       Pattern.compile("/mil-payment-notice/payments/([^/]+)/sendPaymentOutcome");
+  private static final Pattern TRANSACTIONS_PATTERN = Pattern.compile("/transactions");
   private final List<Route> routes;
 
   interface Handler {
@@ -66,13 +69,15 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
       ObjectMapper objectMapper,
       VerifyPaymentNoticeService verifyPaymentNoticeService,
       ActivatePaymentNoticeService activatePaymentNoticeService,
-      PaymentService paymentService) {
+      PaymentService paymentService,
+      ReportingService reportingService) {
     this.restConfigurationProperties = restConfigurationProperties;
     this.restTemplate = restTemplate;
     this.objectMapper = objectMapper;
     this.verifyPaymentNoticeService = verifyPaymentNoticeService;
     this.activatePaymentNoticeService = activatePaymentNoticeService;
     this.paymentService = paymentService;
+    this.reportingService = reportingService;
 
     this.routes =
         List.of(
@@ -119,6 +124,14 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
                       this.objectMapper.readValue(body, ClosePaymentRequest.class);
                   return this.paymentService.sendPaymentOutcome(
                       h, pathParams.get(MilValues.TRANSACTION_ID.getValue()), request);
+                }),
+            new Route(
+                TRANSACTIONS_PATTERN,
+                HttpMethod.POST,
+                (h, pathParams, body) -> {
+                    PagoPaTransactionRequest request =
+                        this.objectMapper.readValue(body, PagoPaTransactionRequest.class);
+                    return this.reportingService.createTransaction(request);
                 }));
   }
 
@@ -181,7 +194,8 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
   private static boolean isLocalMilEndpoint(String endpoint) {
     return QR_CODE_PATTERN.matcher(endpoint).matches()
         || TAX_CODE_NOTICE_PATTERN.matcher(endpoint).matches()
-        || CLOSE_PATTERN.matcher(endpoint).matches();
+        || CLOSE_PATTERN.matcher(endpoint).matches()
+        || TRANSACTIONS_PATTERN.matcher(endpoint).matches();
   }
 
   protected ResponseEntity handleLocalMilCall(Configuration configuration)
