@@ -1,7 +1,7 @@
 package it.gov.pagopa.miladapter.services.impl;
 
 import it.gov.pagopa.miladapter.client.NodeForPspWrapper;
-import it.gov.pagopa.miladapter.client.model.CbillAbiFederazioneDto;
+import it.gov.pagopa.miladapter.services.dto.CbillAbiFederazioneDto;
 import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.properties.NodeErrorMappingProperties;
 import it.gov.pagopa.miladapter.services.model.CommonHeader;
