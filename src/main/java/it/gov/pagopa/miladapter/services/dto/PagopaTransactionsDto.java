@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.Instant;
 
 @Data
@@ -15,6 +16,8 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PagopaTransactionsDto {
+
+    private BigInteger id;
 
     @NotNull
     @Size(max = 36)

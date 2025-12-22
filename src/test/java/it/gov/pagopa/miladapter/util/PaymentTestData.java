@@ -84,7 +84,7 @@ public final class PaymentTestData {
                 "Optional payment note",
                 "2024-12-31", // payOptDuedate
                 PAYMENT_TOKEN,
-                "crdRef_" + UUID.randomUUID().toString().substring(0, 8),
+                "02051234567890177",
                 TERMINAL_ID,
                 "2024-01-15T10:30:00" // payDate
         );

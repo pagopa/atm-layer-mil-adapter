@@ -17,19 +17,13 @@ import java.time.LocalDate;
 public class PagopaTransferListDto {
 
     @NotNull
-    private Long transactionId;
+    private Integer transactionId;
 
     @NotNull
     private Integer transferId;
 
     @NotNull
     private BigDecimal transferAmount;
-
-    @Size(max = 35)
-    private String transferCro;
-
-    @Size(max = 35)
-    private String flowId;
 
     @NotNull
     private Boolean pagopaReported = false;

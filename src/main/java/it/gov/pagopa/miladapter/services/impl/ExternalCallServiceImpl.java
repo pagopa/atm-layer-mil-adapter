@@ -12,10 +12,7 @@ import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.Configuration;
 import it.gov.pagopa.miladapter.properties.RestConfigurationProperties;
 import it.gov.pagopa.miladapter.services.ExternalCallService;
-import it.gov.pagopa.miladapter.services.model.ActivatePaymentNoticeRequest;
-import it.gov.pagopa.miladapter.services.model.ClosePaymentRequest;
-import it.gov.pagopa.miladapter.services.model.CommonHeader;
-import it.gov.pagopa.miladapter.services.model.PagoPaTransactionRequest;
+import it.gov.pagopa.miladapter.services.model.*;
 import it.gov.pagopa.miladapter.util.EngineVariablesToHTTPConfigurationUtils;
 import it.gov.pagopa.miladapter.util.HttpRequestUtils;
 import java.net.URI;
@@ -54,6 +51,7 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
   private static final Pattern CLOSE_PATTERN =
       Pattern.compile("/mil-payment-notice/payments/([^/]+)/sendPaymentOutcome");
   private static final Pattern TRANSACTIONS_PATTERN = Pattern.compile("/transactions");
+  private static final Pattern TRANSFER_LISTS_PATTERN = Pattern.compile("/transfer-lists");
   private final List<Route> routes;
 
   interface Handler {
@@ -132,7 +130,16 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
                     PagoPaTransactionRequest request =
                         this.objectMapper.readValue(body, PagoPaTransactionRequest.class);
                     return this.reportingService.createTransaction(request);
-                }));
+                }),
+            new Route(
+                TRANSFER_LISTS_PATTERN,
+                HttpMethod.POST,
+                (h, pathParams, body) -> {
+                    PagoPaTransferListRequest request =
+                        this.objectMapper.readValue(body, PagoPaTransferListRequest.class);
+                    return this.reportingService.createTransferList(request);
+                })
+            );
   }
 
   @Override
@@ -195,7 +202,8 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
     return QR_CODE_PATTERN.matcher(endpoint).matches()
         || TAX_CODE_NOTICE_PATTERN.matcher(endpoint).matches()
         || CLOSE_PATTERN.matcher(endpoint).matches()
-        || TRANSACTIONS_PATTERN.matcher(endpoint).matches();
+        || TRANSACTIONS_PATTERN.matcher(endpoint).matches()
+        || TRANSFER_LISTS_PATTERN.matcher(endpoint).matches();
   }
 
   protected ResponseEntity handleLocalMilCall(Configuration configuration)
