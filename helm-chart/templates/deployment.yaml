@@ -166,6 +166,12 @@ spec:
               value: "{{ .Values.reportingService.baseUrl }}"
             - name: CBILL_ABI_FEDERAZIONE_PATH
               value: "{{ .Values.reportingService.cbillAbiFederazione.path }}"
+            - name: PAGOPA_TRANSACTIONS_PATH
+              value: "{{ .Values.reportingService.pagopaTransactions.path }}"
+            - name: PAGOPA_TRANSFER_LIST_PATH
+              value: "{{ .Values.reportingService.pagopaTransferList.path }}"
+            - name: ACTIVATE_PAYMENT_EXPIRATION_TIME
+              value: "{{ .Values.paymentnotice.activatepayment.expirationTime }}"
           volumeMounts:
           {{- if .Values.secretProviderClass.enabled }}
           - name: secrets-store-inline
