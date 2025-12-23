@@ -167,3 +167,25 @@ affinity: {}
 Release:
   Time:
     Seconds: 60
+
+reportingService:
+  baseUrl: http://pagopa-prod-atm-layer-reporting-service.pagopa.svc.cluster.local:8080
+  cbillAbiFederazione:
+    path: /api/v1/reporting-service/cbill-abi-federazione/{abi}
+  pagopaTransactions:
+    path: /api/v1/reporting-service/transactions
+  pagopaTransferList:
+    path: /api/v1/reporting-service/bank/transfer-lists
+
+paymentnotice:
+  activatepayment:
+    expirationTime: 120000 # in milliseconds
+
+node:
+  soapClient:
+    url: https://api.uat.platform.pagopa.it/nodo/node-for-psp/v1
+    connectTimeout: 30000
+    readTimeout: 30000
+    credentialsSecretName: "pagopa-dev-atm-layer-mil-adapter-node"
+    credentialsSecretKeys:
+      apiKey: API_KEY

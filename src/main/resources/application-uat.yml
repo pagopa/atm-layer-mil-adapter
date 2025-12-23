@@ -1,17 +1,21 @@
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${SERVER_PORT:8085}
 camunda:
   bpm:
+    history-level: NONE
     client:
       base-url: ${MIL_ADAPTER_ENGINE_URL:http://localhost:8080}/engine-rest
+      lock-duration: ${MIL_ADAPTER_LOCK_DURATION:20000}
+      disable-backoff-strategy: ${MIL_ADAPTER_DISABLE_BACKOFF_STRATEGY:true}
+      async-response-timeout: ${MIL_ADAPTER_ASYNC_RESPONSE_TIMEOUT:500}
+      max-tasks: 1
       basic-auth:
         username: ${MIL_ADAPTER_ENGINE_ACCOUNT_USER:admin}
         password: ${MIL_ADAPTER_ENGINE_ACCOUNT_PASSWORD:AurigaNtt.2023}
 rest-configuration:
-  mil-authenticator-base-path: ${MIL_AUTHENTICATOR_BASE_PATH}
-  mil-base-path: ${MIL_ADAPTER_MIL_BASE_PATH}
-  get-token-endpoint: ${MIL_GET_TOKEN_ENDPOINT:/mil-auth/token}
-  id-pay-base-path: ${MIL_ADAPTER_ID_PAY_BASE_PATH}
+  mil-authenticator-base-path: ${MIL_AUTHENTICATOR_BASE_PATH:http://pagopa-dev-atm-layer-mil-authenticator.pagopa.svc.cluster.local:8080}
+  mil-base-path: ${MIL_ADAPTER_MIL_BASE_PATH:https://mil-d-perf-ca.agreeablestone-406ca858.westeurope.azurecontainerapps.io}
+  id-pay-base-path: ${MIL_ADAPTER_ID_PAY_BASE_PATH:https://api-io.dev.cstar.pagopa.it}
   interceptor-logging-enabled: ${MIL_ADAPTER_ENABLE_INTERCEPTOR_LOGGING:true}
   log-engine-input-variables-enabled: ${MIL_ADAPTER_LOG_ENGINE_INPUT_VARIABLES:true}
   connection-request-timeout-milliseconds: ${MIL_ADAPTER_REST_CONNECTION_REQUEST_TIMEOUT_MILLISECONDS:1000}
@@ -19,15 +23,24 @@ rest-configuration:
   max-retry: ${MIL_ADAPTER_REST_MAX_RETRY:0}
   retry-interval-milliseconds: ${MIL_ADAPTER_REST_RETRY_INTERVAL_MILLISECONDS:500}
   async-threshold: ${MIL_ADAPTER_ASYNC_RESPONSE_TIMEOUT:20000}
-  model-base-path: ${MIL_ADAPTER_MODEL_BASE_PATH}
+  model-base-path: ${MIL_ADAPTER_MODEL_BASE_PATH:http://pagopa-dev-atm-layer-model.pagopa.svc.cluster.local:8080}
   auth:
     mil-authenticator-path: ${MIL_AUTHENTICATOR_RELATIVE_PATH:/api/v1/mil-authenticator/token}
-    client-id: ${MIL_ADAPTER_MIL_AUTH_CLIENT_ID:}
-    client-secret: ${MIL_ADAPTER_MIL_AUTH_CLIENT_SECRET:}
+    client-id: ${MIL_ADAPTER_MIL_AUTH_CLIENT_ID:83c0b10f-b398-4cc8-b356-a3e0f0291679}
+    client-secret: ${MIL_ADAPTER_MIL_AUTH_CLIENT_SECRET:bea0fc26-fe22-4b26-8230-ef7d4461acf9}
     grant-type: ${MIL_ADAPTER_MIL_AUTH_CLIENT_CREDENTIALS:client_credentials}
   definition-id-properties:
     method: GET
     url: /api/v1/model/bpmn/function/{functionType}/bank/{acquirerId}/branch/{branchId}/terminal/{terminalId}
+
+reporting-service:
+  base-url: ${REPORTING_SERVICE_BASE_URL:http://pagopa-dev-atm-layer-reporting-service.pagopa.svc.cluster.local:8080}
+  cbill-abi-federazione:
+    path: ${CBILL_ABI_FEDERAZIONE_PATH:/api/v1/reporting-service/cbill-abi-federazione/{abi}}
+  pagopa-transactions:
+    path: ${PAGOPA_TRANSACTIONS_PATH:/api/v1/reporting-service/transactions}
+  pagopa-transfer-list:
+    path: ${PAGOPA_TRANSFER_LIST_PATH:/api/v1/reporting-service/bank/transfer-lists}
 
 spring:
   application:
@@ -51,8 +64,77 @@ spring:
 
 
 logging:
+  level:
+    root: INFO
+    org.apache.cxf: INFO
+    org.apache.cxf.services: INFO
   pattern:
     level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
 
 id-pay:
-  api-key: ${ID_PAY_API_KEY}
+  api-key: ${ID_PAY_API_KEY:test}
+
+
+paymentnotice:
+  activatepayment:
+    expiration-time: ${ACTIVATE_PAYMENT_EXPIRATION_TIME:120000} # in milliseconds
+# ------------------------------------------------------------------------------
+# Node error remapping and CXF SOAP client configuration to communicate with Nodo
+# ------------------------------------------------------------------------------
+node:
+  soap-client:
+    endpoint-url: ${SOAP_SERVICE_URL}
+    connect-timeout: ${SOAP_CONNECTION_TIMEOUT:30000}
+    read-timeout: ${SOAP_READ_TIMEOUT:30000}
+    apim-subscription-key: ${APIM_SUBSCRIPTION_KEY}
+  error:
+    map:
+      PPT_INTERMEDIARIO_PA_SCONOSCIUTO: '0'
+      PPT_IBAN_NON_CENSITO: '3'
+      PPT_CANALE_TIMEOUT: '0'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_SINTASSI_EXTRAXSD: '3'
+      PPT_STAZIONE_INT_PA_IRRAGGIUNGIBILE: '3'
+      PPT_INTERMEDIARIO_PSP_DISABILITATO: '1'
+      PPT_ATTIVAZIONE_IN_CORSO: '0'
+      PPT_CANALE_ERRORE_RESPONSE: '0'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_ID_INTERMEDIARIO_ERRATO: '3'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_ATTIVA_RPT_IMPORTO_NON_VALIDO: '3'
+      PPT_PAGAMENTO_DUPLICATO: '7'
+      PPT_PSP_SCONOSCIUTO: '1'
+      PPT_SYSTEM_ERROR: '1'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_SINTASSI_XSD: '3'
+      PPT_CANALE_DISABILITATO: '1'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_PAGAMENTO_DUPLICATO: '7'
+      PPT_DOMINIO_DISABILITATO: '1'
+      PPT_AUTORIZZAZIONE: '1'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_PAGAMENTO_ANNULLATO: '6'
+      PPT_CANALE_IRRAGGIUNGIBILE: '0'
+      PPT_STAZIONE_INT_PA_SERVIZIO_NONATTIVO: '0'
+      PPT_SINTASSI_XSD: '2'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_SEMANTICA: '1'
+      PPT_ERRORE_IDEMPOTENZA: '0'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_PAGAMENTO_SCONOSCIUTO: '8'
+      PPT_ERRORE_EMESSO_DA_PAA: '3'
+      PPT_STAZIONE_INT_PA_ERRORE_RESPONSE: '3'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_PAGAMENTO_IN_CORSO: '4'
+      PPT_AUTENTICAZIONE: '1'
+      PPT_SEMANTICA: '1'
+      PPT_DOMINIO_SCONOSCIUTO: '2'
+      PPT_CODIFICA_PSP_SCONOSCIUTA: '1'
+      PPT_SINTASSI_EXTRAXSD: '2'
+      PPT_PAGAMENTO_IN_CORSO: '4'
+      PPT_INTERMEDIARIO_PSP_SCONOSCIUTO: '1'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_PAGAMENTO_SCADUTO: '5'
+      PPT_CANALE_ERRORE: '0'
+      PPT_PSP_DISABILITATO: '1'
+      PPT_STAZIONE_INT_PA_TIMEOUT: '3'
+      PPT_CANALE_SCONOSCIUTO: '1'
+      PPT_STAZIONE_INT_PA_SCONOSCIUTA: '2'
+      PPT_STAZIONE_INT_PA_SERVIZIO_NON_ATTIVO: '0'
+      PPT_STAZIONE_INT_PA_DISABILITATA: '1'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_SYSTEM_ERROR: '3'
+      PPT_INTERMEDIARIO_PA_DISABILITATO: '1'
+      PPT_CANALE_SERVIZIO_NONATTIVO: '0'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_STAZIONE_INT_ERRATA: '3'
+      PPT_ERRORE_EMESSO_DA_PAA-PAA_ID_DOMINIO_ERRATO: '3'
+    outcomes: [UNEXPECTED_ERROR, NOTICE_GLITCH, WRONG_NOTICE_DATA, CREDITOR_PROBLEMS, PAYMENT_ALREADY_IN_PROGRESS, EXPIRED_NOTICE, REVOKED_NOTICE, NOTICE_ALREADY_PAID, UNKNOWN_NOTICE]
