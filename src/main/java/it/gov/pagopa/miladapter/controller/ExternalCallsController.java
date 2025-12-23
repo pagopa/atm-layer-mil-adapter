@@ -21,7 +21,7 @@ public class ExternalCallsController {
     @Autowired
     ExternalCallService externalCallService;
 
-    @PostMapping
+    @PostMapping(produces = "application/json")
     public ResponseEntity<String> externalcall(@RequestBody Map<String, Object> body) throws JsonProcessingException {
         // Log before starting async method
         log.info("Starting call external");
