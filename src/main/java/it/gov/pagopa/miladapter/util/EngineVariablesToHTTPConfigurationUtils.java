@@ -1,6 +1,5 @@
 package it.gov.pagopa.miladapter.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.miladapter.enums.HttpVariablesEnum;
 import it.gov.pagopa.miladapter.enums.RequiredProcessVariables;
 import it.gov.pagopa.miladapter.model.AuthParameters;
@@ -22,7 +21,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static it.gov.pagopa.miladapter.util.LogSanitizer.sanitizeEndpoint;
+import static it.gov.pagopa.miladapter.util.EndpointValidator.sanitizeEndpoint;
 
 @Slf4j
 @Component
