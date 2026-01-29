@@ -31,6 +31,8 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import static it.gov.pagopa.miladapter.util.LogSanitizer.sanitizeForLog;
+
 @Slf4j
 @Service
 public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
@@ -291,7 +293,7 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
         String.format(
             "Unsupported local MIL operation for endpoint: %s with method: %s",
             endpoint, httpMethod);
-    log.error(message);
+    log.error(sanitizeForLog(message));
     return new ResponseEntity<>(new JsonObject().toString(), HttpStatus.NOT_IMPLEMENTED);
   }
 

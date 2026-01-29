@@ -102,7 +102,7 @@ class ExternalCallServiceImplTest {
     headersMap.put("TerminalId", "term_id");
     testVariables.put("headers", headersMap);
     testVariables.put(RequiredProcessVariables.FLOW.getEngineValue(), FlowValues.MIL.getValue());
-    testVariables.put("url", "url");
+    testVariables.put("url", "/path");
     testVariables.put("method", "GET");
     testVariables.put("millAccessToken", "millAccessToken");
     testVariables.put("body", "body");

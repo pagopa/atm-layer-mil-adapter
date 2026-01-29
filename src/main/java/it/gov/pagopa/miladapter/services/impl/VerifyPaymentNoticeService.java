@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ResponseStatusException;
 
+import static it.gov.pagopa.miladapter.util.LogSanitizer.sanitizeForLog;
+
 @Service
 @Validated
 @Slf4j
@@ -48,7 +50,7 @@ public class VerifyPaymentNoticeService {
 			@Pattern(regexp = PaymentNoticeConstants.ENCODED_QRCODE_REGEX, message = "[" + ErrorCode.ENCODED_QRCODE_MUST_MATCH_REGEXP + "] qrCode must match \"{regexp}\"")
 			String b64UrlQrCode) {
 
-		log.debug("verifyPaymentNoticeByQrCode - Input parameters: {}, b64UrlQrCode: {}", headers, b64UrlQrCode);
+		log.debug("verifyPaymentNoticeByQrCode - Input parameters: {}, b64UrlQrCode: {}", headers, sanitizeForLog(b64UrlQrCode));
 
 		// parse qr-code to retrieve the notice number and the PA tax code
 		QrCode parsedQrCode = qrCodeParser.b64UrlParse(b64UrlQrCode);
@@ -76,7 +78,11 @@ public class VerifyPaymentNoticeService {
 			@Pattern(regexp = PaymentNoticeConstants.NOTICE_NUMBER_REGEX, message = "[" + ErrorCode.NOTICE_NUMBER_MUST_MATCH_REGEXP + "] noticeNumber must match \"{regexp}\"")
 			String noticeNumber) {
 
-		log.debug("verifyByTaxCodeAndNoticeNumber - Input parameters: {}, paTaxCode: {}, noticeNumber: {}", headers, paTaxCode, noticeNumber);
+        log.debug(
+            "verifyByTaxCodeAndNoticeNumber - Input parameters: {}, paTaxCode: {}, noticeNumber: {}",
+            headers,
+            sanitizeForLog(paTaxCode),
+            sanitizeForLog(noticeNumber));
 
 		PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId());
 		return callNodeVerifyPaymentNotice(paTaxCode, noticeNumber, pspConf);

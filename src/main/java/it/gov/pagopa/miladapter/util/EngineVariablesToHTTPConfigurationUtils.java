@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static it.gov.pagopa.miladapter.util.LogSanitizer.sanitizeEndpoint;
+
 @Slf4j
 @Component
 public class EngineVariablesToHTTPConfigurationUtils {
@@ -77,6 +79,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         String transactionId = EngineVariablesUtils.getTypedVariable(variables, RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), milFlow);
         Number delayMilliseconds = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.DELAY_MILLISECONDS.getValue(), false);
         String endpointVariable = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.URL.getValue(), true);
+        String safeEndpoint = sanitizeEndpoint(endpointVariable);
         String httpMethodVariable = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.METHOD.getValue(), true);
         HttpMethod httpMethod = HttpRequestUtils.httpMethodFromValue(httpMethodVariable);
         String body = EngineVariablesUtils.getTypedVariable(variables, HttpVariablesEnum.BODY.getValue(), false);
@@ -102,7 +105,7 @@ public class EngineVariablesToHTTPConfigurationUtils {
         AuthParameters authParameters = AuthParameters.builder().requestId(requestId).acquirerId(acquirerId).terminalId(terminalId).channel(channel).transactionId(transactionId).build();
         return Configuration.builder()
                 .body(body)
-                .endpoint(endpointVariable)
+                .endpoint(safeEndpoint)
                 .httpMethod(httpMethod)
                 .pathParams(pathParams)
                 .headers(headers)

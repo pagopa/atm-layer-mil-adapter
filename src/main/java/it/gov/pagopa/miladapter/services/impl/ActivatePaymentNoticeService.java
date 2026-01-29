@@ -4,6 +4,7 @@ import it.gov.pagopa.miladapter.model.PspConfiguration;
 import it.gov.pagopa.miladapter.model.QrCode;
 import it.gov.pagopa.miladapter.services.model.*;
 import it.gov.pagopa.miladapter.util.ErrorCode;
+import it.gov.pagopa.miladapter.util.LogSanitizer;
 import it.gov.pagopa.miladapter.util.PaymentNoticeConstants;
 import it.gov.pagopa.miladapter.util.QrCodeParser;
 import it.gov.pagopa.pagopa_api.node.nodeforpsp.ActivatePaymentNoticeV2Request;
@@ -23,6 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ResponseStatusException;
+
+import static it.gov.pagopa.miladapter.util.LogSanitizer.sanitizeForLog;
 
 @Service
 @Validated
@@ -63,7 +66,7 @@ public class ActivatePaymentNoticeService {
 			@NotNull(message = "[" + ErrorCode.ACTIVATE_REQUEST_MUST_NOT_BE_EMPTY + "] request must not be empty")
             ActivatePaymentNoticeRequest activatePaymentNoticeRequest) {
 
-		log.debug("activateByQrCode - Input parameters: {}, b64UrlQrCode: {}, request: {}", headers, b64UrlQrCode, activatePaymentNoticeRequest);
+		log.debug("activateByQrCode - Input parameters: {}, b64UrlQrCode: {}", headers, sanitizeForLog(b64UrlQrCode));
 
 		// parse qr-code to retrieve the notice number and the PA tax code
 		QrCode parsedQrCode = qrCodeParser.b64UrlParse(b64UrlQrCode);
@@ -97,8 +100,11 @@ public class ActivatePaymentNoticeService {
 			@NotNull(message = "[" + ErrorCode.ACTIVATE_REQUEST_MUST_NOT_BE_EMPTY + "] request must not be empty")
 			ActivatePaymentNoticeRequest activatePaymentNoticeRequest) {
 
-		log.debug("activateByTaxCodeAndNoticeNumber - Input parameters: {}, paTaxCode: {}, noticeNumber: {}, body: {}",
-				headers, paTaxCode, noticeNumber, activatePaymentNoticeRequest);
+        log.debug(
+            "activateByTaxCodeAndNoticeNumber - Input parameters: {}, paTaxCode: {}, noticeNumber: {}",
+            headers,
+            sanitizeForLog(paTaxCode),
+            sanitizeForLog(noticeNumber));
 
         PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId());
 		return this.callNodeActivatePaymentNotice(paTaxCode, noticeNumber, pspConf, activatePaymentNoticeRequest);

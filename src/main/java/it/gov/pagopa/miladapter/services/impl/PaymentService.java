@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ResponseStatusException;
 
+import static it.gov.pagopa.miladapter.util.LogSanitizer.sanitizeForLog;
+
 @Service
 @Validated
 @Slf4j
@@ -47,8 +49,10 @@ public class PaymentService {
             @NotNull(message = "[" + ErrorCode.CLOSE_REQUEST_MUST_NOT_BE_EMPTY + "] request must not be empty")
             ClosePaymentRequest closePaymentRequest) {
 
-        log.debug("closePayment with SendPaymentOutcome - Input parameters: {}, transactionId : {}, {}",
-                headers, transactionId, closePaymentRequest);
+        log.debug(
+            "closePayment with SendPaymentOutcome - Input parameters: {}, transactionId : {}",
+            headers,
+            sanitizeForLog(transactionId));
 
         PspConfiguration pspConf = this.basePaymentService.retrievePSPConfiguration(headers.getAcquirerId());
         return this.callNodeSendPaymentOutcome(pspConf, closePaymentRequest);

@@ -69,7 +69,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         Map<String, Object> variables = new CaseInsensitiveMap<>();
         variables.put("millAccessToken", "VALID_TOKEN");
         variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
-        variables.put(HttpVariablesEnum.URL.getValue(), "http://prova");
+        variables.put(HttpVariablesEnum.URL.getValue(), "/prova");
         variables.put(HttpVariablesEnum.METHOD.getValue(), "GET");
 
         Map<String, Object> headers = new CaseInsensitiveMap<>();
@@ -81,7 +81,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
 
         Configuration configuration = EngineVariablesToHTTPConfigurationUtils
                 .getHttpConfigurationExternalCall(variables, true, false);
-        assertEquals("http://prova", configuration.getEndpoint());
+        assertEquals("/prova", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertNull(configuration.getBody());
         assertEquals(5, configuration.getHeaders().size());
@@ -99,7 +99,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         headersMap.put("TerminalId", "term_id");
         variables.put("headers", headersMap);
         variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
-        variables.put("url", "http://prova");
+        variables.put("url", "/prova");
         variables.put("method", "GET");
         variables.put("millAccessToken", "VALID_TOKEN");
         variables.put("body", "testBody");
@@ -108,7 +108,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         Configuration configuration = EngineVariablesToHTTPConfigurationUtils
                 .getHttpConfigurationExternalCall(variables, true, false);
 
-        assertEquals("http://prova", configuration.getEndpoint());
+        assertEquals("/prova", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertEquals("testBody", configuration.getBody());
         assertEquals(5, configuration.getHeaders().size());
@@ -145,7 +145,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         headersMap.put("TerminalId", "term_id");
         variables.put("headers", headersMap);
         variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
-        variables.put("url", "http://prova");
+        variables.put("url", "/prova");
         variables.put("method", "GET");
         variables.put("millAccessToken", "VALID_TOKEN");
         variables.put("body", "testBody");
@@ -154,7 +154,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
                 .getHttpConfigurationExternalCall(variables,false,true);
 
 
-        assertEquals("http://prova", configuration.getEndpoint());
+        assertEquals("/prova", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertEquals("testBody", configuration.getBody());
         assertEquals(7, configuration.getHeaders().size());
@@ -181,7 +181,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         headersMap.put("TerminalId", "term_id");
         variables.put("headers", headersMap);
         variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
-        variables.put("url", "http://prova");
+        variables.put("url", "/prova");
         variables.put("method", "GET");
         variables.put("millAccessToken", "VALID_TOKEN");
         variables.put("body", "testBody");
@@ -189,7 +189,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         Configuration configuration = EngineVariablesToHTTPConfigurationUtils
                 .getHttpConfigurationExternalCall(variables, false, true);
 
-        assertEquals("http://prova", configuration.getEndpoint());
+        assertEquals("/prova", configuration.getEndpoint());
         assertEquals(HttpMethod.GET, configuration.getHttpMethod());
         assertEquals("testBody", configuration.getBody());
         assertEquals(7, configuration.getHeaders().size());
@@ -215,7 +215,7 @@ class EngineVariablesToHTTPConfigurationUtilsTest {
         headersMap.put("TerminalId", "term_id");
         variables.put("headers", headersMap);
         variables.put(RequiredProcessVariables.TRANSACTION_ID.getEngineValue(), "transaction-id");
-        variables.put("url", "http://prova");
+        variables.put("url", "/prova");
         variables.put("millAccessToken", "VALID_TOKEN");
         variables.put("PathParams", new HashMap<>());
 
