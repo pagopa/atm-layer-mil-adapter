@@ -209,7 +209,7 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
         || TRANSFER_LISTS_PATTERN.matcher(endpoint).matches();
   }
 
-  protected ResponseEntity handleLocalMilCall(Configuration configuration)
+  protected ResponseEntity<String> handleLocalMilCall(Configuration configuration)
       throws JsonProcessingException {
     SpanBuilder spanBuilder = this.spanBuilder(configuration);
     Span serviceSpan = spanBuilder.startSpan();
@@ -298,7 +298,7 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
     return new ResponseEntity<>(new JsonObject().toString(), HttpStatus.NOT_IMPLEMENTED);
   }
 
-  private ResponseEntity executeHttpCall(Configuration configuration, String flow) {
+  private ResponseEntity<String> executeHttpCall(Configuration configuration, String flow) {
     ResponseEntity<String> response;
 
     SpanBuilder spanBuilder = this.spanBuilder(configuration);
