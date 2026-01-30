@@ -1,128 +1,58 @@
 package it.gov.pagopa.miladapter.util;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.stream.Stream;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class EndpointValidatorTest {
 
-    @Test
-    void testSanitizeEndpoint_withNull_shouldThrowException() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            EndpointValidator.sanitizeEndpoint(null);
+    static Stream<Arguments> invalidEndpointProvider() {
+        return Stream.of(
+                Arguments.of(null, "Endpoint cannot be null"),
+                Arguments.of("", "Endpoint cannot be empty"),
+                Arguments.of("   ", "Endpoint cannot be empty"),
+                Arguments.of("http://example.com/api", "Absolute URLs are not allowed in endpoint"),
+                Arguments.of("https://example.com/api", "Absolute URLs are not allowed in endpoint"),
+                Arguments.of("//example.com/api", "Absolute URLs are not allowed in endpoint"),
+                Arguments.of("ftp://example.com/api", "Absolute URLs are not allowed in endpoint"),
+                Arguments.of("HTTPS://example.com/api", "Absolute URLs are not allowed in endpoint"),
+                Arguments.of("api/endpoint", "Endpoint must be a relative path starting with '/'"),
+                Arguments.of("/api/../admin", "Endpoint cannot contain path traversal sequences"),
+                Arguments.of("/api/..", "Endpoint cannot contain path traversal sequences"),
+                Arguments.of("/../api", "Endpoint cannot contain path traversal sequences")
+        );
+    }
+
+    static Stream<Arguments> validEndpointProvider() {
+        return Stream.of(
+                Arguments.of("/api/endpoint", "/api/endpoint"),
+                Arguments.of("  /api/endpoint  ", "/api/endpoint"),
+                Arguments.of("/api/v1/users/123/profile", "/api/v1/users/123/profile"),
+                Arguments.of("/api/endpoint?param=value", "/api/endpoint?param=value")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidEndpointProvider")
+    void testSanitizeEndpoint_withInvalidInput_shouldThrowException(String input, String expectedMessage) {
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
+            EndpointValidator.sanitizeEndpoint(input);
         });
-        assertEquals("Endpoint cannot be null", exception.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        assertNotNull(exception.getReason());
+        assertTrue(exception.getReason().contains(expectedMessage));
     }
 
-    @Test
-    void testSanitizeEndpoint_withEmptyString_shouldThrowException() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            EndpointValidator.sanitizeEndpoint("");
-        });
-        assertEquals("Endpoint cannot be empty", exception.getMessage());
-    }
-
-    @Test
-    void testSanitizeEndpoint_withWhitespaceOnly_shouldThrowException() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            EndpointValidator.sanitizeEndpoint("   ");
-        });
-        assertEquals("Endpoint cannot be empty", exception.getMessage());
-    }
-
-    @Test
-    void testSanitizeEndpoint_withValidRelativePath_shouldReturnPath() {
-        String result = EndpointValidator.sanitizeEndpoint("/api/endpoint");
-        assertEquals("/api/endpoint", result);
-    }
-
-    @Test
-    void testSanitizeEndpoint_withValidPathWithSpaces_shouldTrimAndReturn() {
-        String result = EndpointValidator.sanitizeEndpoint("  /api/endpoint  ");
-        assertEquals("/api/endpoint", result);
-    }
-
-    @Test
-    void testSanitizeEndpoint_withHttpUrl_shouldThrowException() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            EndpointValidator.sanitizeEndpoint("http://example.com/api");
-        });
-        assertEquals("Absolute URLs are not allowed in endpoint", exception.getMessage());
-    }
-
-    @Test
-    void testSanitizeEndpoint_withHttpsUrl_shouldThrowException() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            EndpointValidator.sanitizeEndpoint("https://example.com/api");
-        });
-        assertEquals("Absolute URLs are not allowed in endpoint", exception.getMessage());
-    }
-
-    @Test
-    void testSanitizeEndpoint_withProtocolRelativeUrl_shouldThrowException() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            EndpointValidator.sanitizeEndpoint("//example.com/api");
-        });
-        assertEquals("Absolute URLs are not allowed in endpoint", exception.getMessage());
-    }
-
-    @Test
-    void testSanitizeEndpoint_withCustomProtocol_shouldThrowException() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            EndpointValidator.sanitizeEndpoint("ftp://example.com/api");
-        });
-        assertEquals("Absolute URLs are not allowed in endpoint", exception.getMessage());
-    }
-
-    @Test
-    void testSanitizeEndpoint_withoutLeadingSlash_shouldThrowException() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            EndpointValidator.sanitizeEndpoint("api/endpoint");
-        });
-        assertEquals("Endpoint must be a relative path starting with '/'", exception.getMessage());
-    }
-
-    @Test
-    void testSanitizeEndpoint_withPathTraversal_shouldThrowException() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            EndpointValidator.sanitizeEndpoint("/api/../admin");
-        });
-        assertEquals("Endpoint cannot contain path traversal sequences", exception.getMessage());
-    }
-
-    @Test
-    void testSanitizeEndpoint_withPathTraversalAtEnd_shouldThrowException() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            EndpointValidator.sanitizeEndpoint("/api/..");
-        });
-        assertEquals("Endpoint cannot contain path traversal sequences", exception.getMessage());
-    }
-
-    @Test
-    void testSanitizeEndpoint_withPathTraversalAtStart_shouldThrowException() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            EndpointValidator.sanitizeEndpoint("/../api");
-        });
-        assertEquals("Endpoint cannot contain path traversal sequences", exception.getMessage());
-    }
-
-    @Test
-    void testSanitizeEndpoint_withValidComplexPath_shouldReturnPath() {
-        String result = EndpointValidator.sanitizeEndpoint("/api/v1/users/123/profile");
-        assertEquals("/api/v1/users/123/profile", result);
-    }
-
-    @Test
-    void testSanitizeEndpoint_withQueryString_shouldReturnPath() {
-        String result = EndpointValidator.sanitizeEndpoint("/api/endpoint?param=value");
-        assertEquals("/api/endpoint?param=value", result);
-    }
-
-    @Test
-    void testSanitizeEndpoint_withUppercaseHttps_shouldThrowException() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            EndpointValidator.sanitizeEndpoint("HTTPS://example.com/api");
-        });
-        assertEquals("Absolute URLs are not allowed in endpoint", exception.getMessage());
+    @ParameterizedTest
+    @MethodSource("validEndpointProvider")
+    void testSanitizeEndpoint_withValidInput_shouldReturnSanitizedPath(String input, String expected) {
+        String result = EndpointValidator.sanitizeEndpoint(input);
+        assertEquals(expected, result);
     }
 }
-

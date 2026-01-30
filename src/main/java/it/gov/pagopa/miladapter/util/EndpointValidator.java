@@ -1,5 +1,8 @@
 package it.gov.pagopa.miladapter.util;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 public final class EndpointValidator {
 
     private EndpointValidator() {}
@@ -11,21 +14,21 @@ public final class EndpointValidator {
      */
     public static String sanitizeEndpoint(String endpoint) {
         if (endpoint == null) {
-            throw new RuntimeException("Endpoint cannot be null");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Endpoint cannot be null");
         }
         String trimmed = endpoint.trim();
         if (trimmed.isEmpty()) {
-            throw new RuntimeException("Endpoint cannot be empty");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Endpoint cannot be empty");
         }
         String lower = trimmed.toLowerCase();
         if (lower.startsWith("http://") || lower.startsWith("https://") || lower.startsWith("//") || lower.contains("://")) {
-            throw new RuntimeException("Absolute URLs are not allowed in endpoint");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Absolute URLs are not allowed in endpoint");
         }
         if (!trimmed.startsWith("/")) {
-            throw new RuntimeException("Endpoint must be a relative path starting with '/'");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Endpoint must be a relative path starting with '/'");
         }
         if (trimmed.contains("..")) {
-            throw new RuntimeException("Endpoint cannot contain path traversal sequences");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Endpoint cannot contain path traversal sequences");
         }
         return trimmed;
     }

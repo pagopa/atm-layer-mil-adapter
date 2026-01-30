@@ -38,7 +38,7 @@ import static it.gov.pagopa.miladapter.util.LogSanitizer.sanitizeForLog;
 public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
     implements ExternalCallService {
 
-  private final RestConfigurationProperties restConfigurationProperties;
+  private final RestConfigurationProperties restProperties;
   private final RestTemplate restTemplate;
   private final ObjectMapper objectMapper;
   private final VerifyPaymentNoticeService verifyPaymentNoticeService;
@@ -56,22 +56,23 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
   private static final Pattern TRANSFER_LISTS_PATTERN = Pattern.compile("/transfer-lists");
   private final List<Route> routes;
 
+  @SuppressWarnings("rawtypes")
   interface Handler {
-    ResponseEntity<?> handle(CommonHeader h, Map<String, String> pathParams, String body)
+    ResponseEntity handle(CommonHeader h, Map<String, String> pathParams, String body)
         throws JsonProcessingException;
   }
 
   record Route(Pattern pattern, HttpMethod method, Handler handler) {}
 
   public ExternalCallServiceImpl(
-      RestConfigurationProperties restConfigurationProperties,
+      RestConfigurationProperties restProperties,
       RestTemplate restTemplate,
       ObjectMapper objectMapper,
       VerifyPaymentNoticeService verifyPaymentNoticeService,
       ActivatePaymentNoticeService activatePaymentNoticeService,
       PaymentService paymentService,
       ReportingService reportingService) {
-    this.restConfigurationProperties = restConfigurationProperties;
+    this.restProperties = restProperties;
     this.restTemplate = restTemplate;
     this.objectMapper = objectMapper;
     this.verifyPaymentNoticeService = verifyPaymentNoticeService;
@@ -148,23 +149,23 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
   public URI prepareUri(Configuration configuration, String flow) {
     if (flow.equals(FlowValues.MIL.getValue())) {
       return HttpRequestUtils.buildURI(
-          this.restConfigurationProperties.getMilBasePath(),
+          this.restProperties.getMilBasePath(),
           configuration.getEndpoint(),
           configuration.getPathParams());
     } else if (flow.equals(FlowValues.IDPAY.getValue())) {
       return HttpRequestUtils.buildURI(
-          this.restConfigurationProperties.getIdPayBasePath(),
+          this.restProperties.getIdPayBasePath(),
           configuration.getEndpoint(),
           configuration.getPathParams());
     } else if (flow.equals(FlowValues.AUTH.getValue())) {
       log.info("--TEMPORARY-- Preparing URI for flow {}", flow);
       log.info(
           "--TEMPORARY-- Mil Base path: {} , auth endpoint: {}",
-          this.restConfigurationProperties.getMilBasePath(),
-          this.restConfigurationProperties.getGetTokenEndpoint());
+          this.restProperties.getMilBasePath(),
+          this.restProperties.getGetTokenEndpoint());
       return HttpRequestUtils.buildURI(
-          this.restConfigurationProperties.getMilBasePath(),
-          this.restConfigurationProperties.getGetTokenEndpoint());
+          this.restProperties.getMilBasePath(),
+          this.restProperties.getGetTokenEndpoint());
     } else {
       throw new RuntimeException("Unrecognised flow: " + flow);
     }
@@ -183,7 +184,7 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
     if (flow.equals(FlowValues.AUTH.getValue())) {
       configuration =
           EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationGenerateTokenCall(
-              body, this.restConfigurationProperties.getAuth());
+              body, this.restProperties.getAuth());
     } else {
       configuration =
           EngineVariablesToHTTPConfigurationUtils.getHttpConfigurationExternalCall(
@@ -326,12 +327,12 @@ public class ExternalCallServiceImpl extends GenericRestExternalServiceAbstract
         response = new ResponseEntity<>(new JsonObject().toString(), response.getStatusCode());
       }
     } catch (HttpClientErrorException | HttpServerErrorException e) {
-      log.error("Exception in HTTP request", e);
+      log.error("HttpClientErrorException or HttpServerErrorException in HTTP request", e);
       response = new ResponseEntity<>(new JsonObject().toString(), e.getStatusCode());
       serviceSpan.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, e.getStatusCode().value());
       serviceSpan.setAttribute("http.response.body", e.getResponseBodyAsString());
     } catch (ResourceAccessException e) {
-      log.error("Exception in HTTP request", e);
+      log.error("ResourceAccessException in HTTP request", e);
       response = new ResponseEntity<>(new JsonObject().toString(), HttpStatus.GATEWAY_TIMEOUT);
     } catch (Exception e) {
       log.error("Exception in HTTP request", e);

@@ -14,6 +14,6 @@ public final class LogSanitizer {
         if (input == null) {
             return null;
         }
-        return input.replaceAll("\r", " ").replaceAll("\n", " ");
+        return input.replace("\r", " ").replace("\n", " ");
     }
 }
